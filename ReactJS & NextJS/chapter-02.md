@@ -1,4 +1,4 @@
-# Bài 2: Xử lý Sự kiện và Hiển thị Điều kiện trong ReactJS
+# Chapter 02: Xử lý Sự kiện và Hiển thị Điều kiện trong ReactJS
 
 ## A. Mục tiêu
 Sau khi hoàn thành bài học này, học viên sẽ:
@@ -31,12 +31,12 @@ function Button() {
 #### Hàm xử lý sự kiện
 - Hàm xử lý thường được định nghĩa trong component.
 - Để truyền tham số vào hàm xử lý, sử dụng arrow function hoặc phương thức `bind`:
-  ```jsx
-  function handleClick(id) {
-    console.log(`Đã nhấn vào mục ${id}`);
-  }
-  <button onClick={() => handleClick(1)}>Nhấn</button>;
-  ```
+```jsx
+function handleClick(id) {
+  console.log(`Đã nhấn vào mục ${id}`);
+}
+<button onClick={() => handleClick(1)}>Nhấn</button>;
+```
 - **Lưu ý:** Gọi trực tiếp `handleClick(1)` trong `onClick` sẽ khiến hàm chạy ngay lập tức khi component được render, thay vì chờ sự kiện.
 
 **Giải thích thêm:**

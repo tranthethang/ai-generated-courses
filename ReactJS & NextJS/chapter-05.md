@@ -1,4 +1,4 @@
-# Bài học 5: Quản lý State nâng cao với useReducer và useContext trong ReactJS
+# Chapter 05: Quản lý State nâng cao với useReducer và useContext trong ReactJS
 
 ## A. Mục tiêu
 Sau bài học này, học viên sẽ:

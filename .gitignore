@@ -1,4 +1,15 @@
+# General
 .obsidian/
 *.log
 *~
 .DS_Store
+
+# Node.js specific
+node_modules/
+dist/
+coverage/
+.env
+npm-debug.log*
+.next/
+.cache/
+out/

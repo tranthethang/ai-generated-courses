@@ -1,4 +1,4 @@
-# Bài 1: Giới thiệu về ReactJS và Tư duy Component
+# Chapter 01: Giới thiệu về ReactJS và Tư duy Component
 
 ## A. Mục tiêu
 Sau khi hoàn thành bài học này, học viên sẽ:
@@ -33,7 +33,7 @@ React được tạo ra để giải quyết vấn đề cập nhật giao diệ
 
 **Ví dụ minh họa**:  
 Nếu bạn có một danh sách 100 mục, với vanilla JavaScript hoặc jQuery, bạn phải lặp qua từng mục để cập nhật thủ công. Với React, chỉ những mục thay đổi được cập nhật, giúp cải thiện hiệu suất đáng kể. Ví dụ:
-```jsx
+```javascript 
 // Vanilla JS (cách tiếp cận truyền thống)
 document.getElementById('list').innerHTML = newListHTML;
 
@@ -77,12 +77,12 @@ Vite sử dụng ES modules (mô-đun JavaScript hiện đại) thay vì cách �
 #### Các bước tạo dự án React với Vite
 1. Cài đặt **Node.js** (phiên bản 18 trở lên).
 2. Mở terminal và chạy:
-   ```bash
-   npm create vite@latest my-react-app -- --template react
-   cd my-react-app
-   npm install
-   npm run dev
-   ```
+```bash
+npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev
+```
 3. Truy cập `http://localhost:5173` để xem ứng dụng mặc định.
 
 **Lưu ý**: Nếu bạn gặp lỗi khi chạy `npm create vite`, hãy thử cập nhật npm bằng lệnh `npm install -g npm@latest`.
@@ -212,19 +212,19 @@ function Counter() {
 **Nhiệm vụ**: Tạo dự án React mới bằng Vite, sửa `App.jsx` để hiển thị dòng chữ "Xin chào từ React!".
 **Các bước**:
 1. Chạy lệnh:
-   ```bash
-   npm create vite@latest my-react-app -- --template react
-   cd my-react-app
-   npm install
-   npm run dev
-   ```
+```bash
+npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev
+```
 2. Sửa `src/App.jsx`:
-   ```jsx
-   function App() {
-     return <h1>Xin chào từ React!</h1>;
-   }
-   export default App;
-   ```
+```jsx
+function App() {
+  return <h1>Xin chào từ React!</h1>;
+}
+export default App;
+```
 3. Kiểm tra kết quả tại `http://localhost:5173`.
 
 **Giải thích bổ sung**:  
@@ -236,19 +236,19 @@ Bài tập này giúp làm quen với quy trình tạo dự án và chạy ứng
 **Nhiệm vụ**: Tạo component `UserProfileCard.js` nhận các props `name`, `avatarUrl`, `bio`, `email` và hiển thị trong một thẻ có kiểu dáng.
 **Các bước**:
 1. Tạo file `src/components/UserProfileCard.js`:
-   ```jsx
-   function UserProfileCard({ name, avatarUrl, bio, email }) {
-     return (
-       <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}>
-         <img src={avatarUrl} alt={name} style={{ width: '100px', borderRadius: '50%' }} />
-         <h2>{name}</h2>
-         <p>{bio}</p>
-         <p>Email: {email}</p>
-       </div>
-     );
-   }
-   export default UserProfileCard;
-   ```
+```jsx
+function UserProfileCard({ name, avatarUrl, bio, email }) {
+  return (
+    <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}>
+      <img src={avatarUrl} alt={name} style={{ width: '100px', borderRadius: '50%' }} />
+      <h2>{name}</h2>
+      <p>{bio}</p>
+      <p>Email: {email}</p>
+    </div>
+  );
+}
+export default UserProfileCard;
+```
 
 **Giải thích bổ sung**:  
 Component này sử dụng props để hiển thị thông tin người dùng một cách linh hoạt. Kiểu dáng inline (`style={{...}}`) được dùng để đơn giản hóa, nhưng trong thực tế, bạn nên sử dụng CSS hoặc thư viện như Tailwind CSS.
@@ -259,35 +259,35 @@ Component này sử dụng props để hiển thị thông tin người dùng m�
 **Nhiệm vụ**: Sử dụng `UserProfileCard` trong `App.jsx` để hiển thị thông tin của ba người dùng khác nhau.
 **Các bước**:
 1. Sửa `src/App.jsx`:
-   ```jsx
-   import UserProfileCard from './components/UserProfileCard';
+```jsx
+import UserProfileCard from './components/UserProfileCard';
 
-   function App() {
-     return (
-       <div>
-         <UserProfileCard
-           name="Alice"
-           avatarUrl="https://via.placeholder.com/100"
-           bio="Lập trình viên giao diện, đam mê thiết kế UI."
-           email="alice@example.com"
-         />
-         <UserProfileCard
-           name="Bob"
-           avatarUrl="https://via.placeholder.com/100"
-           bio="Kỹ sư backend, chuyên về API."
-           email="bob@example.com"
-         />
-         <UserProfileCard
-           name="Charlie"
-           avatarUrl="https://via.placeholder.com/100"
-           bio="Lập trình viên full-stack, yêu công nghệ."
-           email="charlie@example.com"
-         />
-       </div>
-     );
-   }
-   export default App;
-   ```
+function App() {
+  return (
+    <div>
+      <UserProfileCard
+        name="Alice"
+        avatarUrl="https://via.placeholder.com/100"
+        bio="Lập trình viên giao diện, đam mê thiết kế UI."
+        email="alice@example.com"
+      />
+      <UserProfileCard
+        name="Bob"
+        avatarUrl="https://via.placeholder.com/100"
+        bio="Kỹ sư backend, chuyên về API."
+        email="bob@example.com"
+      />
+      <UserProfileCard
+        name="Charlie"
+        avatarUrl="https://via.placeholder.com/100"
+        bio="Lập trình viên full-stack, yêu công nghệ."
+        email="charlie@example.com"
+      />
+    </div>
+  );
+}
+export default App;
+```
 
 **Giải thích bổ sung**:  
 Bài tập này giúp bạn hiểu cách tái sử dụng component với các props khác nhau. Mỗi `UserProfileCard` hiển thị dữ liệu riêng, nhưng mã nguồn component không cần thay đổi, thể hiện tính tái sử dụng của React.
@@ -298,31 +298,31 @@ Bài tập này giúp bạn hiểu cách tái sử dụng component với các p
 **Nhiệm vụ**: Tạo component `Counter.js` sử dụng `useState` để quản lý trạng thái `count`, bắt đầu từ 0, với các nút "Tăng" và "Giảm".
 **Các bước**:
 1. Tạo file `src/components/Counter.js`:
-   ```jsx
-   import { useState } from 'react';
+```jsx
+import { useState } from 'react';
 
-   function Counter() {
-     const [count, setCount] = useState(0);
+function Counter() {
+  const [count, setCount] = useState(0);
 
-     return (
-       <div>
-         <h2>Đếm: {count}</h2>
-         <button onClick={() => setCount(count + 1)}>Tăng</button>
-         <button onClick={() => setCount(count - 1)}>Giảm</button>
-       </div>
-     );
-   }
-   export default Counter;
-   ```
+  return (
+    <div>
+      <h2>Đếm: {count}</h2>
+      <button onClick={() => setCount(count + 1)}>Tăng</button>
+      <button onClick={() => setCount(count - 1)}>Giảm</button>
+    </div>
+  );
+}
+export default Counter;
+```
 2. Sử dụng trong `App.jsx`:
-   ```jsx
-   import Counter from './components/Counter';
+```jsx
+import Counter from './components/Counter';
 
-   function App() {
-     return <Counter />;
-   }
-   export default App;
-   ```
+function App() {
+  return <Counter />;
+}
+export default App;
+```
 
 **Giải thích bổ sung**:  
 Bài tập này giới thiệu cách sử dụng `useState` để quản lý trạng thái động. Mỗi lần nhấn nút, `setCount` cập nhật giá trị `count`, và React tự động re-render để hiển thị giá trị mới.
@@ -333,26 +333,26 @@ Bài tập này giới thiệu cách sử dụng `useState` để quản lý tr�
 **Nhiệm vụ**: Thêm trạng thái `isFollowing` vào `UserProfileCard` bằng `useState`. Thêm nút để chuyển đổi giữa "Follow" và "Unfollow".
 **Các bước**:
 1. Sửa `src/components/UserProfileCard.js`:
-   ```jsx
-   import { useState } from 'react';
+```jsx
+import { useState } from 'react';
 
-   function UserProfileCard({ name, avatarUrl, bio, email }) {
-     const [isFollowing, setIsFollowing] = useState(false);
+function UserProfileCard({ name, avatarUrl, bio, email }) {
+  const [isFollowing, setIsFollowing] = useState(false);
 
-     return (
-       <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}>
-         <img src={avatarUrl} alt={name} style={{ width: '100px', borderRadius: '50%' }} />
-         <h2>{name}</h2>
-         <p>{bio}</p>
-         <p>Email: {email}</p>
-         <button onClick={() => setIsFollowing(!isFollowing)}>
-           {isFollowing ? 'Bỏ theo dõi' : 'Theo dõi'}
-         </button>
-       </div>
-     );
-   }
-   export default UserProfileCard;
-   ```
+  return (
+    <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}>
+      <img src={avatarUrl} alt={name} style={{ width: '100px', borderRadius: '50%' }} />
+      <h2>{name}</h2>
+      <p>{bio}</p>
+      <p>Email: {email}</p>
+      <button onClick={() => setIsFollowing(!isFollowing)}>
+        {isFollowing ? 'Bỏ theo dõi' : 'Theo dõi'}
+      </button>
+    </div>
+  );
+}
+export default UserProfileCard;
+```
 2. Kiểm tra chức năng trong `App.jsx` với một hoặc nhiều `UserProfileCard`.
 
 **Giải thích bổ sung**:  
@@ -370,29 +370,29 @@ Nội dung gốc đã khá đầy đủ và chính xác, nhưng có một số �
 
 ### Bổ sung
 - **Khuyến nghị sử dụng Tailwind CSS**: Trong các bài tập thực hành, có thể tích hợp Tailwind CSS để thay thế style inline, giúp mã dễ đọc và bảo trì hơn. Ví dụ, thay vì:
-  ```jsx
-  <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}>
-  ```
-  Sử dụng Tail締
-  ```jsx
-  <div className="border border-gray-300 p-4 rounded-lg max-w-xs">
-  ```
-  Để sử dụng Tailwind, thêm CDN hoặc cài đặt qua npm theo tài liệu chính thức.
+```jsx
+<div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}>
+```
+Sử dụng Tail締
+```jsx
+<div className="border border-gray-300 p-4 rounded-lg max-w-xs">
+```
+Để sử dụng Tailwind, thêm CDN hoặc cài đặt qua npm theo tài liệu chính thức.
 
 - **Tối ưu hóa `<React.Fragment>`**: Trong bài tập 3, thay vì bọc các `UserProfileCard` trong `<div>`, có thể sử dụng `<React.Fragment>` để giảm thẻ dư thừa:
-  ```jsx
-  import UserProfileCard from './components/UserProfileCard';
+```jsx
+import UserProfileCard from './components/UserProfileCard';
 
-  function App() {
-    return (
-      <>
-        <UserProfileCard name="Alice" avatarUrl="https://via.placeholder.com/100" bio="Lập trình viên giao diện, đam mê thiết kế UI." email="alice@example.com" />
-        <UserProfileCard name="Bob" avatarUrl="https://via.placeholder.com/100" bio="Kỹ sư backend, chuyên về API." email="bob@example.com" />
-        <UserProfileCard name="Charlie" avatarUrl="https://via.placeholder.com/100" bio="Lập trình viên full-stack, yêu công nghệ." email="charlie@example.com" />
-      </>
-    );
-  }
-  export default App;
-  ```
+function App() {
+  return (
+    <>
+      <UserProfileCard name="Alice" avatarUrl="https://via.placeholder.com/100" bio="Lập trình viên giao diện, đam mê thiết kế UI." email="alice@example.com" />
+      <UserProfileCard name="Bob" avatarUrl="https://via.placeholder.com/100" bio="Kỹ sư backend, chuyên về API." email="bob@example.com" />
+      <UserProfileCard name="Charlie" avatarUrl="https://via.placeholder.com/100" bio="Lập trình viên full-stack, yêu công nghệ." email="charlie@example.com" />
+    </>
+  );
+}
+export default App;
+```
 
 - **Khuyến nghị về tổ chức mã**: Trong các dự án thực tế, nên tạo thư mục `components/` riêng để chứa các component như `UserProfileCard` và `Counter`, giúp mã nguồn dễ quản lý hơn.

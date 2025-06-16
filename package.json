@@ -1,0 +1,12 @@
+{
+  "name": "md2html",
+  "version": "1.0.0",
+  "bin": {
+    "md2html": "./cmd_md2html.js"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "highlight.js": "^11.10.0",
+    "marked": "^14.1.4"
+  }
+}

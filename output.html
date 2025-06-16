@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chapter-01</title>
+    
+    <style>
+        
+            body { font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace; 
+                   line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; 
+                   background-color: #f9f5d7; color: #3c3836; }
+            h1, h2, h3, h4, h5, h6 { color: #b57614; font-weight: bold; }
+            h1 { color: #9d0006; border-bottom: 2px solid #076678; padding-bottom: 10px; }
+            h2 { color: #af3a03; border-bottom: 1px solid #427b58; padding-bottom: 8px; }
+            h3 { color: #79740e; }
+            code { background-color: #ebdbb2; color: #076678; padding: 3px 6px; 
+                   border-radius: 4px; font-family: inherit; border: 1px solid #d5c4a1; }
+            pre { background-color: #fbf1c7; color: #3c3836; padding: 16px; 
+                  border-radius: 8px; overflow-x: auto; border: 1px solid #d5c4a1; 
+                  box-shadow: 0 1px 3px rgba(60,56,54,0.1); }
+            pre code { background: none; border: none; padding: 0; color: inherit; }
+            blockquote { border-left: 4px solid #b57614; color: #665c54; 
+                        background-color: #f2e5bc; padding: 10px 20px; margin: 16px 0; 
+                        border-radius: 0 4px 4px 0; }
+            a { color: #427b58; text-decoration: none; }
+            a:hover { color: #79740e; text-decoration: underline; }
+            table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+            th, td { border: 1px solid #d5c4a1; padding: 12px; text-align: left; }
+            th { background-color: #ebdbb2; color: #b57614; font-weight: bold; }
+            tr:nth-child(even) { background-color: #f2e5bc; }
+            tr:hover { background-color: #ebdbb2; }
+            strong, b { color: #af3a03; font-weight: bold; }
+            em, i { color: #8f3f71; font-style: italic; }
+            hr { border: none; border-top: 2px solid #d5c4a1; margin: 24px 0; }
+            ul, ol { padding-left: 24px; }
+            li { margin: 4px 0; }
+            li::marker { color: #b57614; }
+        
+        
+        /* Gruvbox Light Hard syntax highlighting */
+        .highlight { background-color: #fbf1c7 !important; }
+        .highlight .hll { background-color: #ebdbb2; }
+        .highlight .c { color: #928374; font-style: italic; } /* Comment */
+        .highlight .err { color: #9d0006; background-color: #f9f5d7; } /* Error */
+        .highlight .k { color: #af3a03; } /* Keyword */
+        .highlight .l { color: #8f3f71; } /* Literal */
+        .highlight .n { color: #3c3836; } /* Name */
+        .highlight .o { color: #af3a03; } /* Operator */
+        .highlight .p { color: #3c3836; } /* Punctuation */
+        .highlight .ch { color: #928374; font-style: italic; } /* Comment.Hashbang */
+        .highlight .cm { color: #928374; font-style: italic; } /* Comment.Multiline */
+        .highlight .cp { color: #427b58; } /* Comment.Preproc */
+        .highlight .cpf { color: #928374; font-style: italic; } /* Comment.PreprocFile */
+        .highlight .c1 { color: #928374; font-style: italic; } /* Comment.Single */
+        .highlight .cs { color: #928374; font-style: italic; } /* Comment.Special */
+        .highlight .gd { color: #9d0006; } /* Generic.Deleted */
+        .highlight .ge { color: #3c3836; font-style: italic; } /* Generic.Emph */
+        .highlight .gi { color: #79740e; } /* Generic.Inserted */
+        .highlight .gs { color: #3c3836; font-weight: bold; } /* Generic.Strong */
+        .highlight .gu { color: #8f3f71; } /* Generic.Subheading */
+        .highlight .kc { color: #8f3f71; } /* Keyword.Constant */
+        .highlight .kd { color: #af3a03; } /* Keyword.Declaration */
+        .highlight .kn { color: #af3a03; } /* Keyword.Namespace */
+        .highlight .kp { color: #af3a03; } /* Keyword.Pseudo */
+        .highlight .kr { color: #af3a03; } /* Keyword.Reserved */
+        .highlight .kt { color: #b57614; } /* Keyword.Type */
+        .highlight .ld { color: #79740e; } /* Literal.Date */
+        .highlight .m { color: #8f3f71; } /* Literal.Number */
+        .highlight .s { color: #79740e; } /* Literal.String */
+        .highlight .na { color: #79740e; } /* Name.Attribute */
+        .highlight .nb { color: #b57614; } /* Name.Builtin */
+        .highlight .nc { color: #b57614; } /* Name.Class */
+        .highlight .no { color: #8f3f71; } /* Name.Constant */
+        .highlight .nd { color: #427b58; } /* Name.Decorator */
+        .highlight .ni { color: #b57614; } /* Name.Entity */
+        .highlight .ne { color: #9d0006; } /* Name.Exception */
+        .highlight .nf { color: #427b58; } /* Name.Function */
+        .highlight .nl { color: #9d0006; } /* Name.Label */
+        .highlight .nn { color: #b57614; } /* Name.Namespace */
+        .highlight .nx { color: #3c3836; } /* Name.Other */
+        .highlight .py { color: #3c3836; } /* Name.Property */
+        .highlight .nt { color: #9d0006; } /* Name.Tag */
+        .highlight .nv { color: #3c3836; } /* Name.Variable */
+        .highlight .ow { color: #af3a03; } /* Operator.Word */
+        .highlight .w { color: #3c3836; } /* Text.Whitespace */
+        .highlight .mb { color: #8f3f71; } /* Literal.Number.Bin */
+        .highlight .mf { color: #8f3f71; } /* Literal.Number.Float */
+        .highlight .mh { color: #8f3f71; } /* Literal.Number.Hex */
+        .highlight .mi { color: #8f3f71; } /* Literal.Number.Integer */
+        .highlight .mo { color: #8f3f71; } /* Literal.Number.Oct */
+        .highlight .sa { color: #79740e; } /* Literal.String.Affix */
+        .highlight .sb { color: #79740e; } /* Literal.String.Backtick */
+        .highlight .sc { color: #79740e; } /* Literal.String.Char */
+        .highlight .dl { color: #79740e; } /* Literal.String.Delimiter */
+        .highlight .sd { color: #79740e; } /* Literal.String.Doc */
+        .highlight .s2 { color: #79740e; } /* Literal.String.Double */
+        .highlight .se { color: #af3a03; } /* Literal.String.Escape */
+        .highlight .sh { color: #79740e; } /* Literal.String.Heredoc */
+        .highlight .si { color: #79740e; } /* Literal.String.Interpol */
+        .highlight .sx { color: #79740e; } /* Literal.String.Other */
+        .highlight .sr { color: #79740e; } /* Literal.String.Regex */
+        .highlight .s1 { color: #79740e; } /* Literal.String.Single */
+        .highlight .ss { color: #076678; } /* Literal.String.Symbol */
+        .highlight .bp { color: #b57614; } /* Name.Builtin.Pseudo */
+        .highlight .fm { color: #427b58; } /* Name.Function.Magic */
+        .highlight .vc { color: #3c3836; } /* Name.Variable.Class */
+        .highlight .vg { color: #3c3836; } /* Name.Variable.Global */
+        .highlight .vi { color: #3c3836; } /* Name.Variable.Instance */
+        .highlight .vm { color: #3c3836; } /* Name.Variable.Magic */
+        .highlight .il { color: #8f3f71; } /* Literal.Number.Integer.Long */
+    
+        
+        .hljs-comment { color: #928374; font-style: italic; }
+        .hljs-string { color: #79740e; }
+        .hljs-keyword { color: #af3a03; font-weight: bold; }
+        .hljs-number { color: #8f3f71; }
+        .hljs-function { color: #427b58; }
+        .hljs-operator { color: #af3a03; }
+        .hljs-bracket { color: #3c3836; }
+    
+        .highlight { background-color: #f8f8f8; }
+        .toc { background-color: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1 id="chapter-01-gioi-thieu-ve-reactjs-va-tu-duy-component">Chapter 01: Giới thiệu về ReactJS và Tư duy Component<a class="headerlink" href="#chapter-01-gioi-thieu-ve-reactjs-va-tu-duy-component" title="Permanent link">&para;</a></h1>
+<h2 id="a-muc-tieu">A. Mục tiêu<a class="headerlink" href="#a-muc-tieu" title="Permanent link">&para;</a></h2>
+<p>Sau khi hoàn thành bài học này, học viên sẽ:<br>
+- Hiểu React là gì, lý do ra đời và các vấn đề mà nó giải quyết (Virtual DOM).<br>
+- Thành thạo cú pháp JSX và sự khác biệt so với HTML.<br>
+- Nắm vững khái niệm Component và áp dụng hiệu quả.<br>
+- Học cách truyền dữ liệu từ component cha sang con bằng Props.<br>
+- Làm quen với khái niệm State và hook <code>useState</code> để quản lý trạng thái component.</p>
+<p><strong>Giải thích bổ sung</strong>:<br>
+Mục tiêu bài học được thiết kế để giúp học viên hiểu rõ nền tảng của ReactJS, từ lý thuyết đến thực hành. Mỗi mục tiêu đều hướng đến việc xây dựng kỹ năng thực tế, chẳng hạn như sử dụng JSX để viết giao diện, chia nhỏ UI thành các component độc lập, và quản lý trạng thái động bằng <code>useState</code>. Các khái niệm này là nền tảng để phát triển ứng dụng web hiện đại.</p>
+<hr>
+<h2 id="b-noi-dung-ly-thuyet">B. Nội dung lý thuyết<a class="headerlink" href="#b-noi-dung-ly-thuyet" title="Permanent link">&para;</a></h2>
+<h3 id="1-tong-quan-ve-reactjs">1. Tổng quan về ReactJS<a class="headerlink" href="#1-tong-quan-ve-reactjs" title="Permanent link">&para;</a></h3>
+<h4 id="lich-su-va-su-phat-trien">Lịch sử và sự phát triển<a class="headerlink" href="#lich-su-va-su-phat-trien" title="Permanent link">&para;</a></h4>
+<p>ReactJS là một thư viện JavaScript mã nguồn mở, được phát triển bởi <strong>Facebook</strong> vào năm <strong>2013</strong>, nhằm xây dựng giao diện người dùng (UI) hiệu quả, đặc biệt cho các ứng dụng <strong>single-page application (SPA)</strong>. React trở nên phổ biến nhờ tính đơn giản, hiệu suất cao và cách tiếp cận dựa trên <strong>component</strong>. Một số cột mốc quan trọng:<br>
+- <strong>2013</strong>: React ra đời và được sử dụng trong các sản phẩm của Facebook như Instagram.<br>
+- <strong>2018</strong>: Giới thiệu <strong>React Hooks</strong>, cho phép sử dụng trạng thái và các tính năng khác trong functional component, giảm sự phụ thuộc vào class component.<br>
+- <strong>2022</strong>: React 18 ra mắt với <strong>Concurrent Rendering</strong>, cải thiện hiệu suất và trải nghiệm người dùng khi xử lý các tác vụ phức tạp.</p>
+<p><strong>Giải thích bổ sung</strong>:<br>
+React được tạo ra để giải quyết vấn đề cập nhật giao diện phức tạp trong các ứng dụng lớn. Trước React, các thư viện như jQuery yêu cầu lập trình viên phải tự quản lý cập nhật DOM, dễ dẫn đến lỗi và hiệu suất kém. React cung cấp cách tiếp cận mới, giúp lập trình viên tập trung vào việc mô tả giao diện thay vì cách thức cập nhật nó.</p>
+<h4 id="virtual-dom">Virtual DOM<a class="headerlink" href="#virtual-dom" title="Permanent link">&para;</a></h4>
+<p><strong>Virtual DOM</strong> là một bản sao nhẹ của DOM thực tế, được lưu trong bộ nhớ. React sử dụng Virtual DOM để tối ưu hóa việc cập nhật giao diện:<br>
+1. Khi trạng thái (state) hoặc props của component thay đổi, React tạo một cây Virtual DOM mới.<br>
+2. React so sánh (diff) cây Virtual DOM mới với cây cũ để xác định phần thay đổi.<br>
+3. Chỉ những phần thay đổi được cập nhật vào DOM thực tế, giảm thiểu thao tác tốn kém.</p>
+<p><strong>Ví dụ minh họa</strong>:<br>
+Nếu bạn có một danh sách 100 mục, với vanilla JavaScript hoặc jQuery, bạn phải lặp qua từng mục để cập nhật thủ công. Với React, chỉ những mục thay đổi được cập nhật, giúp cải thiện hiệu suất đáng kể. Ví dụ:</p>
+<pre class="highlight"><code class="language-jsx">// Vanilla JS (cách tiếp cận truyền thống)
+document.getElementById('list').innerHTML = newListHTML;
+
+// React (Virtual DOM tự động cập nhật)
+return &lt;ul&gt;{items.map(item =&gt; &lt;li&gt;{item}&lt;/li&gt;)}&lt;/ul&gt;;
+</code></pre>
+
+<p><strong>Giải thích bổ sung</strong>:<br>
+Virtual DOM giống như một bản phác thảo của giao diện. Thay vì vẽ lại toàn bộ bức tranh (DOM thực), React chỉ chỉnh sửa những phần cần thay đổi, giống như chỉnh sửa một vài nét vẽ trên bản phác thảo. Điều này giúp ứng dụng nhanh hơn, đặc biệt với giao diện phức tạp.</p>
+<h4 id="declarative-ui">Declarative UI<a class="headerlink" href="#declarative-ui" title="Permanent link">&para;</a></h4>
+<p>React sử dụng cách tiếp cận <strong>declarative</strong> (mô tả) thay vì <strong>imperative</strong> (chỉ thị):<br>
+- <strong>Imperative</strong>: Lập trình viên phải chỉ rõ từng bước để cập nhật giao diện, ví dụ: <code>document.getElementById('button').innerText = 'Clicked';</code>.<br>
+- <strong>Declarative</strong>: Chỉ cần mô tả giao diện sẽ trông như thế nào dựa trên trạng thái hiện tại, React tự động xử lý phần còn lại.</p>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre class="highlight"><code class="language-jsx">// Imperative
+if (isClicked) {
+  document.getElementById('button').innerText = 'Clicked';
+} else {
+  document.getElementById('button').innerText = 'Click me';
+}
+
+// Declarative
+&lt;button&gt;{isClicked ? 'Clicked' : 'Click me'}&lt;/button&gt;
+</code></pre>
+
+<p><strong>Giải thích bổ sung</strong>:<br>
+Cách tiếp cận declarative giúp mã dễ đọc, dễ bảo trì và ít lỗi hơn. Thay vì phải viết các lệnh cập nhật DOM phức tạp, bạn chỉ cần mô tả giao diện dựa trên trạng thái, và React sẽ đảm bảo giao diện luôn đồng bộ với dữ liệu.</p>
+<hr>
+<h3 id="2-thiet-lap-moi-truong">2. Thiết lập môi trường<a class="headerlink" href="#2-thiet-lap-moi-truong" title="Permanent link">&para;</a></h3>
+<h4 id="cong-cu">Công cụ<a class="headerlink" href="#cong-cu" title="Permanent link">&para;</a></h4>
+<p>Ngày nay, <strong>Vite</strong> là lựa chọn phổ biến để khởi tạo dự án React nhờ tốc độ nhanh và hỗ trợ <strong>Hot Module Replacement (HMR)</strong>. So với <code>create-react-app</code>, Vite có thời gian build nhanh hơn và phù hợp với các dự án hiện đại.</p>
+<p><strong>Giải thích bổ sung</strong>:<br>
+Vite sử dụng ES modules (mô-đun JavaScript hiện đại) thay vì cách đóng gói truyền thống, giúp giảm thời gian tải trong quá trình phát triển. Điều này đặc biệt hữu ích khi bạn làm việc với các dự án lớn hoặc cần cập nhật giao diện ngay lập tức.</p>
+<h4 id="cac-buoc-tao-du-an-react-voi-vite">Các bước tạo dự án React với Vite<a class="headerlink" href="#cac-buoc-tao-du-an-react-voi-vite" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Cài đặt <strong>Node.js</strong> (phiên bản 18 trở lên).</li>
+<li>Mở terminal và chạy:</li>
+</ol>
+<pre class="highlight"><code class="language-bash">npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev
+</code></pre>
+
+<ol start="3">
+<li>Truy cập <code>http://localhost:5173</code> để xem ứng dụng mặc định.</li>
+</ol>
+<p><strong>Lưu ý</strong>: Nếu bạn gặp lỗi khi chạy <code>npm create vite</code>, hãy thử cập nhật npm bằng lệnh <code>npm install -g npm@latest</code>.</p>
+<h4 id="cau-truc-du-an">Cấu trúc dự án<a class="headerlink" href="#cau-truc-du-an" title="Permanent link">&para;</a></h4>
+<p>Cấu trúc thư mục của một dự án Vite + React:<br>
+- <code>public/</code>: Chứa các tài nguyên tĩnh như hình ảnh, favicon.<br>
+- <code>src/</code>: Thư mục chính chứa mã nguồn:<br>
+  - <code>App.jsx</code>: Component gốc của ứng dụng.<br>
+  - <code>main.jsx</code>: Điểm vào, nơi ứng dụng được gắn vào DOM.<br>
+- <code>index.html</code>: File HTML chính.<br>
+- <code>vite.config.js</code>: File cấu hình Vite.</p>
+<p><strong>Giải thích bổ sung</strong>:<br>
+Cấu trúc dự án được thiết kế để tách biệt mã nguồn (<code>src</code>) và tài nguyên tĩnh (<code>public</code>). File <code>main.jsx</code> đóng vai trò kết nối React với DOM, thường chứa lệnh <code>ReactDOM.render</code> để gắn ứng dụng vào <code>#root</code> trong <code>index.html</code>.</p>
+<hr>
+<h3 id="3-jsx-javascript-xml">3. JSX - JavaScript XML<a class="headerlink" href="#3-jsx-javascript-xml" title="Permanent link">&para;</a></h3>
+<p>JSX là một phần mở rộng cú pháp cho JavaScript, cho phép viết mã giống HTML trong file JavaScript. JSX không phải HTML mà được chuyển đổi thành các lệnh <code>React.createElement()</code> bởi <strong>Babel</strong>.</p>
+<h4 id="quy-tac-quan-trong-cua-jsx">Quy tắc quan trọng của JSX<a class="headerlink" href="#quy-tac-quan-trong-cua-jsx" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Một thẻ cha duy nhất</strong>: Mọi JSX phải được bọc trong một thẻ cha (ví dụ: <code>&lt;div&gt;</code> hoặc <code>&lt;React.Fragment&gt;</code>/<code>&lt;&gt;</code>).</li>
+<li><strong>Thuộc tính camelCase</strong>: Sử dụng <code>className</code> thay vì <code>class</code>, <code>onClick</code> thay vì <code>onclick</code>.</li>
+<li><strong>Biểu thức JavaScript</strong>: Dùng <code>{}</code> để nhúng biểu thức JavaScript, ví dụ <code>{2 + 2}</code> hoặc <code>{user.name}</code>.</li>
+<li><strong>Bình luận trong JSX</strong>: Sử dụng <code>{/* bình luận */}</code> thay vì <code>&lt;!-- --&gt;</code>.</li>
+</ul>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre class="highlight"><code class="language-jsx">const name = &quot;John&quot;;
+const element = (
+  &lt;div className=&quot;greeting&quot;&gt;
+    &lt;h1&gt;Hello, {name}!&lt;/h1&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+
+<p><strong>Giải thích bổ sung</strong>:<br>
+JSX giúp lập trình viên viết giao diện một cách trực quan, giống như viết HTML, nhưng thực chất là JavaScript. Điều này cho phép kết hợp logic (JavaScript) và giao diện (JSX) trong cùng một file, giúp mã dễ đọc và quản lý hơn.</p>
+<hr>
+<h3 id="4-component-trai-tim-cua-react">4. Component - Trái tim của React<a class="headerlink" href="#4-component-trai-tim-cua-react" title="Permanent link">&para;</a></h3>
+<h4 id="tu-duy-component">Tư duy Component<a class="headerlink" href="#tu-duy-component" title="Permanent link">&para;</a></h4>
+<p>React khuyến khích chia nhỏ giao diện thành các <strong>component</strong> độc lập, tái sử dụng được (ví dụ: <code>Header</code>, <code>Button</code>, <code>Card</code>). Mỗi component chịu trách nhiệm cho một phần cụ thể của giao diện, giúp mã dễ bảo trì và mở rộng.</p>
+<p><strong>Ví dụ minh họa</strong>:<br>
+Một trang web có thể được chia thành:<br>
+- <code>Header</code>: Thanh điều hướng.<br>
+- <code>MainContent</code>: Nội dung chính.<br>
+- <code>Footer</code>: Chân trang.</p>
+<p><strong>Giải thích bổ sung</strong>:<br>
+Tư duy component giống như việc lắp ráp LEGO: mỗi mảnh (component) có chức năng riêng, nhưng khi kết hợp lại sẽ tạo thành một ứng dụng hoàn chỉnh. Điều này giúp bạn dễ dàng sửa đổi hoặc thay thế từng phần mà không ảnh hưởng đến toàn bộ hệ thống.</p>
+<h4 id="functional-component">Functional Component<a class="headerlink" href="#functional-component" title="Permanent link">&para;</a></h4>
+<p>Ngày nay, React chủ yếu sử dụng <strong>functional component</strong> (component dạng hàm), thay vì class component. Một functional component là một hàm JavaScript trả về JSX.</p>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre class="highlight"><code class="language-jsx">function Welcome() {
+  return &lt;h1&gt;Chào mừng đến với React!&lt;/h1&gt;;
+}
+</code></pre>
+
+<h4 id="props-thuoc-tinh">Props (Thuộc tính)<a class="headerlink" href="#props-thuoc-tinh" title="Permanent link">&para;</a></h4>
+<p>Props là cách truyền dữ liệu từ component cha sang component con. Props là <strong>chỉ đọc</strong> (read-only), đảm bảo luồng dữ liệu một chiều, tránh tác dụng phụ không mong muốn.</p>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre class="highlight"><code class="language-jsx">function UserCard(props) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{props.name}&lt;/h2&gt;
+      &lt;p&gt;{props.email}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+// Sử dụng trong component cha
+&lt;UserCard name=&quot;Alice&quot; email=&quot;alice@example.com&quot; /&gt;
+</code></pre>
+
+<p><strong>Giải thích bổ sung</strong>:<br>
+Props giống như tham số của một hàm, cho phép bạn tùy chỉnh component. Ví dụ, cùng một component <code>UserCard</code> có thể hiển thị thông tin của nhiều người khác nhau chỉ bằng cách thay đổi giá trị props.</p>
+<hr>
+<h3 id="5-state-va-hook-usestate">5. State và Hook <code>useState</code><a class="headerlink" href="#5-state-va-hook-usestate" title="Permanent link">&para;</a></h3>
+<h4 id="state-la-gi">State là gì?<a class="headerlink" href="#state-la-gi" title="Permanent link">&para;</a></h4>
+<p><strong>State</strong> là dữ liệu nội bộ của component, có thể thay đổi theo thời gian (ví dụ: giá trị ô input, trạng thái hiển thị modal). Khi state thay đổi, React tự động re-render component để cập nhật giao diện.</p>
+<p><strong>Giải thích bổ sung</strong>:<br>
+State giống như bộ nhớ của component, lưu trữ thông tin thay đổi theo hành động của người dùng (như nhấn nút, nhập liệu). React đảm bảo giao diện luôn khớp với state hiện tại.</p>
+<h4 id="gioi-thieu-ve-hooks">Giới thiệu về Hooks<a class="headerlink" href="#gioi-thieu-ve-hooks" title="Permanent link">&para;</a></h4>
+<p><strong>Hooks</strong> là các hàm đặc biệt của React, cho phép functional component sử dụng các tính năng như state, lifecycle, v.v. Hook <code>useState</code> là hook cơ bản nhất, dùng để quản lý trạng thái.</p>
+<h4 id="hook-usestate">Hook <code>useState</code><a class="headerlink" href="#hook-usestate" title="Permanent link">&para;</a></h4>
+<p>Cú pháp: <code>const [state, setState] = useState(initialValue);</code><br>
+- <code>state</code>: Giá trị trạng thái hiện tại.<br>
+- <code>setState</code>: Hàm để cập nhật trạng thái, kích hoạt re-render.</p>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre class="highlight"><code class="language-jsx">import { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Đếm: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Tăng&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+
+<p><strong>Giải thích bổ sung</strong>:<br>
+<code>useState</code> giống như một hộp chứa giá trị mà component có thể thay đổi. Khi bạn gọi <code>setState</code>, React sẽ cập nhật giá trị và vẽ lại giao diện để phản ánh thay đổi đó. Điều quan trọng là <code>setState</code> không thay đổi state ngay lập tức mà lên lịch cho việc re-render.</p>
+<hr>
+<h2 id="c-bai-tap-thuc-hanh">C. Bài tập thực hành<a class="headerlink" href="#c-bai-tap-thuc-hanh" title="Permanent link">&para;</a></h2>
+<h3 id="bai-1-thiet-lap-du-an-react">Bài 1: Thiết lập dự án React<a class="headerlink" href="#bai-1-thiet-lap-du-an-react" title="Permanent link">&para;</a></h3>
+<p><strong>Nhiệm vụ</strong>: Tạo dự án React mới bằng Vite, sửa <code>App.jsx</code> để hiển thị dòng chữ &ldquo;Xin chào từ React!&rdquo;.<br>
+<strong>Các bước</strong>:<br>
+1. Chạy lệnh:</p>
+<pre class="highlight"><code class="language-bash">npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev
+</code></pre>
+
+<ol start="2">
+<li>Sửa <code>src/App.jsx</code>:</li>
+</ol>
+<pre class="highlight"><code class="language-jsx">function App() {
+  return &lt;h1&gt;Xin chào từ React!&lt;/h1&gt;;
+}
+export default App;
+</code></pre>
+
+<ol start="3">
+<li>Kiểm tra kết quả tại <code>http://localhost:5173</code>.</li>
+</ol>
+<p><strong>Giải thích bổ sung</strong>:<br>
+Bài tập này giúp làm quen với quy trình tạo dự án và chạy ứng dụng React. Bạn sẽ thấy cách Vite nhanh chóng khởi động server phát triển và hiển thị kết quả ngay lập tức.</p>
+<hr>
+<h3 id="bai-2-tao-component-userprofilecard">Bài 2: Tạo Component UserProfileCard<a class="headerlink" href="#bai-2-tao-component-userprofilecard" title="Permanent link">&para;</a></h3>
+<p><strong>Nhiệm vụ</strong>: Tạo component <code>UserProfileCard.js</code> nhận các props <code>name</code>, <code>avatarUrl</code>, <code>bio</code>, <code>email</code> và hiển thị trong một thẻ có kiểu dáng.<br>
+<strong>Các bước</strong>:<br>
+1. Tạo file <code>src/components/UserProfileCard.js</code>:</p>
+<pre class="highlight"><code class="language-jsx">function UserProfileCard({ name, avatarUrl, bio, email }) {
+  return (
+    &lt;div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}&gt;
+      &lt;img src={avatarUrl} alt={name} style={{ width: '100px', borderRadius: '50%' }} /&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;{bio}&lt;/p&gt;
+      &lt;p&gt;Email: {email}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default UserProfileCard;
+</code></pre>
+
+<p><strong>Giải thích bổ sung</strong>:<br>
+Component này sử dụng props để hiển thị thông tin người dùng một cách linh hoạt. Kiểu dáng inline (<code>style={{...}}</code>) được dùng để đơn giản hóa, nhưng trong thực tế, bạn nên sử dụng CSS hoặc thư viện như Tailwind CSS.</p>
+<hr>
+<h3 id="bai-3-su-dung-userprofilecard-trong-app">Bài 3: Sử dụng UserProfileCard trong App<a class="headerlink" href="#bai-3-su-dung-userprofilecard-trong-app" title="Permanent link">&para;</a></h3>
+<p><strong>Nhiệm vụ</strong>: Sử dụng <code>UserProfileCard</code> trong <code>App.jsx</code> để hiển thị thông tin của ba người dùng khác nhau.<br>
+<strong>Các bước</strong>:<br>
+1. Sửa <code>src/App.jsx</code>:</p>
+<pre class="highlight"><code class="language-jsx">import UserProfileCard from './components/UserProfileCard';
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;UserProfileCard
+        name=&quot;Alice&quot;
+        avatarUrl=&quot;https://via.placeholder.com/100&quot;
+        bio=&quot;Lập trình viên giao diện, đam mê thiết kế UI.&quot;
+        email=&quot;alice@example.com&quot;
+      /&gt;
+      &lt;UserProfileCard
+        name=&quot;Bob&quot;
+        avatarUrl=&quot;https://via.placeholder.com/100&quot;
+        bio=&quot;Kỹ sư backend, chuyên về API.&quot;
+        email=&quot;bob@example.com&quot;
+      /&gt;
+      &lt;UserProfileCard
+        name=&quot;Charlie&quot;
+        avatarUrl=&quot;https://via.placeholder.com/100&quot;
+        bio=&quot;Lập trình viên full-stack, yêu công nghệ.&quot;
+        email=&quot;charlie@example.com&quot;
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+export default App;
+</code></pre>
+
+<p><strong>Giải thích bổ sung</strong>:<br>
+Bài tập này giúp bạn hiểu cách tái sử dụng component với các props khác nhau. Mỗi <code>UserProfileCard</code> hiển thị dữ liệu riêng, nhưng mã nguồn component không cần thay đổi, thể hiện tính tái sử dụng của React.</p>
+<hr>
+<h3 id="bai-4-tao-component-counter">Bài 4: Tạo Component Counter<a class="headerlink" href="#bai-4-tao-component-counter" title="Permanent link">&para;</a></h3>
+<p><strong>Nhiệm vụ</strong>: Tạo component <code>Counter.js</code> sử dụng <code>useState</code> để quản lý trạng thái <code>count</code>, bắt đầu từ 0, với các nút &ldquo;Tăng&rdquo; và &ldquo;Giảm&rdquo;.<br>
+<strong>Các bước</strong>:<br>
+1. Tạo file <code>src/components/Counter.js</code>:</p>
+<pre class="highlight"><code class="language-jsx">import { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Đếm: {count}&lt;/h2&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Tăng&lt;/button&gt;
+      &lt;button onClick={() =&gt; setCount(count - 1)}&gt;Giảm&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+export default Counter;
+</code></pre>
+
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code>:</li>
+</ol>
+<pre class="highlight"><code class="language-jsx">import Counter from './components/Counter';
+
+function App() {
+  return &lt;Counter /&gt;;
+}
+export default App;
+</code></pre>
+
+<p><strong>Giải thích bổ sung</strong>:<br>
+Bài tập này giới thiệu cách sử dụng <code>useState</code> để quản lý trạng thái động. Mỗi lần nhấn nút, <code>setCount</code> cập nhật giá trị <code>count</code>, và React tự động re-render để hiển thị giá trị mới.</p>
+<hr>
+<h3 id="bai-5-nang-cap-userprofilecard-voi-tinh-nang-followunfollow">Bài 5: Nâng cấp UserProfileCard với tính năng Follow/Unfollow<a class="headerlink" href="#bai-5-nang-cap-userprofilecard-voi-tinh-nang-followunfollow" title="Permanent link">&para;</a></h3>
+<p><strong>Nhiệm vụ</strong>: Thêm trạng thái <code>isFollowing</code> vào <code>UserProfileCard</code> bằng <code>useState</code>. Thêm nút để chuyển đổi giữa &ldquo;Follow&rdquo; và &ldquo;Unfollow&rdquo;.<br>
+<strong>Các bước</strong>:<br>
+1. Sửa <code>src/components/UserProfileCard.js</code>:</p>
+<pre class="highlight"><code class="language-jsx">import { useState } from 'react';
+
+function UserProfileCard({ name, avatarUrl, bio, email }) {
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  return (
+    &lt;div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}&gt;
+      &lt;img src={avatarUrl} alt={name} style={{ width: '100px', borderRadius: '50%' }} /&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;{bio}&lt;/p&gt;
+      &lt;p&gt;Email: {email}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setIsFollowing(!isFollowing)}&gt;
+        {isFollowing ? 'Bỏ theo dõi' : 'Theo dõi'}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+export default UserProfileCard;
+</code></pre>
+
+<ol start="2">
+<li>Kiểm tra chức năng trong <code>App.jsx</code> với một hoặc nhiều <code>UserProfileCard</code>.</li>
+</ol>
+<p><strong>Giải thích bổ sung</strong>:<br>
+Bài tập này kết hợp props và state, giúp bạn hiểu cách component có thể vừa nhận dữ liệu từ bên ngoài (props) vừa quản lý trạng thái nội bộ (state). Nút &ldquo;Follow/Unfollow&rdquo; thay đổi trạng thái <code>isFollowing</code>, và giao diện tự động cập nhật.</p>
+<hr>
+<h2 id="d-kiem-tra-va-cap-nhat-noi-dung">D. Kiểm tra và cập nhật nội dung<a class="headerlink" href="#d-kiem-tra-va-cap-nhat-noi-dung" title="Permanent link">&para;</a></h2>
+<h3 id="kiem-tra-noi-dung-goc">Kiểm tra nội dung gốc<a class="headerlink" href="#kiem-tra-noi-dung-goc" title="Permanent link">&para;</a></h3>
+<p>Nội dung gốc đã khá đầy đủ và chính xác, nhưng có một số điểm cần cập nhật:<br>
+1. <strong>Phiên bản Node.js</strong>: Đề xuất sử dụng Node.js 18 trở lên, nhưng hiện tại (2025), Node.js 20 là phiên bản ổn định mới nhất, nên khuyến nghị sử dụng phiên bản này.<br>
+2. <strong>Cú pháp JSX</strong>: Nội dung gốc không đề cập đến việc sử dụng <code>&lt;React.Fragment&gt;</code> thay thế <code>&lt;div&gt;</code> để tránh thêm thẻ không cần thiết. Điều này quan trọng để tối ưu hóa cấu trúc DOM.<br>
+3. <strong>Kiểu dáng</strong>: Các bài tập sử dụng style inline, nên bổ sung khuyến nghị sử dụng CSS modules hoặc Tailwind CSS trong các dự án thực tế để quản lý kiểu dáng tốt hơn.<br>
+4. <strong>Hiệu suất</strong>: Phần Virtual DOM có thể bổ sung thêm ví dụ minh họa để làm rõ cách React tối ưu hóa cập nhật.</p>
+<h3 id="bo-sung">Bổ sung<a class="headerlink" href="#bo-sung" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Khuyến nghị sử dụng Tailwind CSS</strong>: Trong các bài tập thực hành, có thể tích hợp Tailwind CSS để thay thế style inline, giúp mã dễ đọc và bảo trì hơn. Ví dụ, thay vì:</li>
+</ul>
+<pre class="highlight"><code class="language-jsx">&lt;div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}&gt;
+</code></pre>
+
+<p>Sử dụng Tail締</p>
+<pre class="highlight"><code class="language-jsx">&lt;div className=&quot;border border-gray-300 p-4 rounded-lg max-w-xs&quot;&gt;
+</code></pre>
+
+<p>Để sử dụng Tailwind, thêm CDN hoặc cài đặt qua npm theo tài liệu chính thức.</p>
+<ul>
+<li><strong>Tối ưu hóa <code>&lt;React.Fragment&gt;</code></strong>: Trong bài tập 3, thay vì bọc các <code>UserProfileCard</code> trong <code>&lt;div&gt;</code>, có thể sử dụng <code>&lt;React.Fragment&gt;</code> để giảm thẻ dư thừa:</li>
+</ul>
+<pre class="highlight"><code class="language-jsx">import UserProfileCard from './components/UserProfileCard';
+
+function App() {
+  return (
+    &lt;&gt;
+      &lt;UserProfileCard name=&quot;Alice&quot; avatarUrl=&quot;https://via.placeholder.com/100&quot; bio=&quot;Lập trình viên giao diện, đam mê thiết kế UI.&quot; email=&quot;alice@example.com&quot; /&gt;
+      &lt;UserProfileCard name=&quot;Bob&quot; avatarUrl=&quot;https://via.placeholder.com/100&quot; bio=&quot;Kỹ sư backend, chuyên về API.&quot; email=&quot;bob@example.com&quot; /&gt;
+      &lt;UserProfileCard name=&quot;Charlie&quot; avatarUrl=&quot;https://via.placeholder.com/100&quot; bio=&quot;Lập trình viên full-stack, yêu công nghệ.&quot; email=&quot;charlie@example.com&quot; /&gt;
+    &lt;/&gt;
+  );
+}
+export default App;
+</code></pre>
+
+<ul>
+<li><strong>Khuyến nghị về tổ chức mã</strong>: Trong các dự án thực tế, nên tạo thư mục <code>components/</code> riêng để chứa các component như <code>UserProfileCard</code> và <code>Counter</code>, giúp mã nguồn dễ quản lý hơn.</li>
+</ul>
+    
+        <script>
+            // Custom Gruvbox syntax highlighter
+            document.addEventListener('DOMContentLoaded', function() {
+                // Apply syntax highlighting to code blocks that don't have it
+                const codeBlocks = document.querySelectorAll('pre code:not(.highlight)');
+                codeBlocks.forEach(block => {
+                    const language = block.className.match(/language-(\w+)/);
+                    if (language) {
+                        highlightGruvbox(block, language[1]);
+                    }
+                });
+            });
+
+            function highlightGruvbox(element, lang) {
+                let code = element.textContent;
+
+                // Basic syntax highlighting patterns
+                const patterns = {
+                    // Comments
+                    comment: /\/\/.*$|\/\*[\s\S]*?\*\/|#.*$|<!--[\s\S]*?-->/gm,
+                    // Strings
+                    string: /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`/g,
+                    // Keywords (common across languages)
+                    keyword: /\b(function|var|let|const|if|else|for|while|return|class|def|import|from|try|catch|finally|throw|new|this|super|extends|implements|interface|enum|struct|union|typedef|sizeof|malloc|free|null|undefined|true|false|async|await|yield|public|private|protected|static|final|abstract|override|virtual|inline|extern|register|volatile|const|auto|break|continue|case|switch|default|do|goto|sizeof|typeof)\b/g,
+                    // Numbers
+                    number: /\b\d+\.?\d*\b/g,
+                    // Functions
+                    functionName: /\b\w+(?=\s*\()/g,
+                    // Operators
+                    operator: /[+\-*/%=<>!&|^~?:]/g,
+                    // Brackets
+                    bracket: /[(){}[\]]/g
+                };
+
+                // Apply highlighting
+                code = code.replace(patterns.comment, '<span class="hljs-comment">$&</span>');
+                code = code.replace(patterns.string, '<span class="hljs-string">$&</span>');
+                code = code.replace(patterns.keyword, '<span class="hljs-keyword">$&</span>');
+                code = code.replace(patterns.number, '<span class="hljs-number">$&</span>');
+                code = code.replace(patterns.functionName, '<span class="hljs-function">$&</span>');
+                code = code.replace(patterns.operator, '<span class="hljs-operator">$&</span>');
+
+                element.innerHTML = code;
+            }
+        </script>
+        
+</body>
+</html>
