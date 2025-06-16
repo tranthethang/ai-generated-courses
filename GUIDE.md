@@ -15,6 +15,14 @@ source myenv/bin/activate
 ```
 
 ```shell
+ pip install unidecode    
+```
+
+```shell
+python cmd_rename.py ./in ./out
+```
+
+```shell
 deactivate
 ```
 
