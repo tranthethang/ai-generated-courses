@@ -1,0 +1,391 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 8: Thao Tác Kiểu Nâng Cao - Mapped Types, Conditional Types và Utility Types</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chapter này sẽ khám phá các tính năng kiểu nâng cao của TypeScript, giúp bạn thực hiện các thao tác phức tạp với kiểu dữ liệu. Chúng ta sẽ tìm hiểu:</p>
+<ul>
+<li><strong>Mapped Types</strong>: Tạo kiểu mới bằng cách biến đổi các thuộc tính của một kiểu hiện có.</li>
+<li><strong>Conditional Types</strong>: Chọn kiểu dựa trên điều kiện logic.</li>
+<li><strong>Utility Types</strong>: Các kiểu tiện ích tích hợp sẵn trong TypeScript, giúp tiết kiệm thời gian và tăng tính an toàn.</li>
+</ul>
+<p>Nắm vững các khái niệm này sẽ giúp bạn viết mã TypeScript linh hoạt, tái sử dụng và an toàn hơn, đặc biệt trong các dự án lớn như ứng dụng React hoặc API Node.js.</p>
+<h2>Tóm tắt lý thuyết chính</h2>
+<h3>1. Toán tử <code>keyof</code></h3>
+<p><strong>Giải thích</strong>:<br>Toán tử <code>keyof</code> lấy tất cả các key (thuộc tính) của một kiểu đối tượng và trả về một <strong>union type</strong> (hợp các chuỗi literal hoặc symbol literal). Đây là nền tảng để làm việc với các kiểu động trong TypeScript, ví dụ như truy cập thuộc tính hoặc lặp qua các key.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">interface UserProfile {
+    id: number;
+    username: string;
+    email: string;
+    lastLogin: Date;
+}
+
+type UserProfileKeys = keyof UserProfile;
+// Kết quả: &quot;id&quot; | &quot;username&quot; | &quot;email&quot; | &quot;lastLogin&quot;
+
+let userKey: UserProfileKeys = &quot;username&quot;; // OK
+// let invalidKey: UserProfileKeys = &quot;password&quot;; // Lỗi: &quot;password&quot; không tồn tại
+</code></pre>
+<p><strong>Ứng dụng thực tế</strong>:  </p>
+<ul>
+<li>Dùng <code>keyof</code> để tạo hàm generic xử lý thuộc tính động:</li>
+</ul>
+<pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}
+
+const user: UserProfile = { id: 1, username: &quot;john&quot;, email: &quot;john@example.com&quot;, lastLogin: new Date() };
+const username = getProperty(user, &quot;username&quot;); // Type: string
+</code></pre>
+<h3>2. Toán tử <code>typeof</code> (trong ngữ cảnh type)</h3>
+<p><strong>Giải thích</strong>:<br>Toán tử <code>typeof</code> trong TypeScript (khác với JavaScript) lấy kiểu của một giá trị (biến, hằng số, hoặc thuộc tính). Nó rất hữu ích khi bạn muốn tái sử dụng kiểu của một biến mà không cần định nghĩa lại.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">let primaryColor = &quot;blue&quot;; // TypeScript suy luận là string
+type ColorType = typeof primaryColor; // ColorType là string
+
+const appConfig = {
+    version: &quot;1.0.0&quot;,
+    debugMode: false
+};
+type AppConfigType = typeof appConfig;
+// AppConfigType: { version: string; debugMode: boolean; }
+
+let currentConfig: AppConfigType = { version: &quot;1.1.0&quot;, debugMode: true };
+</code></pre>
+<p><strong>Ứng dụng thực tế</strong>:  </p>
+<ul>
+<li>Dùng <code>typeof</code> để định nghĩa kiểu cho cấu hình ứng dụng:</li>
+</ul>
+<pre><code class="language-typescript">const DEFAULT_CONFIG = {
+    apiUrl: &quot;https://api.example.com&quot;,
+    timeout: 5000
+};
+type Config = typeof DEFAULT_CONFIG;
+
+function initializeApp(config: Config) {
+    // Xử lý cấu hình
+}
+</code></pre>
+<h3>3. Indexed Access Types (<code>T[K]</code>)</h3>
+<p><strong>Giải thích</strong>:<br>Indexed Access Types cho phép lấy kiểu của một thuộc tính cụ thể từ một kiểu đối tượng, tương tự như cách bạn truy cập thuộc tính trong JavaScript (<code>obj[key]</code>). Nó rất mạnh khi kết hợp với <code>keyof</code> để truy cập kiểu động.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">interface Product {
+    id: number;
+    name: string;
+    price: number;
+    tags: string[];
+}
+
+type ProductNameType = Product[&quot;name&quot;]; // string
+type ProductTagsType = Product[&quot;tags&quot;]; // string[]
+type ProductIdOrPrice = Product[&quot;id&quot; | &quot;price&quot;]; // number
+
+type ProductKeys = keyof Product; // &quot;id&quot; | &quot;name&quot; | &quot;price&quot; | &quot;tags&quot;
+type ProductPropertyType&lt;K extends ProductKeys&gt; = Product[K];
+
+let pName: ProductPropertyType&lt;&quot;name&quot;&gt; = &quot;Laptop&quot;; // OK
+</code></pre>
+<p><strong>Ứng dụng thực tế</strong>:  </p>
+<ul>
+<li>Dùng để lấy kiểu của một thuộc tính trong hàm generic:</li>
+</ul>
+<pre><code class="language-typescript">function updateProductField&lt;K extends keyof Product&gt;(product: Product, key: K, value: Product[K]) {
+    product[key] = value;
+}
+
+const product: Product = { id: 1, name: &quot;Phone&quot;, price: 500, tags: [&quot;tech&quot;] };
+updateProductField(product, &quot;price&quot;, 600); // OK
+// updateProductField(product, &quot;category&quot;, &quot;electronics&quot;); // Lỗi
+</code></pre>
+<h3>4. Mapped Types</h3>
+<p><strong>Giải thích</strong>:<br>Mapped Types tạo kiểu mới bằng cách lặp qua các key của một kiểu đối tượng và áp dụng biến đổi cho từng thuộc tính. Cú pháp <code>[K in keyof T]: NewType</code> giống như một vòng lặp trong TypeScript, cho phép bạn thay đổi kiểu hoặc thuộc tính.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">interface Options {
+    width: number;
+    height: number;
+    color: string;
+}
+
+type FeatureFlags&lt;T&gt; = {
+    [P in keyof T]: boolean;
+};
+type OptionFlags = FeatureFlags&lt;Options&gt;;
+// OptionFlags: { width: boolean; height: boolean; color: boolean; }
+
+let currentFlags: OptionFlags = { width: true, height: false, color: true };
+
+type StringifiedOptionalOptions&lt;T&gt; = {
+    [P in keyof T]?: string;
+};
+type ConfigStrings = StringifiedOptionalOptions&lt;Options&gt;;
+// ConfigStrings: { width?: string; height?: string; color?: string; }
+
+let userConfig: ConfigStrings = { width: &quot;100px&quot;, color: &quot;blue&quot; };
+</code></pre>
+<p><strong>Ứng dụng thực tế</strong>:  </p>
+<ul>
+<li>Tạo kiểu cho form input trong React:</li>
+</ul>
+<pre><code class="language-typescript">type FormValues&lt;T&gt; = {
+    [K in keyof T]: string;
+};
+
+interface UserForm {
+    name: string;
+    email: string;
+}
+
+const form: FormValues&lt;UserForm&gt; = { name: &quot;John&quot;, email: &quot;john@example.com&quot; };
+</code></pre>
+<p><strong>Utility Types dựa trên Mapped Types</strong>:</p>
+<ul>
+<li><code>Readonly&lt;T&gt;</code>: Làm tất cả thuộc tính thành <code>readonly</code>.</li>
+<li><code>Partial&lt;T&gt;</code>: Làm tất cả thuộc tính thành tùy chọn.</li>
+<li><code>Required&lt;T&gt;</code>: Làm tất cả thuộc tính thành bắt buộc.</li>
+<li><code>Pick&lt;T, K&gt;</code>: Chọn một tập hợp thuộc tính từ <code>T</code>.</li>
+<li><code>Omit&lt;T, K&gt;</code>: Loại bỏ một tập hợp thuộc tính từ <code>T</code>.</li>
+</ul>
+<p><strong>Ví dụ Utility Types</strong>:</p>
+<pre><code class="language-typescript">type ReadonlyOptions = Readonly&lt;Options&gt;;
+type PartialOptions = Partial&lt;Options&gt;;
+type DimensionOptions = Pick&lt;Options, &quot;width&quot; | &quot;height&quot;&gt;;
+type StyleOptions = Omit&lt;Options, &quot;width&quot; | &quot;height&quot;&gt;;
+</code></pre>
+<h3>5. Conditional Types (<code>T extends U ? Y : Z</code>)</h3>
+<p><strong>Giải thích</strong>:<br>Conditional Types chọn kiểu dựa trên một điều kiện logic, giống như câu lệnh <code>if-else</code>. Nó rất mạnh khi kết hợp với từ khóa <code>infer</code> để suy luận kiểu từ cấu trúc của kiểu đầu vào.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">type IsString&lt;T&gt; = T extends string ? true :  false;
+
+type Result1 = IsString&lt;string&gt;; // true
+type Result2 = IsString&lt;number&gt;; // false
+
+type ElementType&lt;T&gt; = T extends (infer U)[] ?  U : T;
+type ItemType1 = ElementType&lt;string[]&gt;; // string
+type ItemType2 = ElementType&lt;number[]&gt;; // number
+type ItemType3 = ElementType&lt;boolean&gt;; // boolean
+</code></pre>
+<p><strong>Ứng dụng thực tế</strong>:  </p>
+<ul>
+<li>Kiểm tra kiểu trong hàm generic:</li>
+</ul>
+<pre><code class="language-typescript">function unwrap&lt;T&gt;(value: T): T extends Array&lt;infer U&gt; ? U : T {
+    if (Array.isArray(value)) {
+        return value[0]; // Giả định lấy phần tử đầu tiên
+    }
+    return value;
+}
+
+const str = unwrap([&quot;hello&quot;]); // Type: string
+const num = unwrap(42); // Type: number
+</code></pre>
+<p><strong>Utility Types dựa trên Conditional Types</strong>:</p>
+<ul>
+<li><code>Exclude&lt;T, U&gt;</code>: Loại bỏ các kiểu con có thể gán cho <code>U</code>.</li>
+<li><code>Extract&lt;T, U&gt;</code>: Trích xuất các kiểu con có thể gán cho <code>U</code>.</li>
+<li><code>NonNullable&lt;T&gt;</code>: Loại bỏ <code>null</code> và <code>undefined</code>.</li>
+<li><code>ReturnType&lt;T&gt;</code>: Lấy kiểu trả về của hàm.</li>
+<li><code>Parameters&lt;T&gt;</code>: Lấy kiểu tham số dưới dạng tuple.</li>
+<li><code>InstanceType&lt;T&gt;</code>: Lấy kiểu của instance từ hàm constructor.</li>
+</ul>
+<p><strong>Ví dụ Utility Types</strong>:</p>
+<pre><code class="language-typescript">type T0 = Exclude&lt;&quot;a&quot; | &quot;b&quot; | &quot;c&quot;, &quot;a&quot;&gt;; // &quot;b&quot; | &quot;c&quot;
+type T4 = NonNullable&lt;string | null&gt;;
+ // string
+type T5 = ReturnType&lt;() =&gt; string&gt;;
+ // string
+</code></pre>
+<h2>Code ví dụ chính (Tổng hợp và mở rộng)</h2>
+<pre><code class="language-typescript">// keyof, typeof, Indexed Access
+interface AppSettings {
+    theme: &quot;light&quot; | &quot;dark&quot;;
+    fontSize: number;
+    notifications: {
+        enabled: boolean;
+        sound: string;
+    };
+}
+
+type SettingsKeys = keyof AppSettings;
+// &quot;theme&quot; | &quot;fontSize&quot; | &quot;notifications&quot;
+type NotificationSettingsType = AppSettings[&quot;notifications&quot;];
+ // { enabled: boolean; sound: string; }
+
+const defaultSettings: AppSettings = {
+    theme: &quot;light&quot;,
+    fontSize: 14,
+    notifications: { enabled: true; sound: &quot;default.mp3&quot; }
+};
+type DefaultSettingsType = typeof defaultSettingsType; // Kiểu của defaultSettings
+
+// Mapped Types
+type StringifiedReadonly&lt;T&gt; = {
+    readonly [P in keyof T]: string;
+};
+type StringifiedAppSettings = StringifiedReadonly&lt;AppSettings&gt;;
+
+// Conditional Types
+type GetDataType&lt;T&gt; = T extends { data: infer D } ? D : never;
+type ResponseA = { status: string; data: number[]};
+type DataA = { GetDataType&lt;ResponseA&gt;; // number[]
+type ResponseB = { status: string; message: string };
+type DataB = GetDataType&lt;ResponseB&gt;; // never
+
+// Utility Types
+interface User {
+    id: number;
+    name: string;
+    email?: string;
+    passwordHash: string;
+    createdAt: Date;
+    updatedAt?: Date;
+}
+
+type UserUpdatePayload = Partial&lt;Pick&lt;User, &quot;name&quot; | &quot;email&quot;&gt;&gt;;
+type PublicUser = Omit&lt;User, &quot;passwordHash&quot; | &quot;createdAt&quot; | &quot;updatedAt&quot;&gt;;
+
+function createUser(name: string, email?: string): User {
+    return {
+        id: Math.random(),
+        name,
+        email,
+        passwordHash: &quot;hashed&quot;,
+        createdAt: new Date()
+    };
+}
+
+type CreateUserParams = Parameters&lt;typeof createUser&gt;; // [string, (string | undefined)?]
+type CreatedUserType = ReturnType&lt;typeof createUser&gt;; // User
+</code></pre>
+<h2>Danh sách bài tập</h2>
+<h3>1. Trắc nghiệm: Utility Type <code>Pick</code></h3>
+<p><strong>Mô tả</strong>:<br>Chọn utility type phù hợp để tạo kiểu mới bằng cách chọn các thuộc tính cụ thể từ một kiểu đối tượng.</p>
+<p><strong>Câu hỏi</strong>:<br>Utility type nào dùng để tạo một kiểu mới bằng cách chọn một tập hợp các thuộc tính từ một kiểu hiện có?</p>
+<ul>
+<li>A. Partial<T>`</li>
+<li>B. Readonly<T>`</li>
+<li>C. **Pick&lt;T, K&gt;`</li>
+<li>D. Omit&lt;T, K&gt;`</li>
+</ul>
+<p><strong>Đáp án</strong>: C</p>
+<h3>2. Code: Tạo Mapped Type <code>NullableProps&lt;T&gt;</code></h3>
+<p><strong>Mô tả</strong>:<br>Tạo kiểu generic <code>NullableProps&lt;T&gt;</code> để tất cả thuộc tính của <code>T</code> có thể là <code>null</code> hoặc kiểu gốc.</p>
+<pre><code class="language-typescript">type NullableProps&lt;T&gt; = {
+    [P in keyof T]: T[P] | null;
+};
+interface UserDetails {
+    username: string;
+    email:string;
+    lastLogin: Date;
+}
+type NullableUserDetails = NullableProps&lt;UserDetails&gt;;
+
+let userWithNulls: NullableUserDetails = {
+    username: &quot;testuser&quot;,
+    email: null,
+    lastLogin: new Date()
+};
+</code></pre>
+<h3>3. Code: Conditional Type <code>UnwrapPromise&lt;T&gt;</code></h3>
+<p><strong>Mô tả</strong>:<br>Tạo <code>UnwrapPromise&lt;T&gt;</code> để lấy kiểu giá trị bên trong <code>Promise</code>, hoặc giữ nguyên kiểu nếu không phải <code>Promise</code>.</p>
+<pre><code class="language-typescript">type UnwrapPromise&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : T;
+
+type PromiseStringType = Promise&lt;string&gt;;
+type UnwrappedString = UnwrapPromise&lt;PromiseStringType&gt;; // string
+</code></pre>
+<h3>4. Code: Sử dụng <code>Omit&lt;T, K&gt;</code></h3>
+<p><strong>Mô tả</strong>:<br>Tạo kiểu <code>TodoCreationPayload</code> bằng cách bỏ các thuộc tính <code>id</code>, <code>createdAt</code>, <code>updatedAt</code> từ interface <code>Todo</code>.</p>
+<pre><code class="language-typescript">interface Todo {
+    id: number;
+    text: string;
+    completed: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+type TodoCreationPayload = Omit&lt;Todo, &quot;id&quot; | &quot;createdAt&quot; | &quot;updatedAt&quot;&gt;;
+
+let newTodo: TodoCreationPayload = {
+    text: &quot;Học TypeScript nâng cao&quot;,
+    completed: false
+};
+</code></pre>
+<h3>5. Code: Lấy kiểu tham số và trả về của hàm</h3>
+<p><strong>Mô tả</strong>:<br>Sử dụng <code>Parameters&lt;T&gt;</code> và <code>ReturnType&lt;T&gt;</code> để lấy kiểu tham số và trả về của hàm <code>processUserData</code>.</p>
+<pre><code class="language-typescript">function processUserData(id: number,
+    data: { name: string; age: number },
+    isActive?: boolean
+): { success: boolean; message?: string } {
+    console.log(`Processing user ${id}, Active: ${isActive ?? false}`);
+    if (data.age &lt; 18) {
+        return { success: false, message: &quot;User is underage.&quot; };
+    }
+    return { success: true };
+}
+
+type ProcessUserParams = Parameters&lt; typeof processUserData&gt;;
+type ProcessUserReturn = ReturnType&lt;ProcessUserData&gt;;
+
+let exampleParams: ProcessUserParams = [101, { name: &quot;John Doe&quot;, age: 30 }, true];
+let exampleReturnSuccess: ProcessUserReturn = { success: true };
+</code></pre>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

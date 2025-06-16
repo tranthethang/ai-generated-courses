@@ -1,0 +1,414 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 01: Giới thiệu về ReactJS và Tư duy Component</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau khi hoàn thành bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu React là gì, lý do ra đời và các vấn đề mà nó giải quyết (Virtual DOM).</li>
+<li>Thành thạo cú pháp JSX và sự khác biệt so với HTML.</li>
+<li>Nắm vững khái niệm Component và áp dụng hiệu quả.</li>
+<li>Học cách truyền dữ liệu từ component cha sang con bằng Props.</li>
+<li>Làm quen với khái niệm State và hook <code>useState</code> để quản lý trạng thái component.</li>
+</ul>
+<p><strong>Giải thích bổ sung</strong>:<br>Mục tiêu bài học được thiết kế để giúp học viên hiểu rõ nền tảng của ReactJS, từ lý thuyết đến thực hành. Mỗi mục tiêu đều hướng đến việc xây dựng kỹ năng thực tế, chẳng hạn như sử dụng JSX để viết giao diện, chia nhỏ UI thành các component độc lập, và quản lý trạng thái động bằng <code>useState</code>. Các khái niệm này là nền tảng để phát triển ứng dụng web hiện đại.</p>
+<hr>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Tổng quan về ReactJS</h3>
+<h4>Lịch sử và sự phát triển</h4>
+<p>ReactJS là một thư viện JavaScript mã nguồn mở, được phát triển bởi <strong>Facebook</strong> vào năm <strong>2013</strong>, nhằm xây dựng giao diện người dùng (UI) hiệu quả, đặc biệt cho các ứng dụng <strong>single-page application (SPA)</strong>. React trở nên phổ biến nhờ tính đơn giản, hiệu suất cao và cách tiếp cận dựa trên <strong>component</strong>. Một số cột mốc quan trọng:</p>
+<ul>
+<li><strong>2013</strong>: React ra đời và được sử dụng trong các sản phẩm của Facebook như Instagram.</li>
+<li><strong>2018</strong>: Giới thiệu <strong>React Hooks</strong>, cho phép sử dụng trạng thái và các tính năng khác trong functional component, giảm sự phụ thuộc vào class component.</li>
+<li><strong>2022</strong>: React 18 ra mắt với <strong>Concurrent Rendering</strong>, cải thiện hiệu suất và trải nghiệm người dùng khi xử lý các tác vụ phức tạp.</li>
+</ul>
+<p><strong>Giải thích bổ sung</strong>:<br>React được tạo ra để giải quyết vấn đề cập nhật giao diện phức tạp trong các ứng dụng lớn. Trước React, các thư viện như jQuery yêu cầu lập trình viên phải tự quản lý cập nhật DOM, dễ dẫn đến lỗi và hiệu suất kém. React cung cấp cách tiếp cận mới, giúp lập trình viên tập trung vào việc mô tả giao diện thay vì cách thức cập nhật nó.</p>
+<h4>Virtual DOM</h4>
+<p><strong>Virtual DOM</strong> là một bản sao nhẹ của DOM thực tế, được lưu trong bộ nhớ. React sử dụng Virtual DOM để tối ưu hóa việc cập nhật giao diện:</p>
+<ol>
+<li>Khi trạng thái (state) hoặc props của component thay đổi, React tạo một cây Virtual DOM mới.</li>
+<li>React so sánh (diff) cây Virtual DOM mới với cây cũ để xác định phần thay đổi.</li>
+<li>Chỉ những phần thay đổi được cập nhật vào DOM thực tế, giảm thiểu thao tác tốn kém.</li>
+</ol>
+<p><strong>Ví dụ minh họa</strong>:<br>Nếu bạn có một danh sách 100 mục, với vanilla JavaScript hoặc jQuery, bạn phải lặp qua từng mục để cập nhật thủ công. Với React, chỉ những mục thay đổi được cập nhật, giúp cải thiện hiệu suất đáng kể. Ví dụ:</p>
+<pre><code class="language-javascript">// Vanilla JS (cách tiếp cận truyền thống)
+document.getElementById(&#39;list&#39;).innerHTML = newListHTML;
+
+// React (Virtual DOM tự động cập nhật)
+return &lt;ul&gt;{items.map(item =&gt; &lt;li&gt;{item}&lt;/li&gt;)}&lt;/ul&gt;;
+</code></pre>
+<p><strong>Giải thích bổ sung</strong>:<br>Virtual DOM giống như một bản phác thảo của giao diện. Thay vì vẽ lại toàn bộ bức tranh (DOM thực), React chỉ chỉnh sửa những phần cần thay đổi, giống như chỉnh sửa một vài nét vẽ trên bản phác thảo. Điều này giúp ứng dụng nhanh hơn, đặc biệt với giao diện phức tạp.</p>
+<h4>Declarative UI</h4>
+<p>React sử dụng cách tiếp cận <strong>declarative</strong> (mô tả) thay vì <strong>imperative</strong> (chỉ thị):</p>
+<ul>
+<li><strong>Imperative</strong>: Lập trình viên phải chỉ rõ từng bước để cập nhật giao diện, ví dụ: <code>document.getElementById(&#39;button&#39;).innerText = &#39;Clicked&#39;;</code>.</li>
+<li><strong>Declarative</strong>: Chỉ cần mô tả giao diện sẽ trông như thế nào dựa trên trạng thái hiện tại, React tự động xử lý phần còn lại.</li>
+</ul>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre><code class="language-jsx">// Imperative
+if (isClicked) {
+  document.getElementById(&#39;button&#39;).innerText = &#39;Clicked&#39;;
+} else {
+  document.getElementById(&#39;button&#39;).innerText = &#39;Click me&#39;;
+}
+
+// Declarative
+&lt;button&gt;{isClicked ? &#39;Clicked&#39; : &#39;Click me&#39;}&lt;/button&gt;
+</code></pre>
+<p><strong>Giải thích bổ sung</strong>:<br>Cách tiếp cận declarative giúp mã dễ đọc, dễ bảo trì và ít lỗi hơn. Thay vì phải viết các lệnh cập nhật DOM phức tạp, bạn chỉ cần mô tả giao diện dựa trên trạng thái, và React sẽ đảm bảo giao diện luôn đồng bộ với dữ liệu.</p>
+<hr>
+<h3>2. Thiết lập môi trường</h3>
+<h4>Công cụ</h4>
+<p>Ngày nay, <strong>Vite</strong> là lựa chọn phổ biến để khởi tạo dự án React nhờ tốc độ nhanh và hỗ trợ <strong>Hot Module Replacement (HMR)</strong>. So với <code>create-react-app</code>, Vite có thời gian build nhanh hơn và phù hợp với các dự án hiện đại.</p>
+<p><strong>Giải thích bổ sung</strong>:<br>Vite sử dụng ES modules (mô-đun JavaScript hiện đại) thay vì cách đóng gói truyền thống, giúp giảm thời gian tải trong quá trình phát triển. Điều này đặc biệt hữu ích khi bạn làm việc với các dự án lớn hoặc cần cập nhật giao diện ngay lập tức.</p>
+<h4>Các bước tạo dự án React với Vite</h4>
+<ol>
+<li>Cài đặt <strong>Node.js</strong> (phiên bản 18 trở lên).</li>
+<li>Mở terminal và chạy:</li>
+</ol>
+<pre><code class="language-bash">npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev
+</code></pre>
+<ol start="3">
+<li>Truy cập <code>http://localhost:5173</code> để xem ứng dụng mặc định.</li>
+</ol>
+<p><strong>Lưu ý</strong>: Nếu bạn gặp lỗi khi chạy <code>npm create vite</code>, hãy thử cập nhật npm bằng lệnh <code>npm install -g npm@latest</code>.</p>
+<h4>Cấu trúc dự án</h4>
+<p>Cấu trúc thư mục của một dự án Vite + React:</p>
+<ul>
+<li><code>public/</code>: Chứa các tài nguyên tĩnh như hình ảnh, favicon.</li>
+<li><code>src/</code>: Thư mục chính chứa mã nguồn:<ul>
+<li><code>App.jsx</code>: Component gốc của ứng dụng.</li>
+<li><code>main.jsx</code>: Điểm vào, nơi ứng dụng được gắn vào DOM.</li>
+</ul>
+</li>
+<li><code>index.html</code>: File HTML chính.</li>
+<li><code>vite.config.js</code>: File cấu hình Vite.</li>
+</ul>
+<p><strong>Giải thích bổ sung</strong>:<br>Cấu trúc dự án được thiết kế để tách biệt mã nguồn (<code>src</code>) và tài nguyên tĩnh (<code>public</code>). File <code>main.jsx</code> đóng vai trò kết nối React với DOM, thường chứa lệnh <code>ReactDOM.render</code> để gắn ứng dụng vào <code>#root</code> trong <code>index.html</code>.</p>
+<hr>
+<h3>3. JSX - JavaScript XML</h3>
+<p>JSX là một phần mở rộng cú pháp cho JavaScript, cho phép viết mã giống HTML trong file JavaScript. JSX không phải HTML mà được chuyển đổi thành các lệnh <code>React.createElement()</code> bởi <strong>Babel</strong>.</p>
+<h4>Quy tắc quan trọng của JSX</h4>
+<ul>
+<li><strong>Một thẻ cha duy nhất</strong>: Mọi JSX phải được bọc trong một thẻ cha (ví dụ: <code>&lt;div&gt;</code> hoặc <code>&lt;React.Fragment&gt;</code>/<code>&lt;&gt;</code>).</li>
+<li><strong>Thuộc tính camelCase</strong>: Sử dụng <code>className</code> thay vì <code>class</code>, <code>onClick</code> thay vì <code>onclick</code>.</li>
+<li><strong>Biểu thức JavaScript</strong>: Dùng <code>{}</code> để nhúng biểu thức JavaScript, ví dụ <code>{2 + 2}</code> hoặc <code>{user.name}</code>.</li>
+<li><strong>Bình luận trong JSX</strong>: Sử dụng <code>{/* bình luận */}</code> thay vì <code>&lt;!-- --&gt;</code>.</li>
+</ul>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre><code class="language-jsx">const name = &quot;John&quot;;
+const element = (
+  &lt;div className=&quot;greeting&quot;&gt;
+    &lt;h1&gt;Hello, {name}!&lt;/h1&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+<p><strong>Giải thích bổ sung</strong>:<br>JSX giúp lập trình viên viết giao diện một cách trực quan, giống như viết HTML, nhưng thực chất là JavaScript. Điều này cho phép kết hợp logic (JavaScript) và giao diện (JSX) trong cùng một file, giúp mã dễ đọc và quản lý hơn.</p>
+<hr>
+<h3>4. Component - Trái tim của React</h3>
+<h4>Tư duy Component</h4>
+<p>React khuyến khích chia nhỏ giao diện thành các <strong>component</strong> độc lập, tái sử dụng được (ví dụ: <code>Header</code>, <code>Button</code>, <code>Card</code>). Mỗi component chịu trách nhiệm cho một phần cụ thể của giao diện, giúp mã dễ bảo trì và mở rộng.</p>
+<p><strong>Ví dụ minh họa</strong>:<br>Một trang web có thể được chia thành:</p>
+<ul>
+<li><code>Header</code>: Thanh điều hướng.</li>
+<li><code>MainContent</code>: Nội dung chính.</li>
+<li><code>Footer</code>: Chân trang.</li>
+</ul>
+<p><strong>Giải thích bổ sung</strong>:<br>Tư duy component giống như việc lắp ráp LEGO: mỗi mảnh (component) có chức năng riêng, nhưng khi kết hợp lại sẽ tạo thành một ứng dụng hoàn chỉnh. Điều này giúp bạn dễ dàng sửa đổi hoặc thay thế từng phần mà không ảnh hưởng đến toàn bộ hệ thống.</p>
+<h4>Functional Component</h4>
+<p>Ngày nay, React chủ yếu sử dụng <strong>functional component</strong> (component dạng hàm), thay vì class component. Một functional component là một hàm JavaScript trả về JSX.</p>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre><code class="language-jsx">function Welcome() {
+  return &lt;h1&gt;Chào mừng đến với React!&lt;/h1&gt;;
+}
+</code></pre>
+<h4>Props (Thuộc tính)</h4>
+<p>Props là cách truyền dữ liệu từ component cha sang component con. Props là <strong>chỉ đọc</strong> (read-only), đảm bảo luồng dữ liệu một chiều, tránh tác dụng phụ không mong muốn.</p>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre><code class="language-jsx">function UserCard(props) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{props.name}&lt;/h2&gt;
+      &lt;p&gt;{props.email}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+// Sử dụng trong component cha
+&lt;UserCard name=&quot;Alice&quot; email=&quot;alice@example.com&quot; /&gt;
+</code></pre>
+<p><strong>Giải thích bổ sung</strong>:<br>Props giống như tham số của một hàm, cho phép bạn tùy chỉnh component. Ví dụ, cùng một component <code>UserCard</code> có thể hiển thị thông tin của nhiều người khác nhau chỉ bằng cách thay đổi giá trị props.</p>
+<hr>
+<h3>5. State và Hook <code>useState</code></h3>
+<h4>State là gì?</h4>
+<p><strong>State</strong> là dữ liệu nội bộ của component, có thể thay đổi theo thời gian (ví dụ: giá trị ô input, trạng thái hiển thị modal). Khi state thay đổi, React tự động re-render component để cập nhật giao diện.</p>
+<p><strong>Giải thích bổ sung</strong>:<br>State giống như bộ nhớ của component, lưu trữ thông tin thay đổi theo hành động của người dùng (như nhấn nút, nhập liệu). React đảm bảo giao diện luôn khớp với state hiện tại.</p>
+<h4>Giới thiệu về Hooks</h4>
+<p><strong>Hooks</strong> là các hàm đặc biệt của React, cho phép functional component sử dụng các tính năng như state, lifecycle, v.v. Hook <code>useState</code> là hook cơ bản nhất, dùng để quản lý trạng thái.</p>
+<h4>Hook <code>useState</code></h4>
+<p>Cú pháp: <code>const [state, setState] = useState(initialValue);</code></p>
+<ul>
+<li><code>state</code>: Giá trị trạng thái hiện tại.</li>
+<li><code>setState</code>: Hàm để cập nhật trạng thái, kích hoạt re-render.</li>
+</ul>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Đếm: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Tăng&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<p><strong>Giải thích bổ sung</strong>:<br><code>useState</code> giống như một hộp chứa giá trị mà component có thể thay đổi. Khi bạn gọi <code>setState</code>, React sẽ cập nhật giá trị và vẽ lại giao diện để phản ánh thay đổi đó. Điều quan trọng là <code>setState</code> không thay đổi state ngay lập tức mà lên lịch cho việc re-render.</p>
+<hr>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Thiết lập dự án React</h3>
+<p><strong>Nhiệm vụ</strong>: Tạo dự án React mới bằng Vite, sửa <code>App.jsx</code> để hiển thị dòng chữ &quot;Xin chào từ React!&quot;.
+<strong>Các bước</strong>:</p>
+<ol>
+<li>Chạy lệnh:</li>
+</ol>
+<pre><code class="language-bash">npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev
+</code></pre>
+<ol start="2">
+<li>Sửa <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">function App() {
+  return &lt;h1&gt;Xin chào từ React!&lt;/h1&gt;;
+}
+export default App;
+</code></pre>
+<ol start="3">
+<li>Kiểm tra kết quả tại <code>http://localhost:5173</code>.</li>
+</ol>
+<p><strong>Giải thích bổ sung</strong>:<br>Bài tập này giúp làm quen với quy trình tạo dự án và chạy ứng dụng React. Bạn sẽ thấy cách Vite nhanh chóng khởi động server phát triển và hiển thị kết quả ngay lập tức.</p>
+<hr>
+<h3>Bài 2: Tạo Component UserProfileCard</h3>
+<p><strong>Nhiệm vụ</strong>: Tạo component <code>UserProfileCard.js</code> nhận các props <code>name</code>, <code>avatarUrl</code>, <code>bio</code>, <code>email</code> và hiển thị trong một thẻ có kiểu dáng.
+<strong>Các bước</strong>:</p>
+<ol>
+<li>Tạo file <code>src/components/UserProfileCard.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">function UserProfileCard({ name, avatarUrl, bio, email }) {
+  return (
+    &lt;div style={{ border: &#39;1px solid #ccc&#39;, padding: &#39;16px&#39;, borderRadius: &#39;8px&#39;, maxWidth: &#39;300px&#39; }}&gt;
+      &lt;img src={avatarUrl} alt={name} style={{ width: &#39;100px&#39;, borderRadius: &#39;50%&#39; }} /&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;{bio}&lt;/p&gt;
+      &lt;p&gt;Email: {email}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default UserProfileCard;
+</code></pre>
+<p><strong>Giải thích bổ sung</strong>:<br>Component này sử dụng props để hiển thị thông tin người dùng một cách linh hoạt. Kiểu dáng inline (<code>style={{...}}</code>) được dùng để đơn giản hóa, nhưng trong thực tế, bạn nên sử dụng CSS hoặc thư viện như Tailwind CSS.</p>
+<hr>
+<h3>Bài 3: Sử dụng UserProfileCard trong App</h3>
+<p><strong>Nhiệm vụ</strong>: Sử dụng <code>UserProfileCard</code> trong <code>App.jsx</code> để hiển thị thông tin của ba người dùng khác nhau.
+<strong>Các bước</strong>:</p>
+<ol>
+<li>Sửa <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import UserProfileCard from &#39;./components/UserProfileCard&#39;;
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;UserProfileCard
+        name=&quot;Alice&quot;
+        avatarUrl=&quot;https://via.placeholder.com/100&quot;
+        bio=&quot;Lập trình viên giao diện, đam mê thiết kế UI.&quot;
+        email=&quot;alice@example.com&quot;
+      /&gt;
+      &lt;UserProfileCard
+        name=&quot;Bob&quot;
+        avatarUrl=&quot;https://via.placeholder.com/100&quot;
+        bio=&quot;Kỹ sư backend, chuyên về API.&quot;
+        email=&quot;bob@example.com&quot;
+      /&gt;
+      &lt;UserProfileCard
+        name=&quot;Charlie&quot;
+        avatarUrl=&quot;https://via.placeholder.com/100&quot;
+        bio=&quot;Lập trình viên full-stack, yêu công nghệ.&quot;
+        email=&quot;charlie@example.com&quot;
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+export default App;
+</code></pre>
+<p><strong>Giải thích bổ sung</strong>:<br>Bài tập này giúp bạn hiểu cách tái sử dụng component với các props khác nhau. Mỗi <code>UserProfileCard</code> hiển thị dữ liệu riêng, nhưng mã nguồn component không cần thay đổi, thể hiện tính tái sử dụng của React.</p>
+<hr>
+<h3>Bài 4: Tạo Component Counter</h3>
+<p><strong>Nhiệm vụ</strong>: Tạo component <code>Counter.js</code> sử dụng <code>useState</code> để quản lý trạng thái <code>count</code>, bắt đầu từ 0, với các nút &quot;Tăng&quot; và &quot;Giảm&quot;.
+<strong>Các bước</strong>:</p>
+<ol>
+<li>Tạo file <code>src/components/Counter.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Đếm: {count}&lt;/h2&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Tăng&lt;/button&gt;
+      &lt;button onClick={() =&gt; setCount(count - 1)}&gt;Giảm&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+export default Counter;
+</code></pre>
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import Counter from &#39;./components/Counter&#39;;
+
+function App() {
+  return &lt;Counter /&gt;;
+}
+export default App;
+</code></pre>
+<p><strong>Giải thích bổ sung</strong>:<br>Bài tập này giới thiệu cách sử dụng <code>useState</code> để quản lý trạng thái động. Mỗi lần nhấn nút, <code>setCount</code> cập nhật giá trị <code>count</code>, và React tự động re-render để hiển thị giá trị mới.</p>
+<hr>
+<h3>Bài 5: Nâng cấp UserProfileCard với tính năng Follow/Unfollow</h3>
+<p><strong>Nhiệm vụ</strong>: Thêm trạng thái <code>isFollowing</code> vào <code>UserProfileCard</code> bằng <code>useState</code>. Thêm nút để chuyển đổi giữa &quot;Follow&quot; và &quot;Unfollow&quot;.
+<strong>Các bước</strong>:</p>
+<ol>
+<li>Sửa <code>src/components/UserProfileCard.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+
+function UserProfileCard({ name, avatarUrl, bio, email }) {
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  return (
+    &lt;div style={{ border: &#39;1px solid #ccc&#39;, padding: &#39;16px&#39;, borderRadius: &#39;8px&#39;, maxWidth: &#39;300px&#39; }}&gt;
+      &lt;img src={avatarUrl} alt={name} style={{ width: &#39;100px&#39;, borderRadius: &#39;50%&#39; }} /&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;{bio}&lt;/p&gt;
+      &lt;p&gt;Email: {email}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setIsFollowing(!isFollowing)}&gt;
+        {isFollowing ? &#39;Bỏ theo dõi&#39; : &#39;Theo dõi&#39;}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+export default UserProfileCard;
+</code></pre>
+<ol start="2">
+<li>Kiểm tra chức năng trong <code>App.jsx</code> với một hoặc nhiều <code>UserProfileCard</code>.</li>
+</ol>
+<p><strong>Giải thích bổ sung</strong>:<br>Bài tập này kết hợp props và state, giúp bạn hiểu cách component có thể vừa nhận dữ liệu từ bên ngoài (props) vừa quản lý trạng thái nội bộ (state). Nút &quot;Follow/Unfollow&quot; thay đổi trạng thái <code>isFollowing</code>, và giao diện tự động cập nhật.</p>
+<hr>
+<h2>D. Kiểm tra và cập nhật nội dung</h2>
+<h3>Kiểm tra nội dung gốc</h3>
+<p>Nội dung gốc đã khá đầy đủ và chính xác, nhưng có một số điểm cần cập nhật:</p>
+<ol>
+<li><strong>Phiên bản Node.js</strong>: Đề xuất sử dụng Node.js 18 trở lên, nhưng hiện tại (2025), Node.js 20 là phiên bản ổn định mới nhất, nên khuyến nghị sử dụng phiên bản này.</li>
+<li><strong>Cú pháp JSX</strong>: Nội dung gốc không đề cập đến việc sử dụng <code>&lt;React.Fragment&gt;</code> thay thế <code>&lt;div&gt;</code> để tránh thêm thẻ không cần thiết. Điều này quan trọng để tối ưu hóa cấu trúc DOM.</li>
+<li><strong>Kiểu dáng</strong>: Các bài tập sử dụng style inline, nên bổ sung khuyến nghị sử dụng CSS modules hoặc Tailwind CSS trong các dự án thực tế để quản lý kiểu dáng tốt hơn.</li>
+<li><strong>Hiệu suất</strong>: Phần Virtual DOM có thể bổ sung thêm ví dụ minh họa để làm rõ cách React tối ưu hóa cập nhật.</li>
+</ol>
+<h3>Bổ sung</h3>
+<ul>
+<li><strong>Khuyến nghị sử dụng Tailwind CSS</strong>: Trong các bài tập thực hành, có thể tích hợp Tailwind CSS để thay thế style inline, giúp mã dễ đọc và bảo trì hơn. Ví dụ, thay vì:</li>
+</ul>
+<pre><code class="language-jsx">&lt;div style={{ border: &#39;1px solid #ccc&#39;, padding: &#39;16px&#39;, borderRadius: &#39;8px&#39;, maxWidth: &#39;300px&#39; }}&gt;
+</code></pre>
+<p>Sử dụng Tail締</p>
+<pre><code class="language-jsx">&lt;div className=&quot;border border-gray-300 p-4 rounded-lg max-w-xs&quot;&gt;
+</code></pre>
+<p>Để sử dụng Tailwind, thêm CDN hoặc cài đặt qua npm theo tài liệu chính thức.</p>
+<ul>
+<li><strong>Tối ưu hóa <code>&lt;React.Fragment&gt;</code></strong>: Trong bài tập 3, thay vì bọc các <code>UserProfileCard</code> trong <code>&lt;div&gt;</code>, có thể sử dụng <code>&lt;React.Fragment&gt;</code> để giảm thẻ dư thừa:</li>
+</ul>
+<pre><code class="language-jsx">import UserProfileCard from &#39;./components/UserProfileCard&#39;;
+
+function App() {
+  return (
+    &lt;&gt;
+      &lt;UserProfileCard name=&quot;Alice&quot; avatarUrl=&quot;https://via.placeholder.com/100&quot; bio=&quot;Lập trình viên giao diện, đam mê thiết kế UI.&quot; email=&quot;alice@example.com&quot; /&gt;
+      &lt;UserProfileCard name=&quot;Bob&quot; avatarUrl=&quot;https://via.placeholder.com/100&quot; bio=&quot;Kỹ sư backend, chuyên về API.&quot; email=&quot;bob@example.com&quot; /&gt;
+      &lt;UserProfileCard name=&quot;Charlie&quot; avatarUrl=&quot;https://via.placeholder.com/100&quot; bio=&quot;Lập trình viên full-stack, yêu công nghệ.&quot; email=&quot;charlie@example.com&quot; /&gt;
+    &lt;/&gt;
+  );
+}
+export default App;
+</code></pre>
+<ul>
+<li><strong>Khuyến nghị về tổ chức mã</strong>: Trong các dự án thực tế, nên tạo thư mục <code>components/</code> riêng để chứa các component như <code>UserProfileCard</code> và <code>Counter</code>, giúp mã nguồn dễ quản lý hơn.</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

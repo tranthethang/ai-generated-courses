@@ -1,0 +1,425 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 04: React Router - Xây dựng ứng dụng đa trang (SPA)</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu khái niệm <strong>Single Page Application (SPA)</strong> và vai trò của <strong>client-side routing</strong>.</li>
+<li>Biết cách cài đặt và cấu hình thư viện <strong><code>react-router-dom</code></strong>.</li>
+<li>Xây dựng được các <strong>route tĩnh</strong> và <strong>route động</strong>.</li>
+<li>Thành thạo sử dụng các component chính: <strong><code>BrowserRouter</code></strong>, <strong><code>Routes</code></strong>, <strong><code>Route</code></strong>, <strong><code>Link</code></strong>, <strong><code>NavLink</code></strong>.</li>
+<li>Sử dụng hook <strong><code>useParams</code></strong> để truy xuất tham số từ URL động.</li>
+</ul>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Single Page Application (SPA) là gì?</h3>
+<p><strong>SPA</strong> là một ứng dụng web chỉ tải một trang HTML duy nhất từ server. Khi người dùng điều hướng, JavaScript động cập nhật nội dung giao diện mà không cần tải lại toàn bộ trang.</p>
+<h4>Ưu điểm</h4>
+<ul>
+<li>Trải nghiệm người dùng mượt mà, tương tự ứng dụng desktop.</li>
+<li>Tốc độ điều hướng nhanh sau lần tải ban đầu.</li>
+<li>Giảm tải cho server vì chỉ cần gửi dữ liệu JSON thay vì HTML hoàn chỉnh.</li>
+</ul>
+<h4>Nhược điểm</h4>
+<ul>
+<li>Thời gian tải ban đầu có thể lâu hơn do tải toàn bộ JavaScript.</li>
+<li>Yêu cầu xử lý <strong>client-side routing</strong> để đồng bộ URL với giao diện.</li>
+<li>Có thể gặp vấn đề về <strong>SEO</strong> nếu không cấu hình server-side rendering hoặc pre-rendering.</li>
+</ul>
+<h3>2. Giới thiệu react-router-dom</h3>
+<p><strong><code>react-router-dom</code></strong> là thư viện phổ biến nhất để triển khai routing trong ứng dụng React. Nó cung cấp các công cụ để quản lý điều hướng và ánh xạ URL với các component.</p>
+<h4>Cài đặt</h4>
+<p>Chạy lệnh sau để cài đặt:</p>
+<pre><code class="language-bash">npm install react-router-dom
+</code></pre>
+<h4>Các Component cốt lõi</h4>
+<ul>
+<li><strong><code>&lt;BrowserRouter&gt;</code></strong>: Bao bọc toàn bộ ứng dụng, sử dụng <strong>HTML5 History API</strong> để đồng bộ URL với giao diện. Thường đặt trong <code>index.js</code> hoặc <code>App.js</code>.</li>
+<li><strong><code>&lt;Routes&gt;</code></strong>: Chứa các <code>&lt;Route&gt;</code> con, chọn route đầu tiên khớp với URL hiện tại để render.</li>
+<li><strong><code>&lt;Route&gt;</code></strong>: Định nghĩa ánh xạ giữa <strong>path</strong> (đường dẫn) và <strong>element</strong> (component giao diện).</li>
+</ul>
+<pre><code class="language-jsx">&lt;Route path=&quot;/about&quot; element={&lt;AboutPage /&gt;} /&gt;
+</code></pre>
+<ul>
+<li><strong><code>&lt;Link&gt;</code></strong>: Tạo liên kết điều hướng, thay thế thẻ <code>&lt;a&gt;</code> để tránh tải lại trang.</li>
+</ul>
+<pre><code class="language-jsx">&lt;Link to=&quot;/about&quot;&gt;Về chúng tôi&lt;/Link&gt;
+</code></pre>
+<ul>
+<li><strong><code>&lt;NavLink&gt;</code></strong>: Biến thể của <code>&lt;Link&gt;</code>, tự động thêm class <code>active</code> khi URL khớp với <code>to</code>, hỗ trợ style cho liên kết đang được chọn.</li>
+</ul>
+<pre><code class="language-jsx">&lt;NavLink to=&quot;/home&quot; className={({ isActive }) =&gt; isActive ? &#39;active-link&#39; : &#39;&#39;}&gt;Trang chủ&lt;/NavLink&gt;
+</code></pre>
+<h3>3. Route động (Dynamic Routes)</h3>
+<p>Route động cho phép xử lý các URL có tham số, ví dụ: <code>/products/:productId</code>. Dấu <code>:</code> trong <code>path</code> biểu thị một tham số động.</p>
+<p>Ví dụ:</p>
+<pre><code class="language-jsx">&lt;Route path=&quot;/products/:productId&quot; element={&lt;ProductDetailPage /&gt;} /&gt;
+</code></pre>
+<h3>4. Hooks của React Router</h3>
+<ul>
+<li><strong><code>useParams()</code></strong>: Trả về object chứa các tham số từ URL. Ví dụ, với <code>/products/123</code>, <code>useParams()</code> trả về <code>{ productId: &#39;123&#39; }</code>.</li>
+</ul>
+<pre><code class="language-jsx">import { useParams } from &#39;react-router-dom&#39;;
+function ProductDetailPage() {
+  const { productId } = useParams();
+  return &lt;h1&gt;Sản phẩm {productId}&lt;/h1&gt;;
+}
+</code></pre>
+<ul>
+<li><strong><code>useNavigate()</code></strong>: Cho phép điều hướng lập trình (programmatic navigation), ví dụ: chuyển hướng sau khi submit form.</li>
+</ul>
+<pre><code class="language-jsx">import { useNavigate } from &#39;react-router-dom&#39;;
+function LoginButton() {
+  const navigate = useNavigate();
+  return &lt;button onClick={() =&gt; navigate(&#39;/home&#39;)}&gt;Đăng nhập&lt;/button&gt;;
+}
+</code></pre>
+<ul>
+<li><strong><code>useLocation()</code></strong>: Cung cấp thông tin về URL hiện tại (pathname, search, hash).</li>
+</ul>
+<pre><code class="language-jsx">import { useLocation } from &#39;react-router-dom&#39;;
+function CurrentPage() {
+  const location = useLocation();
+  return &lt;p&gt;URL hiện tại: {location.pathname}&lt;/p&gt;;
+}
+</code></pre>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Chuyển đổi Todo List thành SPA</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Chuyển ứng dụng Todo List từ bài 2 thành SPA với 3 trang:<ul>
+<li><code>/</code>: Hiển thị tất cả công việc.</li>
+<li><code>/active</code>: Hiển thị công việc chưa hoàn thành.</li>
+<li><code>/completed</code>: Hiển thị công việc đã hoàn thành.</li>
+<li>Sử dụng <code>&lt;NavLink&gt;</code> để tạo menu điều hướng với style cho tab active.</li>
+</ul>
+</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Cài đặt <code>react-router-dom</code>:</li>
+</ol>
+<pre><code class="language-bash">npm install react-router-dom
+</code></pre>
+<ol start="2">
+<li>Cập nhật <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+import { BrowserRouter, Routes, Route, NavLink } from &#39;react-router-dom&#39;;
+import TodoForm from &#39;./components/TodoForm&#39;;
+import TodoList from &#39;./components/TodoList&#39;;
+
+function App() {
+  const [todos, setTodos] = useState([]);
+
+  function addTodo(text) {
+    setTodos([...todos, { id: Date.now(), text, completed: false }]);
+  }
+
+  function deleteTodo(id) {
+    setTodos(todos.filter(todo =&gt; todo.id !== id));
+  }
+
+  function toggleComplete(id) {
+    setTodos(
+      todos.map(todo =&gt;
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  }
+
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;div&gt;
+        &lt;h1&gt;Todo List&lt;/h1&gt;
+        &lt;nav&gt;
+          &lt;NavLink to=&quot;/&quot; className={({ isActive }) =&gt; isActive ? &#39;active&#39; : &#39;&#39;}&gt;Tất cả&lt;/NavLink&gt;
+          &lt;NavLink to=&quot;/active&quot; className={({ isActive }) =&gt; isActive ? &#39;active&#39; : &#39;&#39;}&gt;Chưa hoàn thành&lt;/NavLink&gt;
+          &lt;NavLink to=&quot;/completed&quot; className={({ isActive }) =&gt; isActive ? &#39;active&#39; : &#39;&#39;}&gt;Đã hoàn thành&lt;/NavLink&gt;
+        &lt;/nav&gt;
+        &lt;TodoForm onAdd={addTodo} /&gt;
+        &lt;Routes&gt;
+          &lt;Route path=&quot;/&quot; element={&lt;TodoList todos={todos} onDelete={deleteTodo} onToggle={toggleComplete} /&gt;} /&gt;
+          &lt;Route path=&quot;/active&quot; element={&lt;TodoList todos={todos.filter(todo =&gt; !todo.completed)} onDelete={deleteTodo} onToggle={toggleComplete} /&gt;} /&gt;
+          &lt;Route path=&quot;/completed&quot; element={&lt;TodoList todos={todos.filter(todo =&gt; todo.completed)} onDelete={deleteTodo} onToggle={toggleComplete} /&gt;} /&gt;
+        &lt;/Routes&gt;
+      &lt;/div&gt;
+    &lt;/BrowserRouter&gt;
+  );
+}
+export default App;
+</code></pre>
+<ol start="3">
+<li>Thêm style trong <code>src/index.css</code>:</li>
+</ol>
+<pre><code class="language-css">.active {
+  font-weight: bold;
+  color: blue;
+}
+nav a {
+  margin-right: 10px;
+  text-decoration: none;
+}
+</code></pre>
+<h3>Bài 2: Xây dựng trang Blog đơn giản</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo một mảng bài blog giả. Trang <code>/blog</code> hiển thị danh sách tiêu đề, mỗi tiêu đề là <code>&lt;Link&gt;</code> dẫn đến <code>/blog/:postId</code>. Trang chi tiết sử dụng <code>useParams</code> để hiển thị bài blog.</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Tạo <code>src/components/BlogList.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { Link } from &#39;react-router-dom&#39;;
+
+function BlogList({ posts }) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Danh sách bài blog&lt;/h2&gt;
+      &lt;ul&gt;
+        {posts.map(post =&gt; (
+          &lt;li key={post.id}&gt;
+            &lt;Link to={`/blog/${post.id}`}&gt;{post.title}&lt;/Link&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+export default BlogList;
+</code></pre>
+<ol start="2">
+<li>Tạo <code>src/components/BlogPost.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useParams } from &#39;react-router-dom&#39;;
+
+function BlogPost({ posts }) {
+  const { postId } = useParams();
+  const post = posts.find(p =&gt; p.id === parseInt(postId));
+
+  if (!post) return &lt;p&gt;Bài viết không tồn tại&lt;/p&gt;;
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{post.title}&lt;/h2&gt;
+      &lt;p&gt;{post.content}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default BlogPost;
+</code></pre>
+<ol start="3">
+<li>Cập nhật <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { BrowserRouter, Routes, Route } from &#39;react-router-dom&#39;;
+import BlogList from &#39;./components/BlogList&#39;;
+import BlogPost from &#39;./components/BlogPost&#39;;
+
+const posts = [
+  { id: 1, title: &#39;Bài viết 1&#39;, content: &#39;Nội dung bài viết 1...&#39; },
+  { id: 2, title: &#39;Bài viết 2&#39;, content: &#39;Nội dung bài viết 2...&#39; },
+  { id: 3, title: &#39;Bài viết 3&#39;, content: &#39;Nội dung bài viết 3...&#39; },
+];
+
+function App() {
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;Routes&gt;
+        &lt;Route path=&quot;/blog&quot; element={&lt;BlogList posts={posts} /&gt;} /&gt;
+        &lt;Route path=&quot;/blog/:postId&quot; element={&lt;BlogPost posts={posts} /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  );
+}
+export default App;
+</code></pre>
+<h3>Bài 3: Tạo trang Not Found (404)</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo trang 404 cho các URL không khớp, sử dụng <code>&lt;Route path=&quot;*&quot;&gt;</code>.</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Tạo <code>src/components/NotFoundPage.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">function NotFoundPage() {
+  return &lt;h2&gt;404 - Trang không tồn tại&lt;/h2&gt;;
+}
+export default NotFoundPage;
+</code></pre>
+<ol start="2">
+<li>Cập nhật <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { BrowserRouter, Routes, Route } from &#39;react-router-dom&#39;;
+import BlogList from &#39;./components/BlogList&#39;;
+import BlogPost from &#39;./components/BlogPost&#39;;
+import NotFoundPage from &#39;./components/NotFoundPage&#39;;
+
+const posts = [
+  { id: 1, title: &#39;Bài viết 1&#39;, content: &#39;Nội dung bài viết 1...&#39; },
+  { id: 2, title: &#39;Bài viết 2&#39;, content: &#39;Nội dung bài viết 2...&#39; },
+];
+
+function App() {
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;Routes&gt;
+        &lt;Route path=&quot;/blog&quot; element={&lt;BlogList posts={posts} /&gt;} /&gt;
+        &lt;Route path=&quot;/blog/:postId&quot; element={&lt;BlogPost posts={posts} /&gt;} /&gt;
+        &lt;Route path=&quot;*&quot; element={&lt;NotFoundPage /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  );
+}
+export default App;
+</code></pre>
+<h3>Bài 4: Tạo trang Login giả với chuyển hướng</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Nếu chưa đăng nhập (state <code>isLoggedIn</code>), chuyển hướng từ <code>/profile</code> về <code>/login</code> bằng <code>useNavigate</code>.</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Tạo <code>src/components/LoginPage.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useNavigate } from &#39;react-router-dom&#39;;
+
+function LoginPage({ setIsLoggedIn }) {
+  const navigate = useNavigate();
+
+  function handleLogin() {
+    setIsLoggedIn(true);
+    navigate(&#39;/profile&#39;);
+  }
+
+  return &lt;button onClick={handleLogin}&gt;Đăng nhập&lt;/button&gt;;
+}
+export default LoginPage;
+</code></pre>
+<ol start="2">
+<li>Tạo <code>src/components/ProfilePage.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useEffect } from &#39;react&#39;;
+import { useNavigate } from &#39;react-router-dom&#39;;
+
+function ProfilePage({ isLoggedIn }) {
+  const navigate = useNavigate();
+
+  useEffect(() =&gt; {
+    if (!isLoggedIn) {
+      navigate(&#39;/login&#39;);
+    }
+  }, [isLoggedIn]);
+
+  return &lt;h2&gt;Hồ sơ người dùng&lt;/h2&gt;;
+}
+export default ProfilePage;
+</code></pre>
+<ol start="3">
+<li>Cập nhật <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+import { BrowserRouter, Routes, Route } from &#39;react-router-dom&#39;;
+import LoginPage from &#39;./components/LoginPage&#39;;
+import ProfilePage from &#39;./components/ProfilePage&#39;;
+
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;Routes&gt;
+        &lt;Route path=&quot;/login&quot; element={&lt;LoginPage setIsLoggedIn={setIsLoggedIn} /&gt;} /&gt;
+        &lt;Route path=&quot;/profile&quot; element={&lt;ProfilePage isLoggedIn={isLoggedIn} /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  );
+}
+export default App;
+</code></pre>
+<h3>Bài 5: Mở rộng Blog với nút Quay lại</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Trong trang <code>/blog/:postId</code>, thêm nút &quot;Quay lại danh sách&quot; sử dụng <code>useNavigate</code>.</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Cập nhật <code>src/components/BlogPost.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useParams, useNavigate } from &#39;react-router-dom&#39;;
+
+function BlogPost({ posts }) {
+  const { postId } = useParams();
+  const navigate = useNavigate();
+  const post = posts.find(p =&gt; p.id === parseInt(postId));
+
+  if (!post) return &lt;p&gt;Bài viết không tồn tại&lt;/p&gt;;
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{post.title}&lt;/h2&gt;
+      &lt;p&gt;{post.content}&lt;/p&gt;
+      &lt;button onClick={() =&gt; navigate(&#39;/blog&#39;)}&gt;Quay lại danh sách&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+export default BlogPost;
+</code></pre>
+<ol start="2">
+<li>Đảm bảo <code>App.jsx</code> từ Bài 2 hoặc 3 đã được cấu hình đúng.</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

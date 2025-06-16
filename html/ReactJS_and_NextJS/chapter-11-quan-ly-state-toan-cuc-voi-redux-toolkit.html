@@ -1,0 +1,429 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 11: Quản lý State toàn cục với Redux Toolkit</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu khi nào cần sử dụng <strong>Redux Toolkit (RTK)</strong> để quản lý state toàn cục trong ứng dụng React/Next.js.</li>
+<li>Nắm vững các khái niệm cốt lõi của RTK: <strong>configureStore</strong>, <strong>createSlice</strong>, <strong>store</strong>, <strong>dispatch</strong>, và <strong>selector</strong>.</li>
+<li>Biết cách tạo một <strong>slice</strong> để quản lý một phần của state toàn cục.</li>
+<li>Tích hợp Redux store vào ứng dụng Next.js và sử dụng các hook như <strong>useSelector</strong> và <strong>useDispatch</strong> trong component.</li>
+<li>Hiểu cách sử dụng <strong>Redux DevTools</strong> để debug state và actions.</li>
+<li>Áp dụng RTK vào các ứng dụng thực tế một cách hiệu quả, giảm thiểu boilerplate code.</li>
+</ul>
+<hr>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Tại sao cần Redux?</h3>
+<p>Trong các ứng dụng React, <strong>useState</strong> và <strong>useContext</strong> (kết hợp với <strong>useReducer</strong>) thường đủ để quản lý state cho các ứng dụng vừa và nhỏ. Tuy nhiên, khi ứng dụng trở nên phức tạp, Redux trở thành lựa chọn tối ưu trong các trường hợp sau:</p>
+<ul>
+<li><strong>State toàn cục lớn và phức tạp</strong>: Nhiều component cần truy cập và cập nhật cùng một state.</li>
+<li><strong>Logic bất đồng bộ phức tạp</strong>: Cần xử lý các API call, side effects, hoặc middleware.</li>
+<li><strong>Debugging mạnh mẽ</strong>: Redux DevTools cho phép theo dõi lịch sử state và actions.</li>
+<li><strong>Dự án lớn với nhiều lập trình viên</strong>: Redux cung cấp cấu trúc rõ ràng để quản lý state, dễ dàng bảo trì và mở rộng.</li>
+</ul>
+<h4>Hạn chế của useContext + useReducer:</h4>
+<ul>
+<li><strong>Khó mở rộng</strong>: Khi state lớn, logic trong reducer trở nên phức tạp.</li>
+<li><strong>Hiệu năng</strong>: useContext có thể gây re-render không cần thiết.</li>
+<li><strong>Thiếu công cụ debug</strong>: Không có công cụ như Redux DevTools để theo dõi thay đổi state.</li>
+</ul>
+<h4>Ưu điểm của Redux:</h4>
+<ul>
+<li>State được quản lý tập trung trong một <strong>store</strong> duy nhất.</li>
+<li>Dễ dàng debug với Redux DevTools.</li>
+<li>Hỗ trợ middleware (như Redux Thunk) để xử lý logic bất đồng bộ.</li>
+<li>Redux Toolkit giảm thiểu boilerplate code so với Redux gốc.</li>
+</ul>
+<hr>
+<h3>2. Redux Toolkit (RTK) - Redux thời hiện đại</h3>
+<p><strong>Redux Toolkit (RTK)</strong> là bộ công cụ chính thức của Redux, được thiết kế để đơn giản hóa việc viết code Redux, giảm boilerplate và cải thiện trải nghiệm lập trình.</p>
+<h4>Các khái niệm cốt lõi:</h4>
+<ul>
+<li><strong>configureStore</strong>: Hàm tạo store, tự động tích hợp Redux DevTools và middleware (như Redux Thunk).<pre><code class="language-javascript">import { configureStore } from &#39;@reduxjs/toolkit&#39;;
+
+const store = configureStore({
+  reducer: {
+    // Các reducer sẽ được thêm vào đây
+  },
+});
+</code></pre>
+</li>
+<li><strong>createSlice</strong>: Hàm chính để tạo một &quot;slice&quot; (một phần của state). Nó tự động tạo reducer và action creators.<pre><code class="language-javascript">import { createSlice } from &#39;@reduxjs/toolkit&#39;;
+
+const counterSlice = createSlice({
+  name: &#39;counter&#39;,
+  initialState: { value: 0 },
+  reducers: {
+    increment(state) {
+      state.value += 1; // Mutate trực tiếp nhờ Immer
+    },
+    decrement(state) {
+      state.value -= 1;
+    },
+    incrementByAmount(state, action) {
+      state.value += action.payload;
+    },
+  },
+});
+</code></pre>
+</li>
+<li><strong>Store</strong>: Object duy nhất chứa toàn bộ state của ứng dụng.</li>
+<li><strong>Dispatch</strong>: Hàm để gửi action đến store, kích hoạt reducer để cập nhật state.</li>
+<li><strong>Selector</strong>: Hàm để trích xuất dữ liệu từ store.<pre><code class="language-javascript">import { useSelector } from &#39;react-redux&#39;;
+
+const count = useSelector((state) =&gt; state.counter.value);
+</code></pre>
+</li>
+<li><strong>Immer</strong>: Thư viện tích hợp trong RTK, cho phép viết code &quot;mutate&quot; state một cách an toàn (thực chất tạo bản sao mới của state).</li>
+</ul>
+<h4>Ưu điểm của RTK:</h4>
+<ul>
+<li>Giảm boilerplate so với Redux gốc (không cần viết action types hay action creators thủ công).</li>
+<li>Tích hợp sẵn Redux DevTools và middleware.</li>
+<li>Code dễ đọc, dễ bảo trì nhờ <code>createSlice</code> và Immer.</li>
+</ul>
+<hr>
+<h3>3. Tích hợp Redux với React/Next.js</h3>
+<p>Để sử dụng Redux trong ứng dụng Next.js, cần thực hiện các bước sau:</p>
+<ol>
+<li><strong>Cài đặt store</strong> và cung cấp cho ứng dụng thông qua <code>&lt;Provider&gt;</code> (từ <code>react-redux</code>).</li>
+<li>Sử dụng <strong>useSelector</strong> để đọc state từ store.</li>
+<li>Sử dụng <strong>useDispatch</strong> để gửi action đến store.</li>
+</ol>
+<h4>Ví dụ tích hợp:</h4>
+<ul>
+<li>Bao bọc ứng dụng bằng <code>&lt;Provider&gt;</code> trong <code>pages/_app.js</code>:<pre><code class="language-javascript">import { Provider } from &#39;react-redux&#39;;
+import store from &#39;../store&#39;;
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    &lt;Provider store={store}&gt;
+      &lt;Component {...pageProps} /&gt;
+    &lt;/Provider&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Sử dụng trong component:<pre><code class="language-javascript">import { useSelector, useDispatch } from &#39;react-redux&#39;;
+import { increment, decrement } from &#39;../features/counter/counterSlice&#39;;
+
+export default function Counter() {
+  const count = useSelector((state) =&gt; state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; dispatch(increment())}&gt;Tăng&lt;/button&gt;
+      &lt;button onClick={() =&gt; dispatch(decrement())}&gt;Giảm&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+</ul>
+<h4>Lưu ý khi dùng Redux trong Next.js:</h4>
+<ul>
+<li>Redux hoạt động tốt với cả <strong>Server-Side Rendering (SSR)</strong> và <strong>Static Site Generation (SSG)</strong>, nhưng cần cấu hình đúng để tránh hydrate lỗi.</li>
+<li>Đảm bảo store được tạo một lần duy nhất (trong file <code>store.js</code>) và chia sẻ cho cả client và server.</li>
+</ul>
+<hr>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Cài đặt Redux Toolkit và react-redux</h3>
+<ol>
+<li>Cài đặt các package:<pre><code class="language-bash">npm install @reduxjs/toolkit react-redux
+</code></pre>
+</li>
+</ol>
+<h3>Bài 2: Cấu hình store</h3>
+<ol>
+<li>Tạo file <code>store.js</code> trong thư mục gốc:<pre><code class="language-javascript">import { configureStore } from &#39;@reduxjs/toolkit&#39;;
+
+export const store = configureStore({
+  reducer: {},
+  devTools: process.env.NODE_ENV !== &#39;production&#39;, // Bật DevTools ở môi trường dev
+});
+</code></pre>
+</li>
+<li>Kiểm tra cài đặt bằng cách import <code>store</code> trong <code>pages/_app.js</code>.</li>
+</ol>
+<h3>Bài 3: Tạo slice cho Counter</h3>
+<ol>
+<li>Tạo file <code>features/counter/counterSlice.js</code>:<pre><code class="language-javascript">import { createSlice } from &#39;@reduxjs/toolkit&#39;;
+
+const counterSlice = createSlice({
+  name: &#39;counter&#39;,
+  initialState: {
+    value: 0,
+  },
+  reducers: {
+    increment(state) {
+      state.value += 1;
+    },
+    decrement(state) {
+      state.value -= 1;
+    },
+    incrementByAmount(state, action) {
+      state.value += action.payload;
+    },
+  },
+});
+
+export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export default counterSlice.reducer;
+</code></pre>
+</li>
+<li>Kết nối reducer vào store trong <code>store.js</code>:<pre><code class="language-javascript">import { configureStore } from &#39;@reduxjs/toolkit&#39;;
+import counterReducer from &#39;./features/counter/counterSlice&#39;;
+
+export const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+  },
+  devTools: process.env.NODE_ENV !== &#39;production&#39;,
+});
+</code></pre>
+</li>
+</ol>
+<h3>Bài 4: Kết nối store với ứng dụng</h3>
+<ol>
+<li>Cập nhật <code>pages/_app.js</code>:<pre><code class="language-javascript">import { Provider } from &#39;react-redux&#39;;
+import { store } from &#39;../store&#39;;
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    &lt;Provider store={store}&gt;
+      &lt;Component {...pageProps} /&gt;
+    &lt;/Provider&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Kiểm tra: Mở DevTools → Redux tab để xác nhận store được khởi tạo.</li>
+</ol>
+<h3>Bài 5: Sử dụng Redux trong component</h3>
+<ol>
+<li>Tạo file <code>components/Counter.js</code>:<pre><code class="language-javascript">import { useSelector, useDispatch } from &#39;react-redux&#39;;
+import { increment, decrement, incrementByAmount } from &#39;../features/counter/counterSlice&#39;;
+
+export default function Counter() {
+  const count = useSelector((state) =&gt; state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    &lt;div className=&quot;max-w-md mx-auto mt-10&quot;&gt;
+      &lt;h2 className=&quot;text-2xl font-bold mb-4&quot;&gt;Counter&lt;/h2&gt;
+      &lt;p className=&quot;text-lg mb-4&quot;&gt;Giá trị: {count}&lt;/p&gt;
+      &lt;div className=&quot;space-x-2&quot;&gt;
+        &lt;button
+          onClick={() =&gt; dispatch(increment())}
+          className=&quot;bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600&quot;
+        &gt;
+          Tăng
+        &lt;/button&gt;
+        &lt;button
+          onClick={() =&gt; dispatch(decrement())}
+          className=&quot;bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600&quot;
+        &gt;
+          Giảm
+        &lt;/button&gt;
+        &lt;button
+          onClick={() =&gt; dispatch(incrementByAmount(5))}
+          className=&quot;bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600&quot;
+        &gt;
+          Tăng 5
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Sử dụng component trong <code>pages/index.js</code>:<pre><code class="language-javascript">import Counter from &#39;../components/Counter&#39;;
+
+export default function Home() {
+  return (
+    &lt;div className=&quot;min-h-screen flex items-center justify-center&quot;&gt;
+      &lt;Counter /&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Kiểm tra: Mở trình duyệt, nhấn các nút và quan sát giá trị thay đổi. Dùng Redux DevTools để xem lịch sử actions.</li>
+</ol>
+<hr>
+<h2>D. Bổ sung: Tối ưu hóa và Debug với Redux DevTools</h2>
+<h3>1. Sử dụng Redux DevTools</h3>
+<ul>
+<li>Cài đặt extension Redux DevTools trên Chrome hoặc Firefox.</li>
+<li>Mở DevTools → Tab Redux để:<ul>
+<li>Xem toàn bộ state của store.</li>
+<li>Theo dõi lịch sử actions và payload.</li>
+<li>“Time travel” để quay lại trạng thái trước đó.</li>
+</ul>
+</li>
+<li>Ví dụ: Khi nhấn nút “Tăng”, bạn sẽ thấy action <code>counter/increment</code> được dispatch.</li>
+</ul>
+<h3>2. Tối ưu hóa hiệu năng</h3>
+<ul>
+<li><strong>Memoized selectors</strong>: Sử dụng <code>createSelector</code> từ RTK để tối ưu hóa selector:<pre><code class="language-javascript">import { createSelector } from &#39;@reduxjs/toolkit&#39;;
+
+const selectCounter = (state) =&gt; state.counter;
+export const selectCount = createSelector([selectCounter], (counter) =&gt; counter.value);
+</code></pre>
+</li>
+<li><strong>Bất đồng bộ với Redux Thunk</strong>: RTK tích hợp sẵn Redux Thunk để xử lý API calls:<pre><code class="language-javascript">import { createAsyncThunk } from &#39;@reduxjs/toolkit&#39;;
+
+export const fetchData = createAsyncThunk(&#39;counter/fetchData&#39;, async () =&gt; {
+  const response = await fetch(&#39;https://api.example.com/data&#39;);
+  return await response.json();
+});
+</code></pre>
+</li>
+</ul>
+<h3>3. Xử lý SSR trong Next.js</h3>
+<ul>
+<li>Khi dùng Redux với SSR, cần đảm bảo store được khởi tạo đúng cách để tránh hydrate lỗi:<pre><code class="language-javascript">// pages/_app.js
+import { Provider } from &#39;react-redux&#39;;
+import { store } from &#39;../store&#39;;
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    &lt;Provider store={store}&gt;
+      &lt;Component {...pageProps} /&gt;
+    &lt;/Provider&gt;
+  );
+}
+</code></pre>
+</li>
+</ul>
+<hr>
+<h2>E. So sánh useContext + useReducer và Redux Toolkit</h2>
+<table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>useContext + useReducer</th>
+<th>Redux Toolkit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Độ phức tạp</strong></td>
+<td>Đơn giản, phù hợp ứng dụng nhỏ</td>
+<td>Phức tạp hơn, phù hợp ứng dụng lớn</td>
+</tr>
+<tr>
+<td><strong>Hiệu năng</strong></td>
+<td>Có thể gây re-render không cần thiết</td>
+<td>Tối ưu hóa với Immer, ít re-render</td>
+</tr>
+<tr>
+<td><strong>Debugging</strong></td>
+<td>Không có công cụ debug chuyên dụng</td>
+<td>Redux DevTools mạnh mẽ</td>
+</tr>
+<tr>
+<td><strong>Bất đồng bộ</strong></td>
+<td>Cần tự viết logic async</td>
+<td>Tích hợp Redux Thunk, hỗ trợ createAsyncThunk</td>
+</tr>
+<tr>
+<td><strong>Boilerplate</strong></td>
+<td>Ít code, nhưng khó mở rộng khi state lớn</td>
+<td>Ít boilerplate nhờ RTK, dễ mở rộng</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>F. Tài liệu tham khảo</h2>
+<ul>
+<li><a href="https://redux-toolkit.js.org/">Redux Toolkit Documentation</a></li>
+<li><a href="https://react-redux.js.org/">React-Redux Documentation</a></li>
+<li><a href="https://redux-toolkit.js.org/usage/nextjs">Next.js with Redux</a></li>
+<li><a href="https://github.com/reduxjs/redux-devtools">Redux DevTools</a></li>
+</ul>
+<hr>
+<h2>G. Bài tập nâng cao (tùy chọn)</h2>
+<ol>
+<li><strong>Tích hợp API bất đồng bộ</strong>:<ul>
+<li>Tạo một slice mới để quản lý state của dữ liệu API (ví dụ: danh sách bài viết).</li>
+<li>Sử dụng <code>createAsyncThunk</code> để gọi API từ <code>jsonplaceholder.typicode.com</code>.</li>
+<li>Hiển thị danh sách bài viết trong component và xử lý trạng thái loading/lỗi.</li>
+</ul>
+</li>
+<li><strong>Tùy chỉnh selector</strong>:<ul>
+<li>Sử dụng <code>createSelector</code> để tạo selector tính toán giá trị từ state (ví dụ: <code>isCounterPositive</code>).</li>
+<li>Hiển thị thông báo khi giá trị counter lớn hơn 0.</li>
+</ul>
+</li>
+<li><strong>Form với Redux</strong>:<ul>
+<li>Tạo một form sử dụng Redux để quản lý state (thay vì <code>useState</code> hoặc <code>react-hook-form</code>).</li>
+<li>Dùng RTK để lưu trữ dữ liệu form và xử lý submit.</li>
+</ul>
+</li>
+<li><strong>Debug với Redux DevTools</strong>:<ul>
+<li>Viết một báo cáo ngắn (200 từ) về cách sử dụng Redux DevTools để debug ứng dụng. Bao gồm cách xem lịch sử actions và cách “time travel”.</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

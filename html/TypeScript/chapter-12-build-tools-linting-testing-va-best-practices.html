@@ -1,0 +1,478 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 12: Hoàn Thiện Dự Án - Build Tools, Linting, Testing và Best Practices</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chapter này tổng kết các kiến thức đã học, tập trung vào các công cụ và quy trình để hoàn thiện một dự án TypeScript chuyên nghiệp. Chúng ta sẽ khám phá các công cụ xây dựng (build tools) nâng cao, cách thiết lập linting và formatting để đảm bảo chất lượng code, các phương pháp kiểm thử (testing) cơ bản, và các thực hành tốt nhất (best practices) khi làm việc với TypeScript.</p>
+<h2>Tiêu đề</h2>
+<p>Hoàn Thiện Dự Án: Build Tools, Linting, Testing và Best Practices</p>
+<h2>Tóm tắt lý thuyết chính</h2>
+<h3>1. Build Tools (Công cụ xây dựng)</h3>
+<p>Các dự án TypeScript lớn thường cần các công cụ xây dựng mạnh mẽ hơn ngoài <code>tsc</code> (TypeScript Compiler).</p>
+<h4><code>tsc</code> và các tùy chọn nâng cao</h4>
+<ul>
+<li><strong><code>--watch</code> (<code>-w</code>)</strong>: Theo dõi thay đổi trong các file và tự động biên dịch lại, giúp tiết kiệm thời gian trong quá trình phát triển.</li>
+<li><strong><code>--project &lt;path&gt;</code> (<code>-p &lt;path&gt;</code>)</strong>: Chỉ định đường dẫn đến file <code>tsconfig.json</code>, hữu ích khi có nhiều cấu hình trong dự án.</li>
+<li><strong><code>--build</code> (<code>-b</code>)</strong>: Dùng cho project references, xây dựng dự án và các dependency của nó một cách hiệu quả.</li>
+<li><strong><code>outFile</code></strong>: Gộp tất cả output thành một file JavaScript duy nhất. Thường dùng với <code>amd</code> hoặc <code>system</code>, ít phổ biến với module ES6/CommonJS.</li>
+<li><strong><code>incremental: true</code></strong>: Trong <code>tsconfig.json</code>, bật biên dịch tăng dần, chỉ biên dịch các file thay đổi, giúp tăng tốc độ.</li>
+</ul>
+<h4>Sử dụng Webpack hoặc Parcel với TypeScript</h4>
+<ul>
+<li><p><strong>Webpack</strong>: Module bundler mạnh mẽ, phổ biến trong các dự án phức tạp.</p>
+<ul>
+<li>Cần <strong>loader</strong> như <code>ts-loader</code> hoặc <code>awesome-typescript-loader</code> để xử lý file <code>.ts</code>.</li>
+<li>Có thể kết hợp với <code>babel-loader</code> và <code>@babel/preset-typescript</code> để tận dụng hệ sinh thái Babel (ví dụ: polyfills, minification).</li>
+<li>Hỗ trợ tối ưu hóa code (minification, tree shaking), code splitting, và quản lý asset (CSS, images).</li>
+<li><strong>Giải thích chi tiết</strong>: Webpack cho phép tùy chỉnh cao, phù hợp với dự án lớn, nhưng cần cấu hình phức tạp. Ví dụ, tree shaking giúp loại bỏ code không dùng đến, giảm kích thước bundle.</li>
+</ul>
+</li>
+<li><p><strong>Parcel</strong>: Module bundler &quot;zero-configuration&quot;, dễ sử dụng cho dự án nhỏ.</p>
+<ul>
+<li>Tự động phát hiện và biên dịch TypeScript mà không cần loader riêng.</li>
+<li>Tốc độ nhanh, phù hợp khi muốn bắt đầu nhanh mà không cần cấu hình phức tạp.</li>
+<li><strong>Giải thích chi tiết</strong>: Parcel lý tưởng cho các dự án đơn giản hoặc prototype, nhưng ít tùy chỉnh hơn Webpack.</li>
+</ul>
+</li>
+</ul>
+<h4><code>nodemon</code></h4>
+<p>Công cụ tự động khởi động lại ứng dụng Node.js khi có thay đổi trong file. Thường kết hợp với <code>tsc -w</code> hoặc <code>ts-node</code> để chạy TypeScript trực tiếp.</p>
+<pre><code class="language-bash"># Chạy file JS đã biên dịch
+nodemon dist/server.js
+
+# Chạy TypeScript trực tiếp với ts-node
+nodemon --exec ts-node src/server.ts
+</code></pre>
+<ul>
+<li><strong>Giải thích chi tiết</strong>: <code>nodemon</code> giúp tăng tốc phát triển bằng cách tự động reload server khi code thay đổi, giảm thao tác thủ công.</li>
+</ul>
+<h3>2. Linting và Formatting (Kiểm tra và Định dạng Code)</h3>
+<p>Đảm bảo code nhất quán, dễ đọc, và tuân theo các quy tắc chung.</p>
+<h4>ESLint</h4>
+<p>Công cụ linting phổ biến cho JavaScript/TypeScript, giúp phát hiện lỗi cú pháp, code smells, và đảm bảo tuân thủ style guide.</p>
+<ul>
+<li><p><strong>Cần cài đặt</strong>:</p>
+<ul>
+<li><code>@typescript-eslint/parser</code>: Cho phép ESLint hiểu cú pháp TypeScript.</li>
+<li><code>@typescript-eslint/eslint-plugin</code>: Cung cấp các rule dành riêng cho TypeScript.</li>
+</ul>
+</li>
+<li><p><strong>Cấu hình <code>.eslintrc.js</code></strong>:</p>
+</li>
+</ul>
+<pre><code class="language-javascript">module.exports = {
+  parser: &#39;@typescript-eslint/parser&#39;,
+  extends: [
+    &#39;eslint:recommended&#39;,
+    &#39;plugin:@typescript-eslint/recommended&#39;,
+    &#39;plugin:@typescript-eslint/recommended-requiring-type-checking&#39;,
+    &#39;prettier&#39; // Tắt các rule xung đột với Prettier
+  ],
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: &#39;module&#39;,
+    project: &#39;./tsconfig.json&#39; // Cần cho rule yêu cầu thông tin kiểu
+  },
+  rules: {
+    &#39;@typescript-eslint/no-explicit-any&#39;: &#39;warn&#39;,
+    &#39;@typescript-eslint/no-unused-vars&#39;: [&#39;error&#39;, { argsIgnorePattern: &#39;^_&#39; }]
+  },
+  ignorePatterns: [&#39;dist/&#39;, &#39;node_modules/&#39;]
+};
+</code></pre>
+<ul>
+<li><strong>Giải thích chi tiết</strong>:<ul>
+<li><code>eslint:recommended</code>: Bộ rule cơ bản của ESLint.</li>
+<li><code>@typescript-eslint/recommended</code>: Bộ rule khuyến nghị cho TypeScript.</li>
+<li><code>project: &#39;./tsconfig.json&#39;</code>: Cho phép ESLint sử dụng thông tin kiểu từ TypeScript để kiểm tra chính xác hơn.</li>
+<li><code>ignorePatterns</code>: Bỏ qua thư mục không cần lint như <code>dist/</code> hoặc <code>node_modules/</code>.</li>
+</ul>
+</li>
+</ul>
+<h4>Prettier</h4>
+<p>Công cụ định dạng code tự động, đảm bảo style nhất quán (khoảng cách, dấu ngoặc, xuống dòng, v.v.).</p>
+<ul>
+<li><p><strong>Tích hợp với ESLint</strong>:</p>
+<ul>
+<li><code>eslint-config-prettier</code>: Tắt các rule ESLint xung đột với Prettier.</li>
+<li><code>eslint-plugin-prettier</code>: Chạy Prettier như một rule ESLint.</li>
+</ul>
+</li>
+<li><p><strong>Cấu hình <code>.prettierrc.js</code></strong>:</p>
+</li>
+</ul>
+<pre><code class="language-javascript">module.exports = {
+  semi: true,
+  trailingComma: &#39;es5&#39;,
+  singleQuote: true,
+  printWidth: 80,
+  tabWidth: 2,
+  useTabs: false,
+  bracketSpacing: true
+};
+</code></pre>
+<ul>
+<li><strong>Giải thích chi tiết</strong>:<ul>
+<li>Prettier tự động format code khi lưu file, giảm tranh cãi về style.</li>
+<li>Tích hợp với ESLint giúp vừa kiểm tra lỗi (ESLint) vừa định dạng (Prettier).</li>
+</ul>
+</li>
+</ul>
+<h4>Tích hợp với VS Code</h4>
+<ul>
+<li>Cài extension <strong>ESLint</strong> và <strong>Prettier</strong> cho VS Code.</li>
+<li>Cấu hình VS Code để tự động format khi lưu:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;editor.defaultFormatter&quot;: &quot;esbenp.prettier-vscode&quot;,
+  &quot;editor.formatOnSave&quot;: true,
+  &quot;eslint.validate&quot;: [&quot;javascript&quot;, &quot;typescript&quot;]
+}
+</code></pre>
+<ul>
+<li><strong>Giải thích chi tiết</strong>: Tích hợp này giúp hiển thị lỗi linting và tự động format code ngay trong editor, cải thiện trải nghiệm phát triển.</li>
+</ul>
+<h3>3. Testing (Kiểm thử)</h3>
+<p>Kiểm thử đảm bảo code hoạt động đúng và dễ bảo trì.</p>
+<h4>Unit Testing với Jest hoặc Mocha + Chai</h4>
+<ul>
+<li><strong>Jest</strong>: Testing framework &quot;all-in-one&quot;, phổ biến cho React và TypeScript.<ul>
+<li>Cần <code>ts-jest</code> để xử lý file <code>.ts</code>.</li>
+<li><strong>Cấu hình <code>jest.config.js</code></strong>:</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-javascript">module.exports = {
+  preset: &#39;ts-jest&#39;,
+  testEnvironment: &#39;node&#39;,
+  roots: [&#39;&lt;rootDir&gt;/src&#39;],
+  testMatch: [&#39;**/__tests__/**/*.(ts|tsx|js)&#39;, &#39;**/?(*.)(spec|test).(ts|tsx|js)&#39;],
+  transform: {
+    &#39;^.+\\.(ts|tsx)$&#39;: [&#39;ts-jest&#39;, { tsconfig: &#39;tsconfig.json&#39; }]
+  },
+  moduleNameMapper: {
+    &#39;\\.(css|less|scss)$&#39;: &#39;identity-obj-proxy&#39;
+  },
+  setupFilesAfterEnv: [&#39;&lt;rootDir&gt;/src/setupTests.ts&#39;]
+};
+</code></pre>
+<ul>
+<li><p><strong>Mocha + Chai</strong>: Linh hoạt, thường dùng cho dự án cần tùy chỉnh cao.</p>
+<ul>
+<li>Cần <code>ts-node</code> để chạy TypeScript trực tiếp.</li>
+<li>Cấu hình trong <code>package.json</code> hoặc file <code>mocha.opts</code>.</li>
+</ul>
+</li>
+<li><p><strong>Giải thích chi tiết</strong>:</p>
+<ul>
+<li>Jest dễ dùng hơn cho beginner nhờ cấu hình đơn giản và tích hợp mock, snapshot testing.</li>
+<li>Mocha phù hợp khi cần kiểm soát chi tiết quy trình test.</li>
+</ul>
+</li>
+</ul>
+<h4>Ví dụ test case</h4>
+<pre><code class="language-typescript">// File: src/utils/math.ts
+export function add(a: number, b: number): number {
+  return a + b;
+}
+
+// File: src/utils/__tests__/math.test.ts
+import { add } from &#39;../math&#39;;
+
+describe(&#39;Math utility functions&#39;, () =&gt; {
+  describe(&#39;add function&#39;, () =&gt; {
+    it(&#39;should return the sum of two positive numbers&#39;, () =&gt; {
+      expect(add(2, 3)).toBe(5);
+    });
+    it(&#39;should return the sum of a positive and a negative number&#39;, () =&gt; {
+      expect(add(5, -2)).toBe(3);
+    });
+    it(&#39;should return zero when adding zero&#39;, () =&gt; {
+      expect(add(7, 0)).toBe(7);
+    });
+  });
+});
+</code></pre>
+<ul>
+<li><strong>Giải thích chi tiết</strong>:<ul>
+<li><code>describe</code> nhóm các test case liên quan.</li>
+<li><code>it</code> định nghĩa từng test case với mô tả rõ ràng.</li>
+<li><code>expect</code> kiểm tra kết quả đầu ra của hàm.</li>
+</ul>
+</li>
+</ul>
+<h3>4. TypeScript Best Practices (Thực hành tốt nhất)</h3>
+<ul>
+<li><p><strong>Bật <code>strict</code> mode</strong>: Trong <code>tsconfig.json</code>, đặt <code>strict: true</code> để bật các kiểm tra kiểu nghiêm ngặt (<code>strictNullChecks</code>, <code>noImplicitAny</code>, v.v.), giúp phát hiện lỗi sớm.</p>
+</li>
+<li><p><strong>Ưu tiên <code>unknown</code> hơn <code>any</code></strong>: <code>unknown</code> buộc kiểm tra kiểu trước khi sử dụng, an toàn hơn <code>any</code>.</p>
+</li>
+<li><p><strong>Khai báo kiểu tường minh cho API</strong>: Dùng <code>interface</code> hoặc <code>type</code> để định nghĩa kiểu rõ ràng cho dữ liệu từ API hoặc module.</p>
+</li>
+<li><p><strong>Tận dụng Utility Types</strong>: Sử dụng <code>Partial</code>, <code>Readonly</code>, <code>Pick</code>, <code>Omit</code> để tạo kiểu an toàn và ngắn gọn.</p>
+</li>
+<li><p><strong>Code dễ đọc, dễ bảo trì</strong>: Đặt tên biến/hàm/class rõ ràng, chia nhỏ code thành module/hàm với mục đích cụ thể.</p>
+</li>
+<li><p><strong>Dùng <code>readonly</code></strong>: Đánh dấu thuộc tính không thay đổi để tăng tính bất biến.</p>
+</li>
+<li><p><strong>Tránh lạm dụng type assertions (<code>as Type</code>)</strong>: Chỉ dùng khi chắc chắn về kiểu, tránh tắt kiểm tra của TypeScript.</p>
+</li>
+<li><p><strong>Dùng ESLint và Prettier</strong>: Đảm bảo code nhất quán và tuân thủ quy tắc.</p>
+</li>
+<li><p><strong>Viết Unit Tests</strong>: Đảm bảo code đúng và dễ refactor.</p>
+</li>
+<li><p><strong>Cập nhật TypeScript và <code>@types</code> packages</strong>: Tận dụng tính năng mới và bản vá lỗi.</p>
+</li>
+<li><p><strong>Giải thích chi tiết</strong>:</p>
+<ul>
+<li><code>strict</code> mode giúp code an toàn hơn nhưng có thể cần thêm công sức xử lý <code>null</code>/<code>undefined</code>.</li>
+<li>Utility Types giảm code lặp và tăng tính linh hoạt.</li>
+<li>Type assertions nên dùng cẩn thận, ví dụ khi làm việc với thư viện không có type definitions.</li>
+</ul>
+</li>
+</ul>
+<h3>5. Ôn tập và Q&amp;A</h3>
+<p>Học viên có thể đặt câu hỏi về bất kỳ chủ đề nào trong khóa học, chia sẻ kinh nghiệm hoặc thảo luận các tình huống thực tế khi áp dụng TypeScript.</p>
+<h2>Code ví dụ chính</h2>
+<h3>Ví dụ <code>package.json</code> scripts</h3>
+<pre><code class="language-json">{
+  &quot;scripts&quot;: {
+    &quot;build&quot;: &quot;tsc&quot;,
+    &quot;build:watch&quot;: &quot;tsc -w&quot;,
+    &quot;start&quot;: &quot;node dist/server.js&quot;,
+    &quot;dev&quot;: &quot;nodemon --exec ts-node src/server.ts&quot;,
+    &quot;lint&quot;: &quot;eslint . --ext .ts,.tsx&quot;,
+    &quot;lint:fix&quot;: &quot;eslint . --ext .ts,.tsx --fix&quot;,
+    &quot;format&quot;: &quot;prettier --write \&quot;src/**/*.ts\&quot;&quot;,
+    &quot;test&quot;: &quot;jest&quot;,
+    &quot;test:watch&quot;: &quot;jest --watch&quot;
+  }
+}
+</code></pre>
+<h2>Danh sách bài tập</h2>
+<h3>1. Trắc nghiệm: Công cụ phân tích tĩnh code</h3>
+<p><strong>Tiêu đề</strong>: Hiểu về Linting<br><strong>Mô tả</strong>: Chọn công cụ phù hợp cho phân tích tĩnh code.<br><strong>Câu hỏi</strong>: Công cụ nào thường được sử dụng để phân tích tĩnh code TypeScript, tìm lỗi tiềm ẩn, code smells, và vấn đề về style?  </p>
+<ul>
+<li>A. Jest  </li>
+<li>B. Webpack  </li>
+<li>C. ESLint  </li>
+<li>D. Node.js<br><strong>Đáp án</strong>: C<br><strong>Giải thích</strong>: ESLint là công cụ phân tích tĩnh code, kiểm tra cú pháp, style, và lỗi tiềm ẩn. Jest dùng cho testing, Webpack cho bundling, và Node.js là runtime.</li>
+</ul>
+<h3>2. Thực hành: Cài đặt ESLint và Prettier</h3>
+<p><strong>Tiêu đề</strong>: Thiết lập môi trường Linting và Formatting<br><strong>Mô tả</strong>:  </p>
+<ul>
+<li>Cài đặt ESLint, <code>@typescript-eslint/parser</code>, <code>@typescript-eslint/eslint-plugin</code>.  </li>
+<li>Cài đặt Prettier, <code>eslint-config-prettier</code>, <code>eslint-plugin-prettier</code>.  </li>
+<li>Tạo file <code>.eslintrc.js</code> và <code>.prettierrc.js</code>.  </li>
+<li>(Tùy chọn) Cấu hình VS Code để format khi lưu và hiển thị cảnh báo ESLint.  </li>
+<li>Viết code TypeScript có lỗi style/linting và kiểm tra ESLint/Prettier.</li>
+</ul>
+<p><strong>Gợi ý cài đặt</strong>:</p>
+<pre><code class="language-bash">npm init -y
+npm install typescript --save-dev
+npm install eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --save-dev
+npm install prettier eslint-config-prettier eslint-plugin-prettier --save-dev
+npx eslint --init
+</code></pre>
+<ul>
+<li><strong>Giải thích chi tiết</strong>: Bài tập giúp học viên làm quen với quy trình thiết lập môi trường linting/formatting, từ cài đặt đến tích hợp editor.</li>
+</ul>
+<h3>3. Thực hành: Cài đặt Jest và viết Unit Test</h3>
+<p><strong>Tiêu đề</strong>: Viết Unit Test cơ bản<br><strong>Mô tả</strong>:  </p>
+<ul>
+<li>Cài đặt Jest, <code>ts-jest</code>, <code>@types/jest</code>.  </li>
+<li>Tạo file <code>jest.config.js</code>.  </li>
+<li>Viết hàm <code>capitalize(str: string): string</code> (viết hoa chữ cái đầu).  </li>
+<li>Viết file test <code>capitalize.test.ts</code> với 2-3 test case.  </li>
+<li>Chạy test bằng <code>npm test</code>.</li>
+</ul>
+<p><strong>Ví dụ hàm <code>capitalize</code></strong>:</p>
+<pre><code class="language-typescript">export function capitalize(str: string): string {
+  if (!str) return &#39;&#39;;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+</code></pre>
+<p><strong>Ví dụ test</strong>:</p>
+<pre><code class="language-typescript">import { capitalize } from &#39;../utils&#39;;
+
+describe(&#39;capitalize function&#39;, () =&gt; {
+  it(&#39;should capitalize the first letter of a string&#39;, () =&gt; {
+    expect(capitalize(&#39;hello&#39;)).toBe(&#39;Hello&#39;);
+  });
+  it(&#39;should return empty string for empty input&#39;, () =&gt; {
+    expect(capitalize(&#39;&#39;)).toBe(&#39;&#39;);
+  });
+  it(&#39;should not change already capitalized string&#39;, () =&gt; {
+    expect(capitalize(&#39;Hello&#39;)).toBe(&#39;Hello&#39;);
+  });
+});
+</code></pre>
+<ul>
+<li><strong>Giải thích chi tiết</strong>: Bài tập giúp học viên làm quen với Jest, viết test case, và kiểm tra tính đúng đắn của hàm.</li>
+</ul>
+<h3>4. Thảo luận: Lợi ích của <code>strictNullChecks</code></h3>
+<p><strong>Tiêu đề</strong>: Thảo luận về <code>strictNullChecks</code><br><strong>Mô tả</strong>:  </p>
+<ul>
+<li><strong>Lợi ích</strong>: Giảm lỗi <code>Cannot read property &#39;…&#39; of null/undefined</code>, buộc xử lý <code>null</code>/<code>undefined</code> tường minh, tăng an toàn code.  </li>
+<li><strong>Thách thức</strong>: Cần thêm code để kiểm tra <code>null</code>/<code>undefined</code>, đặc biệt khi làm việc với API hoặc code JavaScript cũ.  </li>
+<li><strong>Giải thích chi tiết</strong>: Thảo luận giúp học viên hiểu tầm quan trọng của kiểm tra kiểu nghiêm ngặt và cách xử lý các trường hợp đặc biệt.</li>
+</ul>
+<h3>5. Code Review: Áp dụng Best Practices</h3>
+<p><strong>Tiêu đề</strong>: Áp dụng Best Practices<br><strong>Mô tả</strong>: Review đoạn code sau và đề xuất cải thiện dựa trên best practices:</p>
+<pre><code class="language-typescript">function processData(data: any, options: any) {
+  let result;
+  if (options.type === &#39;string&#39;) {
+    result = String(data).toUpperCase();
+  } else if (options.type === &#39;number&#39;) {
+    result = Number(data) * options.factor;
+  }
+  return result;
+}
+
+class UserProfile {
+  id;
+  name;
+  email;
+  constructor(id, name, email) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+  }
+  updateProfile(newData) {
+    this.name = newData.name ? newData.name : this.name;
+    this.email = newData.email ? newData.email : this.email;
+  }
+}
+</code></pre>
+<p><strong>Đề xuất cải thiện</strong>:</p>
+<ol>
+<li><p><strong>Tránh <code>any</code> trong <code>processData</code></strong>:</p>
+<ul>
+<li>Định nghĩa interface cho <code>data</code> và <code>options</code>.</li>
+<li>Dùng <code>unknown</code> nếu kiểu chưa rõ, kết hợp type guard để kiểm tra.</li>
+</ul>
+</li>
+<li><p><strong>Khai báo kiểu tường minh cho <code>UserProfile</code></strong>:</p>
+<ul>
+<li>Thêm kiểu cho các thuộc tính và tham số constructor.</li>
+<li>Dùng <code>readonly</code> cho <code>id</code> vì không nên thay đổi.</li>
+</ul>
+</li>
+<li><p><strong>Định nghĩa kiểu cho <code>newData</code> trong <code>updateProfile</code></strong>:</p>
+<ul>
+<li>Dùng interface để khai báo kiểu của <code>newData</code>.</li>
+</ul>
+</li>
+<li><p><strong>Kiểm tra <code>null</code>/<code>undefined</code> tường minh</strong>:</p>
+<ul>
+<li>Dùng <code>strictNullChecks</code> để bắt lỗi sớm.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code cải thiện</strong>:</p>
+<pre><code class="language-typescript">interface ProcessOptions {
+  type: &#39;string&#39; | &#39;number&#39;;
+  factor?: number;
+}
+
+function processData(data: unknown, options: ProcessOptions): string | number | undefined {
+  if (options.type === &#39;string&#39;) {
+    return typeof data === &#39;string&#39; ? data.toUpperCase() : String(data).toUpperCase();
+  } else if (options.type === &#39;number&#39;) {
+    return typeof data === &#39;number&#39; &amp;&amp; options.factor ? data * options.factor : 0;
+  }
+}
+
+interface UserProfileData {
+  name?: string;
+  email?: string;
+}
+
+class UserProfile {
+  readonly id: string;
+  name: string;
+  email: string;
+
+  constructor(id: string, name: string, email: string) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+  }
+
+  updateProfile(newData: Partial&lt;UserProfileData&gt;) {
+    this.name = newData.name ?? this.name;
+    this.email = newData.email ?? this.email;
+  }
+}
+</code></pre>
+<ul>
+<li><strong>Giải thích chi tiết</strong>:<ul>
+<li>Interface <code>ProcessOptions</code> và <code>UserProfileData</code> làm rõ cấu trúc dữ liệu.</li>
+<li><code>unknown</code> thay vì <code>any</code> trong <code>processData</code> tăng an toàn.</li>
+<li><code>Partial&lt;UserProfileData&gt;</code> cho phép <code>newData</code> có các thuộc tính tùy chọn.</li>
+<li><code>??</code> thay vì toán tử <code>?</code> để xử lý <code>null</code>/<code>undefined</code> ngắn gọn hơn.</li>
+</ul>
+</li>
+</ul>
+<h2>Kết luận</h2>
+<p>Chapter này cung cấp kiến thức toàn diện về cách hoàn thiện dự án TypeScript với build tools, linting, testing, và best practices. Học viên được khuyến khích áp dụng vào dự án thực tế và thảo luận để củng cố kiến thức.</p>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

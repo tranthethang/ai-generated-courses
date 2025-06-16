@@ -1,0 +1,411 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 1: Giới thiệu TypeScript và Các Kiểu Dữ Liệu Cơ Bản</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chào mừng bạn đến với hành trình khám phá <strong>TypeScript</strong>! Chapter này là bước khởi đầu giúp bạn hiểu TypeScript là gì, tại sao nó trở thành công cụ mạnh mẽ trong phát triển web hiện đại, và cách sử dụng các kiểu dữ liệu cơ bản. Nếu bạn đã quen với JavaScript, TypeScript sẽ là một bước tiến lớn giúp code của bạn an toàn, dễ bảo trì, và dễ mở rộng hơn. Chúng ta sẽ:</p>
+<ul>
+<li>Tìm hiểu TypeScript và so sánh với JavaScript.</li>
+<li>Cài đặt môi trường TypeScript và cấu hình dự án cơ bản.</li>
+<li>Làm quen với các kiểu dữ liệu cơ bản và cách khai báo biến.</li>
+<li>Thực hành qua các ví dụ và bài tập.</li>
+</ul>
+<p><strong>Mục tiêu</strong>: Sau chapter này, bạn sẽ viết được các đoạn code TypeScript cơ bản, hiểu lợi ích của kiểu tĩnh, và sẵn sàng cho các khái niệm nâng cao hơn.</p>
+<h2>Tiêu đề Chapter</h2>
+<p>TypeScript là gì? Tại sao nên dùng? Các kiểu dữ liệu cơ bản.</p>
+<h2>Lý thuyết chính</h2>
+<h3>1. TypeScript là gì? So sánh với JavaScript</h3>
+<h4>Định nghĩa</h4>
+<p>TypeScript là một ngôn ngữ lập trình mã nguồn mở, được phát triển bởi Microsoft. Nó là một <strong>superset của JavaScript</strong>, nghĩa là mọi code JavaScript hợp lệ đều chạy được trong TypeScript. Tuy nhiên, TypeScript bổ sung <strong>kiểu tĩnh (static typing)</strong> và các tính năng như interfaces, enums, generics, giúp code dễ quản lý hơn, đặc biệt trong các dự án lớn.</p>
+<ul>
+<li><strong>Cách hoạt động</strong>: Code TypeScript (<code>.ts</code> hoặc <code>.tsx</code> cho React) được <strong>biên dịch (transpiled)</strong> thành JavaScript (<code>.js</code>) bằng trình biên dịch <code>tsc</code>. File JavaScript này có thể chạy trên trình duyệt hoặc Node.js.</li>
+<li><strong>Tích hợp dần dần</strong>: Bạn có thể thêm TypeScript vào dự án JavaScript hiện có mà không cần viết lại toàn bộ.</li>
+</ul>
+<h4>So sánh JavaScript và TypeScript</h4>
+<table>
+<thead>
+<tr>
+<th><strong>Tiêu chí</strong></th>
+<th><strong>JavaScript</strong></th>
+<th><strong>TypeScript</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Kiểu dữ liệu</strong></td>
+<td>Động (dynamically typed), kiểu được xác định tại runtime.</td>
+<td>Tĩnh tùy chọn (optional static typing), kiểm tra kiểu tại compile-time.</td>
+</tr>
+<tr>
+<td><strong>Kiểm tra lỗi</strong></td>
+<td>Lỗi kiểu chỉ phát hiện khi chạy (runtime).</td>
+<td>Phát hiện lỗi kiểu ngay khi biên dịch (compile-time).</td>
+</tr>
+<tr>
+<td><strong>Ưu điểm</strong></td>
+<td>Linh hoạt, dễ học, cộng đồng lớn.</td>
+<td>An toàn hơn, dễ bảo trì, hỗ trợ công cụ phát triển mạnh mẽ (autocompletion).</td>
+</tr>
+<tr>
+<td><strong>Nhược điểm</strong></td>
+<td>Dễ gặp lỗi kiểu trong dự án lớn (truyền sai kiểu, truy cập thuộc tính sai).</td>
+<td>Cần thời gian học thêm cú pháp kiểu và cấu hình.</td>
+</tr>
+</tbody></table>
+<p><strong>Ví dụ minh họa lỗi trong JavaScript</strong>:</p>
+<pre><code class="language-javascript">function greet(name) {
+    return &quot;Hello, &quot; + name.toUpperCase();
+}
+greet(123); // Runtime error: name.toUpperCase is not a function
+</code></pre>
+<p><strong>TypeScript phát hiện lỗi ngay khi biên dịch</strong>:</p>
+<pre><code class="language-typescript">function greet(name: string) {
+    return &quot;Hello, &quot; + name.toUpperCase();
+}
+greet(123); // Lỗi biên dịch: Argument of type &#39;number&#39; is not assignable to parameter of type &#39;string&#39;.
+greet(&quot;Alice&quot;); // OK
+</code></pre>
+<h3>2. Ưu điểm của TypeScript</h3>
+<ul>
+<li><strong>Kiểm tra kiểu tĩnh</strong>: Phát hiện lỗi trước khi chạy, như truyền sai kiểu dữ liệu.</li>
+<li><strong>Code dễ đọc, dễ bảo trì</strong>: Kiểu dữ liệu rõ ràng giúp đội nhóm hiểu code nhanh hơn.</li>
+<li><strong>Công cụ phát triển mạnh mẽ</strong>: Tích hợp tốt với VS Code, cung cấp:<ul>
+<li>Tự động hoàn thành (autocompletion).</li>
+<li>Gợi ý kiểu (type hinting).</li>
+<li>Báo lỗi trực tiếp khi viết code.</li>
+<li>Tái cấu trúc an toàn (refactoring).</li>
+</ul>
+</li>
+<li><strong>Hỗ trợ ECMAScript mới nhất</strong>: TypeScript luôn cập nhật các tính năng JavaScript mới.</li>
+<li><strong>Phù hợp dự án lớn</strong>: Giảm lỗi, dễ mở rộng trong các dự án phức tạp như ứng dụng React/Next.js.</li>
+</ul>
+<h3>3. Cài đặt TypeScript và cấu hình <code>tsconfig.json</code></h3>
+<h4>Yêu cầu</h4>
+<ul>
+<li>Cài đặt <strong>Node.js</strong> và <strong>npm</strong> (hoặc <strong>yarn</strong>).</li>
+<li>Trình soạn thảo hỗ trợ TypeScript (khuyến nghị: <strong>VS Code</strong>).</li>
+</ul>
+<h4>Cài đặt TypeScript</h4>
+<p>Chạy lệnh sau để cài TypeScript toàn cục:</p>
+<pre><code class="language-bash">npm install -g typescript
+tsc -v  // Kiểm tra phiên bản (ví dụ: 5.5.x tính đến 2025)
+</code></pre>
+<h4>Biên dịch file TypeScript đầu tiên</h4>
+<p>Tạo file <code>app.ts</code>:</p>
+<pre><code class="language-typescript">let message: string = &quot;Chào mừng bạn đến với TypeScript!&quot;;
+console.log(message);
+</code></pre>
+<p>Biên dịch: <code>tsc app.ts</code> (tạo ra <code>app.js</code>).<br>Chạy: <code>node app.js</code>.</p>
+<h4>Cấu hình <code>tsconfig.json</code></h4>
+<p>Tạo file cấu hình bằng lệnh: <code>tsc --init</code>. File <code>tsconfig.json</code> chứa các tùy chọn quan trọng trong <code>compilerOptions</code>:</p>
+<ul>
+<li><strong><code>target</code></strong>: Phiên bản JavaScript đầu ra (ví dụ: <code>&quot;ES2020&quot;</code> cho các trình duyệt hiện đại hoặc <code>&quot;ES5&quot;</code> cho tương thích ngược).</li>
+<li><strong><code>module</code></strong>: Hệ thống module (ví dụ: <code>&quot;ESNext&quot;</code> cho ES Modules, <code>&quot;CommonJS&quot;</code> cho Node.js).</li>
+<li><strong><code>outDir</code></strong>: Thư mục chứa file <code>.js</code> đầu ra (ví dụ: <code>&quot;./dist&quot;</code>).</li>
+<li><strong><code>rootDir</code></strong>: Thư mục chứa file <code>.ts</code> nguồn (ví dụ: <code>&quot;./src&quot;</code>).</li>
+<li><strong><code>strict</code></strong>: Bật tất cả kiểm tra kiểu nghiêm ngặt (khuyến khích <code>true</code>):<ul>
+<li><code>noImplicitAny</code>: Báo lỗi nếu biến không có kiểu rõ ràng.</li>
+<li><code>strictNullChecks</code>: Ép kiểm tra <code>null</code>/<code>undefined</code> chặt chẽ.</li>
+</ul>
+</li>
+<li><strong><code>esModuleInterop</code></strong>: Cải thiện tương thích giữa ES Modules và CommonJS.</li>
+<li><strong><code>sourceMap</code></strong>: Tạo file <code>.map</code> để debug dễ dàng.</li>
+</ul>
+<p><strong>Ví dụ <code>tsconfig.json</code> cơ bản</strong>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;ES2020&quot;,
+    &quot;module&quot;: &quot;ESNext&quot;,
+    &quot;outDir&quot;: &quot;./dist&quot;,
+    &quot;rootDir&quot;: &quot;./src&quot;,
+    &quot;strict&quot;: true,
+    &quot;esModuleInterop&quot;: true,
+    &quot;sourceMap&quot;: true
+  }
+}
+</code></pre>
+<p>Chạy <code>tsc</code> để biên dịch toàn bộ dự án hoặc <code>tsc -w</code> để theo dõi thay đổi tự động.</p>
+<h3>4. Các kiểu dữ liệu cơ bản (Primitive Types)</h3>
+<p>TypeScript cung cấp các kiểu cơ bản để định nghĩa giá trị của biến, tham số, hoặc giá trị trả về của hàm.</p>
+<h4><code>string</code></h4>
+<p>Chuỗi ký tự (bao gồm text, ký tự Unicode).</p>
+<pre><code class="language-typescript">let fullName: string = &quot;Nguyễn Văn A&quot;;
+</code></pre>
+<h4><code>number</code></h4>
+<p>Số (nguyên hoặc thực, không phân biệt <code>int</code>/<code>float</code>).</p>
+<pre><code class="language-typescript">let age: number = 30.5;
+</code></pre>
+<h4><code>boolean</code></h4>
+<p>Giá trị logic (<code>true</code> hoặc <code>false</code>).</p>
+<pre><code class="language-typescript">let isActive: boolean = true;
+</code></pre>
+<h4><code>null</code> và <code>undefined</code></h4>
+<ul>
+<li><code>null</code>: Biểu thị sự vắng mặt cố ý của giá trị.</li>
+<li><code>undefined</code>: Biến chưa được gán giá trị.</li>
+</ul>
+<p><strong>Lưu ý</strong>: Với <code>strictNullChecks</code>, bạn phải sử dụng <strong>union types</strong> để cho phép <code>null</code> hoặc <code>undefined</code>:</p>
+<pre><code class="language-typescript">let userAddress: string | null = null; // Union type: string hoặc null
+let lastLoginDate: Date | undefined;   // Date hoặc undefined
+</code></pre>
+<h4><code>any</code></h4>
+<p>Kiểu &quot;thoát hiểm&quot;, cho phép gán bất kỳ giá trị nào và vô hiệu hóa kiểm tra kiểu. <strong>Hạn chế sử dụng</strong> vì mất đi lợi ích của TypeScript.</p>
+<pre><code class="language-typescript">let anything: any = &quot;Chuỗi&quot;;
+anything = 100;
+anything.doSomething(); // Không lỗi biên dịch, nhưng có thể lỗi runtime
+</code></pre>
+<h4><code>unknown</code></h4>
+<p>An toàn hơn <code>any</code>. Nhận mọi giá trị, nhưng phải <strong>kiểm tra kiểu (type narrowing)</strong> trước khi sử dụng.</p>
+<pre><code class="language-typescript">let valueFromApi: unknown = &quot;Dữ liệu&quot;;
+if (typeof valueFromApi === &quot;string&quot;) {
+    console.log(valueFromApi.toUpperCase()); // OK
+} else {
+    console.log(&quot;Không phải chuỗi&quot;);
+}
+</code></pre>
+<h4><code>void</code></h4>
+<p>Dành cho hàm không trả về giá trị.</p>
+<pre><code class="language-typescript">function logMessage(message: string): void {
+    console.log(message);
+}
+</code></pre>
+<h4><code>never</code></h4>
+<p>Dành cho hàm không bao giờ hoàn thành bình thường (throw lỗi, vòng lặp vô tận).</p>
+<pre><code class="language-typescript">function throwError(message: string): never {
+    throw new Error(message);
+}
+</code></pre>
+<h3>5. Union Types và Type Narrowing</h3>
+<h4>Union Types</h4>
+<p>Cho phép một biến có thể thuộc nhiều kiểu khác nhau, sử dụng dấu <code>|</code>.</p>
+<pre><code class="language-typescript">let result: string | number;
+result = &quot;Success&quot;; // OK
+result = 200;       // OK
+// result = true;   // Lỗi
+</code></pre>
+<h4>Type Narrowing</h4>
+<p>Kiểm tra kiểu để thu hẹp phạm vi kiểu của biến, đảm bảo sử dụng an toàn.</p>
+<pre><code class="language-typescript">function processInput(input: string | number): void {
+    if (typeof input === &quot;string&quot;) {
+        console.log(`Chuỗi: ${input.toUpperCase()}`);
+    } else {
+        console.log(`Số: ${input * 2}`);
+    }
+}
+processInput(&quot;Hello&quot;); // Chuỗi: HELLO
+processInput(10);     // Số: 20
+</code></pre>
+<h3>6. Khai báo biến và suy luận kiểu</h3>
+<ul>
+<li><strong>Khai báo tường minh</strong>: Chỉ định kiểu rõ ràng.</li>
+</ul>
+<pre><code class="language-typescript">let studentName: string = &quot;Bùi Văn C&quot;;
+const studentAge: number = 22;
+</code></pre>
+<ul>
+<li><strong>Suy luận kiểu (Type Inference)</strong>: TypeScript tự động suy ra kiểu nếu gán giá trị ngay.</li>
+</ul>
+<pre><code class="language-typescript">let teacherName = &quot;Trần Thị D&quot;; // TypeScript suy luận là string
+// teacherName = 100; // Lỗi: Type &#39;number&#39; is not assignable to type &#39;string&#39;.
+</code></pre>
+<p><strong>Thực tiễn tốt nhất</strong>:</p>
+<ul>
+<li>Dùng <code>const</code> khi giá trị không thay đổi.</li>
+<li>Dùng <code>let</code> khi cần thay đổi giá trị.</li>
+<li>Tránh <code>var</code> vì phạm vi (scope) dễ gây lỗi.</li>
+<li>Khai báo kiểu tường minh cho tham số hàm và giá stricter trả về để code rõ ràng hơn.</li>
+</ul>
+<h3>7. Code ví dụ chính</h3>
+<p>Dưới đây là đoạn code tổng hợp, minh họa các khái niệm đã học, kèm chú thích chi tiết:</p>
+<pre><code class="language-typescript">// 1. Khai báo biến với kiểu cơ bản và type inference
+let frameworkName: string = &quot;TypeScript&quot;; // Kiểu tường minh
+let version = 5.5; // TypeScript suy luận là number
+let isLearning: boolean = true;
+let projectDescription: string | undefined; // Cho phép undefined
+
+console.log(`Chào mừng đến với ${frameworkName} phiên bản ${version}!`);
+console.log(`Bạn đang học? ${isLearning}`);
+
+// 2. Union type với null
+let authorName: string | null = &quot;Một tác giả&quot;;
+console.log(`Tác giả: ${authorName}`);
+authorName = null; // OK vì đã khai báo union type
+console.log(`Tác giả sau khi gán null: ${authorName}`);
+
+// 3. Kiểu any - Hạn chế sử dụng
+let flexibleVar: any = &quot;Có thể là bất cứ thứ gì&quot;;
+console.log(`flexibleVar (string): ${flexibleVar}`);
+flexibleVar = 2025;
+console.log(`flexibleVar (number): ${flexibleVar}`);
+flexibleVar = { topic: &quot;TypeScript Basics&quot; };
+console.log(`flexibleVar (object): ${flexibleVar.topic}`);
+
+// 4. Kiểu unknown - An toàn hơn any
+let userInput: unknown = &quot;Dữ liệu người dùng&quot;;
+if (typeof userInput === &quot;string&quot;) {
+    console.log(`Độ dài chuỗi userInput: ${userInput.length}`); // OK
+} else {
+    console.log(&quot;userInput không phải là chuỗi.&quot;);
+}
+userInput = 12345;
+if (typeof userInput === &quot;number&quot;) {
+    console.log(`userInput nhân 2: ${userInput * 2}`); // OK
+}
+
+// 5. Kiểu void
+function displayCurrentTime(): void {
+    const now = new Date();
+    console.log(`Thời gian hiện tại: ${now.toLocaleTimeString()}`);
+}
+displayCurrentTime();
+
+// 6. Kiểu never
+function criticalError(message: string): never {
+    console.error(&quot;Lỗi nghiêm trọng!&quot;);
+    throw new Error(message);
+}
+
+// 7. Phát hiện lỗi kiểu
+function calculateSum(a: number, b: number): number {
+    return a + b;
+}
+let num1: number = 10;
+let num2: number = 5;
+console.log(`Tổng ${num1} và ${num2} là: ${calculateSum(num1, num2)}`);
+// console.log(calculateSum(num1, &quot;5&quot;)); // Lỗi biên dịch
+</code></pre>
+<h3>8. Danh sách bài tập</h3>
+<h4>Bài tập 1: Trắc nghiệm - Mục đích chính của TypeScript</h4>
+<p><strong>Câu hỏi</strong>: Mục đích chính của TypeScript là gì?</p>
+<ul>
+<li>A. Viết code chạy nhanh hơn JavaScript.</li>
+<li>B. Thêm kiểu tĩnh vào JavaScript, giúp phát hiện lỗi sớm và cải thiện bảo trì code.</li>
+<li>C. Thay thế hoàn toàn JavaScript trong phát triển web.</li>
+<li>D. Giảm kích thước file JavaScript sau biên dịch.</li>
+</ul>
+<p><strong>Đáp án</strong>: B</p>
+<h4>Bài tập 2: Trắc nghiệm - Sự khác biệt giữa <code>any</code> và <code>unknown</code></h4>
+<p><strong>Câu hỏi</strong>: Phát biểu nào mô tả đúng nhất sự khác biệt giữa <code>any</code> và <code>unknown</code>?</p>
+<ul>
+<li>A. Cả <code>any</code> và <code>unknown</code> đều không cho phép thao tác nếu chưa kiểm tra kiểu.</li>
+<li>B. <code>any</code> cho phép mọi thao tác mà không cần kiểm tra kiểu, <code>unknown</code> yêu cầu kiểm tra kiểu trước.</li>
+<li>C. <code>unknown</code> là bí danh của <code>any</code>.</li>
+<li>D. <code>unknown</code> chỉ nhận <code>null</code> hoặc <code>undefined</code>.</li>
+</ul>
+<p><strong>Đáp án</strong>: B</p>
+<h4>Bài tập 3: Code - Khai báo thông tin sản phẩm</h4>
+<p><strong>Yêu cầu</strong>:</p>
+<ul>
+<li>Khai báo biến <code>productName: string</code> = &quot;Laptop XYZ&quot;.</li>
+<li>Khai báo biến <code>productPrice: number</code> = 25000000.</li>
+<li>Khai báo biến <code>isAvailable: boolean</code> = true.</li>
+<li>In các giá trị ra console.</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">let productName: string = &quot;Laptop XYZ&quot;;
+let productPrice: number = 25000000;
+let isAvailable: boolean = true;
+
+console.log(`Tên sản phẩm: ${productName}`);
+console.log(`Giá: ${productPrice}`);
+console.log(`Còn hàng: ${isAvailable}`);
+</code></pre>
+<h4>Bài tập 4: Code - Viết hàm chào hỏi</h4>
+<p><strong>Yêu cầu</strong>: Viết hàm <code>sayHello</code> nhận tham số <code>userName: string</code>, trả về <code>void</code>, in ra &quot;Xin chào, [userName]!&quot;.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function sayHello(userName: string): void {
+    console.log(`Xin chào, ${userName}!`);
+}
+sayHello(&quot;Mai&quot;);
+</code></pre>
+<h4>Bài tập 5: Code - Sửa lỗi kiểu</h4>
+<p><strong>Đoạn code gốc</strong>:</p>
+<pre><code class="language-typescript">function calculateTotalPrice(quantity, price) {
+    return quantity * price;
+}
+let itemCount = &quot;5&quot;;
+let itemPrice = 10000;
+let total = calculateTotalPrice(itemCount, itemPrice);
+console.log(&quot;Tổng tiền:&quot;, total);
+</code></pre>
+<p><strong>Giải pháp sửa lỗi</strong>:</p>
+<pre><code class="language-typescript">function calculateTotalPrice(quantity: number, price: number): number {
+    return quantity * price;
+}
+let itemCount: number = 5; // Sửa từ string thành number
+let itemPrice: number = 10000;
+let total: number = calculateTotalPrice(itemCount, itemPrice);
+console.log(&quot;Tổng tiền:&quot;, total);
+</code></pre>
+<h4>Bài tập 6: Code - Xử lý Union Types</h4>
+<p><strong>Yêu cầu</strong>: Viết hàm <code>displayValue</code> nhận tham số <code>value: string | number</code>. Nếu là <code>string</code>, in ra chuỗi in hoa. Nếu là <code>number</code>, in ra số nhân đôi.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function displayValue(value: string | number): void {
+    if (typeof value === &quot;string&quot;) {
+        console.log(`Chuỗi in hoa: ${value.toUpperCase()}`);
+    } else {
+        console.log(`Số nhân đôi: ${value * 2}`);
+    }
+}
+displayValue(&quot;Hello&quot;); // Chuỗi in hoa: HELLO
+displayValue(10);     // Số nhân đôi: 20
+</code></pre>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

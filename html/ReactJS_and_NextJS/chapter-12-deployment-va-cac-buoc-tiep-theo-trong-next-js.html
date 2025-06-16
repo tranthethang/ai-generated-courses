@@ -1,0 +1,491 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 12: Deployment và các bước tiếp theo trong Next.js</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu quy trình <strong>build</strong> và triển khai một ứng dụng Next.js cho môi trường <strong>production</strong>.</li>
+<li>Biết cách sử dụng và quản lý <strong>biến môi trường (Environment Variables)</strong> để lưu trữ thông tin cấu hình và bảo mật.</li>
+<li>Thành thạo việc <strong>triển khai (deploy)</strong> ứng dụng Next.js lên nền tảng <strong>Vercel</strong> với quy trình <strong>Continuous Deployment</strong>.</li>
+<li>Nắm được các hướng đi tiếp theo để phát triển kỹ năng trở thành một lập trình viên <strong>React/Next.js</strong> chuyên nghiệp.</li>
+<li>Hiểu các khái niệm nâng cao như <strong>testing</strong>, <strong>internationalization (i18n)</strong>, <strong>App Router</strong>, <strong>authentication</strong>, và <strong>UI component libraries</strong>.</li>
+</ul>
+<hr>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Build cho Production</h3>
+<p>Để chuẩn bị ứng dụng Next.js cho môi trường production, bạn cần chạy lệnh build để tạo ra phiên bản tối ưu hóa của ứng dụng.</p>
+<h4>Quy trình build:</h4>
+<ul>
+<li>Chạy lệnh:<pre><code class="language-bash">npm run build
+</code></pre>
+Hoặc:<pre><code class="language-bash">next build
+</code></pre>
+</li>
+<li>Next.js thực hiện các tối ưu hóa:<ul>
+<li><strong>Static Generation (SSG)</strong>: Chạy <code>getStaticProps</code> và <code>getStaticPaths</code> để tạo các trang tĩnh.</li>
+<li><strong>Server-Side Rendering (SSR)</strong>: Chuẩn bị các trang sử dụng <code>getServerSideProps</code>.</li>
+<li><strong>Minification</strong>: Nén code JavaScript và CSS để giảm kích thước.</li>
+<li><strong>Image Optimization</strong>: Tối ưu hóa hình ảnh sử dụng <code>next/image</code>.</li>
+<li><strong>Font Optimization</strong>: Tối ưu hóa font với <code>next/font</code>.</li>
+</ul>
+</li>
+<li>Kết quả được lưu trong thư mục <code>.next</code>. Đây là thư mục chứa toàn bộ tài nguyên cần thiết để chạy ứng dụng ở production.</li>
+</ul>
+<h4>Chạy ứng dụng production cục bộ:</h4>
+<ul>
+<li>Sau khi build, chạy:<pre><code class="language-bash">npm run start
+</code></pre>
+Hoặc:<pre><code class="language-bash">next start
+</code></pre>
+</li>
+<li>Truy cập <code>http://localhost:3000</code> để kiểm tra ứng dụng ở chế độ production.</li>
+</ul>
+<h4>Lưu ý:</h4>
+<ul>
+<li>Chế độ production không có <strong>hot-reload</strong> như chế độ development.</li>
+<li>Đảm bảo ứng dụng không có lỗi trước khi build (kiểm tra bằng <code>npm run dev</code>).</li>
+</ul>
+<hr>
+<h3>2. Biến môi trường (Environment Variables)</h3>
+<p><strong>Biến môi trường</strong> được sử dụng để lưu trữ các thông tin cấu hình như <strong>API keys</strong>, <strong>database credentials</strong>, hoặc các giá trị khác nhau giữa các môi trường (development, production).</p>
+<h4>Cách sử dụng trong Next.js:</h4>
+<ol>
+<li>Tạo file <code>.env.local</code> trong thư mục gốc của dự án:<pre><code class="language-env">DB_HOST=localhost
+DB_USER=myuser
+NEXT_PUBLIC_API_URL=https://api.example.com
+</code></pre>
+</li>
+<li><strong>Phân loại biến môi trường</strong>:<ul>
+<li><strong>Biến server-side</strong>: Các biến như <code>DB_HOST</code>, <code>DB_USER</code> chỉ có thể truy cập trong code chạy trên server (như <code>getStaticProps</code>, <code>getServerSideProps</code>, hoặc API Routes).</li>
+<li><strong>Biến client-side</strong>: Các biến bắt đầu bằng <code>NEXT_PUBLIC_</code> (ví dụ: <code>NEXT_PUBLIC_API_URL</code>) có thể truy cập trong code chạy trên client (như trong component).</li>
+</ul>
+</li>
+<li>Truy cập biến môi trường trong code:<pre><code class="language-javascript">// Server-side
+export async function getStaticProps() {
+  const dbHost = process.env.DB_HOST;
+  return { props: {} };
+}
+
+// Client-side
+export default function Home() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  return &lt;div&gt;API URL: {apiUrl}&lt;/div&gt;;
+}
+</code></pre>
+</li>
+</ol>
+<h4>Lưu ý:</h4>
+<ul>
+<li>File <code>.env.local</code> không nên commit lên Git (thêm vào <code>.gitignore</code>).</li>
+<li>Các biến <code>NEXT_PUBLIC_</code> sẽ được nhúng vào bundle JavaScript, nên tránh lưu thông tin nhạy cảm trong đó.</li>
+<li>Khi deploy lên Vercel, cần cấu hình lại biến môi trường trên giao diện Vercel.</li>
+</ul>
+<hr>
+<h3>3. Deployment với Vercel</h3>
+<p><strong>Vercel</strong> là nền tảng được tạo bởi đội ngũ phát triển Next.js, cung cấp trải nghiệm triển khai đơn giản, nhanh chóng và tối ưu cho các ứng dụng Next.js.</p>
+<h4>Quy trình triển khai:</h4>
+<ol>
+<li><strong>Đẩy code lên Git repository</strong>:<ul>
+<li>Tạo repository trên GitHub, GitLab, hoặc Bitbucket.</li>
+<li>Đẩy code dự án lên:<pre><code class="language-bash">git init
+git add .
+git commit -m &quot;Initial commit&quot;
+git remote add origin &lt;repository-url&gt;
+git push -u origin main
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Tạo tài khoản Vercel</strong>:<ul>
+<li>Đăng ký tại <a href="https://vercel.com">vercel.com</a> (có thể dùng tài khoản GitHub để đăng nhập).</li>
+</ul>
+</li>
+<li><strong>Tạo dự án mới trên Vercel</strong>:<ul>
+<li>Trên dashboard Vercel, nhấn “New Project”.</li>
+<li>Chọn repository Git của bạn.</li>
+<li>Vercel tự động phát hiện dự án là Next.js và cấu hình build settings.</li>
+<li>Nhấn “Deploy” để bắt đầu triển khai.</li>
+</ul>
+</li>
+<li><strong>Continuous Deployment</strong>:<ul>
+<li>Mỗi khi bạn đẩy code mới lên nhánh chính (main/master), Vercel sẽ tự động build và deploy lại.</li>
+<li>Vercel cung cấp URL cho ứng dụng (ví dụ: <code>https://my-app.vercel.app</code>).</li>
+</ul>
+</li>
+<li><strong>Cấu hình biến môi trường trên Vercel</strong>:<ul>
+<li>Vào phần Settings → Environment Variables của dự án.</li>
+<li>Thêm các biến như <code>NEXT_PUBLIC_API_URL</code>, <code>DB_HOST</code>.</li>
+<li>Redeploy để áp dụng thay đổi.</li>
+</ul>
+</li>
+</ol>
+<h4>Ưu điểm của Vercel:</h4>
+<ul>
+<li>Tích hợp chặt chẽ với Next.js, hỗ trợ SSG, SSR, và API Routes.</li>
+<li>Tự động tối ưu hóa hiệu năng (CDN, image optimization).</li>
+<li>Hỗ trợ preview deployments cho các pull requests.</li>
+<li>Miễn phí cho các dự án cá nhân và nhỏ.</li>
+</ul>
+<h4>Lưu ý:</h4>
+<ul>
+<li>Đảm bảo file <code>.env.local</code> không được đẩy lên Git.</li>
+<li>Kiểm tra log build trên Vercel để phát hiện lỗi triển khai.</li>
+</ul>
+<hr>
+<h3>4. Các bước tiếp theo để trở thành lập trình viên React/Next.js chuyên nghiệp</h3>
+<p>Sau khi nắm vững các kiến thức cơ bản, bạn cần học thêm các kỹ năng nâng cao để phát triển sự nghiệp:</p>
+<h4>a. Testing</h4>
+<ul>
+<li><strong>Unit Testing và Integration Testing</strong>:<ul>
+<li>Sử dụng <strong>Jest</strong> và <strong>React Testing Library</strong> để viết test cho component và logic.</li>
+<li>Ví dụ:<pre><code class="language-javascript">import { render, screen } from &#39;@testing-library/react&#39;;
+import MyComponent from &#39;./MyComponent&#39;;
+
+test(&#39;renders component&#39;, () =&gt; {
+  render(&lt;MyComponent /&gt;);
+  expect(screen.getByText(&#39;Hello&#39;)).toBeInTheDocument();
+});
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>End-to-End (E2E) Testing</strong>:<ul>
+<li>Sử dụng <strong>Cypress</strong> hoặc <strong>Playwright</strong> để kiểm tra luồng người dùng.</li>
+<li>Ví dụ (Cypress):<pre><code class="language-javascript">describe(&#39;Contact Form&#39;, () =&gt; {
+  it(&#39;submits form successfully&#39;, () =&gt; {
+    cy.visit(&#39;/contact&#39;);
+    cy.get(&#39;input[name=&quot;name&quot;]&#39;).type(&#39;John Doe&#39;);
+    cy.get(&#39;button[type=&quot;submit&quot;]&#39;).click();
+    cy.contains(&#39;Form submitted&#39;).should(&#39;be.visible&#39;);
+  });
+});
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h4>b. Internationalization (i18n)</h4>
+<ul>
+<li>Hỗ trợ đa ngôn ngữ với thư viện <strong>next-i18next</strong>.</li>
+<li>Cấu hình cơ bản:<pre><code class="language-javascript">// next.config.js
+module.exports = {
+  i18n: {
+    locales: [&#39;en&#39;, &#39;vi&#39;],
+    defaultLocale: &#39;en&#39;,
+  },
+};
+</code></pre>
+</li>
+<li>Sử dụng trong component:<pre><code class="language-javascript">import { useTranslation } from &#39;next-i18next&#39;;
+
+export default function Home() {
+  const { t } = useTranslation(&#39;common&#39;);
+  return &lt;h1&gt;{t(&#39;welcome&#39;)}&lt;/h1&gt;;
+}
+</code></pre>
+</li>
+</ul>
+<h4>c. App Router</h4>
+<ul>
+<li>Tìm hiểu <strong>App Router</strong> (thư mục <code>app</code>) trong Next.js, thay thế cho Pages Router.</li>
+<li>Hỗ trợ <strong>Server Components</strong>, <strong>Layouts</strong>, và <strong>Streaming</strong>.</li>
+<li>Ví dụ cấu trúc thư mục:<pre><code>app/
+  layout.js
+  page.js
+  [slug]/
+    page.js
+</code></pre>
+</li>
+<li>Ví dụ <code>layout.js</code>:<pre><code class="language-javascript">export default function RootLayout({ children }) {
+  return (
+    &lt;html lang=&quot;en&quot;&gt;
+      &lt;body&gt;
+        &lt;nav&gt;Navigation&lt;/nav&gt;
+        {children}
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}
+</code></pre>
+</li>
+</ul>
+<h4>d. Authentication</h4>
+<ul>
+<li>Tích hợp xác thực với <strong>NextAuth.js</strong> hoặc <strong>Clerk</strong>.</li>
+<li>Ví dụ với NextAuth.js:<pre><code class="language-javascript">// pages/api/auth/[...nextauth].js
+import NextAuth from &#39;next-auth&#39;;
+import GitHubProvider from &#39;next-auth/providers/github&#39;;
+
+export default NextAuth({
+  providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
+  ],
+});
+</code></pre>
+</li>
+</ul>
+<h4>e. UI Component Libraries</h4>
+<ul>
+<li>Làm việc với các thư viện như <strong>Material-UI</strong>, <strong>Chakra UI</strong>, hoặc <strong>Shadcn/ui</strong> để xây dựng giao diện nhanh chóng.</li>
+<li>Ví dụ với Material-UI:<pre><code class="language-javascript">import Button from &#39;@mui/material/Button&#39;;
+
+export default function Home() {
+  return &lt;Button variant=&quot;contained&quot;&gt;Click Me&lt;/Button&gt;;
+}
+</code></pre>
+</li>
+</ul>
+<hr>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Build và chạy ứng dụng ở chế độ production</h3>
+<ol>
+<li>Chạy lệnh build:<pre><code class="language-bash">npm run build
+</code></pre>
+</li>
+<li>Kiểm tra output trong thư mục <code>.next</code>.</li>
+<li>Chạy ứng dụng production cục bộ:<pre><code class="language-bash">npm run start
+</code></pre>
+</li>
+<li>Truy cập <code>http://localhost:3000</code> và kiểm tra ứng dụng.</li>
+</ol>
+<h3>Bài 2: Sử dụng biến môi trường</h3>
+<ol>
+<li>Tạo file <code>.env.local</code>:<pre><code class="language-env">NEXT_PUBLIC_APP_TITLE=&quot;My Awesome Blog&quot;
+</code></pre>
+</li>
+<li>Sử dụng biến trong component <code>components/Layout.js</code>:<pre><code class="language-javascript">export default function Layout({ children }) {
+  const title = process.env.NEXT_PUBLIC_APP_TITLE;
+  return (
+    &lt;div&gt;
+      &lt;header&gt;
+        &lt;h1&gt;{title}&lt;/h1&gt;
+      &lt;/header&gt;
+      &lt;main&gt;{children}&lt;/main&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Kiểm tra: Chạy <code>npm run dev</code> và xác nhận tiêu đề hiển thị đúng.</li>
+</ol>
+<h3>Bài 3: Đẩy code lên GitHub</h3>
+<ol>
+<li>Tạo repository mới trên GitHub.</li>
+<li>Đẩy code dự án:<pre><code class="language-bash">git init
+git add .
+git commit -m &quot;Initial commit&quot;
+git remote add origin &lt;repository-url&gt;
+git push -u origin main
+</code></pre>
+</li>
+<li>Đảm bảo file <code>.env.local</code> được thêm vào <code>.gitignore</code>.</li>
+</ol>
+<h3>Bài 4: Deploy lên Vercel</h3>
+<ol>
+<li>Đăng ký tài khoản Vercel tại <a href="https://vercel.com">vercel.com</a>.</li>
+<li>Tạo dự án mới:<ul>
+<li>Kết nối với repository GitHub vừa tạo.</li>
+<li>Nhấn “Deploy”.</li>
+</ul>
+</li>
+<li>Truy cập URL được cung cấp (ví dụ: <code>https://my-app.vercel.app</code>).</li>
+<li>Chia sẻ URL với giảng viên hoặc đồng nghiệp.</li>
+</ol>
+<h3>Bài 5: Cấu hình biến môi trường trên Vercel</h3>
+<ol>
+<li>Truy cập phần Settings → Environment Variables của dự án trên Vercel.</li>
+<li>Thêm biến:<pre><code>Name: NEXT_PUBLIC_APP_TITLE
+Value: My Production Blog
+</code></pre>
+</li>
+<li>Redeploy dự án:<ul>
+<li>Đẩy một commit mới lên GitHub (ví dụ: thay đổi nhỏ trong README).</li>
+<li>Hoặc nhấn “Redeploy” trên Vercel.</li>
+</ul>
+</li>
+<li>Kiểm tra URL ứng dụng và xác nhận tiêu đề đã thay đổi thành “My Production Blog”.</li>
+</ol>
+<hr>
+<h2>D. Bổ sung: Tối ưu hóa và giám sát sau triển khai</h2>
+<h3>1. Tối ưu hóa hiệu năng</h3>
+<ul>
+<li>Sử dụng <strong>Vercel Analytics</strong> để theo dõi hiệu năng ứng dụng:<ul>
+<li>Truy cập tab Analytics trên dashboard Vercel.</li>
+<li>Kiểm tra các chỉ số như <strong>First Contentful Paint (FCP)</strong>, <strong>Largest Contentful Paint (LCP)</strong>, và <strong>Cumulative Layout Shift (CLS)</strong>.</li>
+</ul>
+</li>
+<li>Tối ưu hóa thêm:<ul>
+<li>Sử dụng <code>next/image</code> với thuộc tính <code>priority</code> cho hình ảnh quan trọng.</li>
+<li>Lazy-load các component nặng bằng <code>next/dynamic</code>.</li>
+<li>Giảm kích thước font bằng cách chỉ tải các <code>subsets</code> cần thiết trong <code>next/font</code>.</li>
+</ul>
+</li>
+</ul>
+<h3>2. Giám sát lỗi</h3>
+<ul>
+<li>Tích hợp <strong>Sentry</strong> hoặc <strong>Vercel Log Drains</strong> để theo dõi lỗi runtime:<pre><code class="language-javascript">// pages/_app.js
+import * as Sentry from &#39;@sentry/nextjs&#39;;
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+});
+</code></pre>
+</li>
+<li>Kiểm tra log trên Vercel (tab Deployments → Logs) để phát hiện lỗi build hoặc runtime.</li>
+</ul>
+<h3>3. Tối ưu hóa SEO</h3>
+<ul>
+<li>Thêm <strong>meta tags</strong> và <strong>Open Graph</strong> để cải thiện SEO và chia sẻ trên mạng xã hội:<pre><code class="language-javascript">// pages/_document.js
+import Document, { Html, Head, Main, NextScript } from &#39;next/document&#39;;
+
+export default class MyDocument extends Document {
+  render() {
+    return (
+      &lt;Html lang=&quot;vi&quot;&gt;
+        &lt;Head&gt;
+          &lt;meta name=&quot;description&quot; content=&quot;My Awesome Blog&quot; /&gt;
+          &lt;meta property=&quot;og:title&quot; content={process.env.NEXT_PUBLIC_APP_TITLE} /&gt;
+        &lt;/Head&gt;
+        &lt;body&gt;
+          &lt;Main /&gt;
+          &lt;NextScript /&gt;
+        &lt;/body&gt;
+      &lt;/Html&gt;
+    );
+  }
+}
+</code></pre>
+</li>
+</ul>
+<hr>
+<h2>E. So sánh các nền tảng triển khai</h2>
+<table>
+<thead>
+<tr>
+<th>Nền tảng</th>
+<th>Ưu điểm</th>
+<th>Nhược điểm</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Vercel</strong></td>
+<td>Tích hợp chặt chẽ với Next.js, dễ sử dụng, hỗ trợ SSG/SSR, CDN mạnh mẽ</td>
+<td>Chi phí cao cho các dự án lớn, hạn chế tùy chỉnh server</td>
+</tr>
+<tr>
+<td><strong>Netlify</strong></td>
+<td>Hỗ trợ SSG tốt, dễ tích hợp với CMS, miễn phí cho dự án nhỏ</td>
+<td>Hỗ trợ SSR hạn chế, không tối ưu cho Next.js như Vercel</td>
+</tr>
+<tr>
+<td><strong>Heroku</strong></td>
+<td>Linh hoạt, hỗ trợ Node.js server, dễ mở rộng</td>
+<td>Build chậm, không tối ưu cho SSG, chi phí tăng khi sử dụng add-ons</td>
+</tr>
+<tr>
+<td><strong>AWS Amplify</strong></td>
+<td>Tích hợp tốt với AWS, phù hợp cho dự án lớn</td>
+<td>Phức tạp để cấu hình, không thân thiện với người mới</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>F. Tài liệu tham khảo</h2>
+<ul>
+<li><a href="https://nextjs.org/docs/deployment">Next.js Documentation - Deployment</a></li>
+<li><a href="https://vercel.com/docs">Vercel Documentation</a></li>
+<li><a href="https://nextjs.org/docs/basic-features/environment-variables">Next.js Environment Variables</a></li>
+<li><a href="https://jestjs.io/docs/getting-started">Jest Documentation</a></li>
+<li><a href="https://next-auth.js.org/">NextAuth.js Documentation</a></li>
+</ul>
+<hr>
+<h2>G. Bài tập nâng cao (tùy chọn)</h2>
+<ol>
+<li><strong>Tích hợp Sentry</strong>:<ul>
+<li>Cài đặt <code>@sentry/nextjs</code> và cấu hình để theo dõi lỗi.</li>
+<li>Tạo một lỗi giả (throw new Error) và kiểm tra lỗi trên dashboard Sentry.</li>
+</ul>
+</li>
+<li><strong>Tùy chỉnh domain</strong>:<ul>
+<li>Mua một domain và cấu hình trên Vercel để sử dụng domain tùy chỉnh (ví dụ: <code>myblog.com</code>).</li>
+</ul>
+</li>
+<li><strong>Tích hợp i18n</strong>:<ul>
+<li>Cấu hình <code>next-i18next</code> để hỗ trợ tiếng Anh và tiếng Việt.</li>
+<li>Tạo file dịch: <code>public/locales/en/common.json</code> và <code>public/locales/vi/common.json</code>.</li>
+</ul>
+</li>
+<li><strong>Viết test</strong>:<ul>
+<li>Viết unit test cho component <code>Layout</code> bằng Jest và React Testing Library.</li>
+<li>Viết E2E test cho trang <code>/contact</code> bằng Cypress.</li>
+</ul>
+</li>
+<li><strong>Tối ưu hóa SEO</strong>:<ul>
+<li>Thêm <code>next-seo</code> để quản lý meta tags động.</li>
+<li>Cấu hình sitemap và robots.txt trên Vercel.</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

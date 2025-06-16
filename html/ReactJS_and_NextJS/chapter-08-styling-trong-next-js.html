@@ -1,0 +1,495 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 08: Styling trong Next.js</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu và áp dụng được các phương pháp styling trong dự án Next.js.</li>
+<li>Sử dụng thành thạo <strong>CSS Modules</strong> để tạo style cục bộ cho component.</li>
+<li>Tích hợp và sử dụng <strong>SASS/SCSS</strong> để viết CSS nâng cao với các tính năng như variables, nesting, mixins.</li>
+<li>Cài đặt và sử dụng <strong>Tailwind CSS</strong>, một framework utility-first để phát triển giao diện nhanh chóng và nhất quán.</li>
+<li>So sánh ưu, nhược điểm của các phương pháp styling và lựa chọn phương pháp phù hợp cho từng tình huống.</li>
+</ul>
+<hr>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Global CSS</h3>
+<p><strong>Global CSS</strong> là cách áp dụng các style chung cho toàn bộ ứng dụng. Trong Next.js, các file CSS toàn cục chỉ được phép import trong file <code>pages/_app.js</code>. Điều này giúp đảm bảo rằng các style toàn cục được áp dụng một cách thống nhất và tránh xung đột.</p>
+<h4>Cách sử dụng:</h4>
+<ul>
+<li>Tạo file <code>styles/globals.css</code> (hoặc <code>.scss</code> nếu dùng SASS).</li>
+<li>Import file trong <code>pages/_app.js</code>:<pre><code class="language-javascript">import &#39;../styles/globals.css&#39;;
+</code></pre>
+</li>
+<li>Dùng Global CSS để:<ul>
+<li>Định nghĩa các <strong>CSS variables</strong> (ví dụ: <code>--primary-color</code>, <code>--background-color</code>).</li>
+<li>Áp dụng các <strong>style reset</strong> (như normalize.css).</li>
+<li>Thiết lập <strong>typography</strong> hoặc <strong>theme variables</strong> chung cho toàn ứng dụng.</li>
+</ul>
+</li>
+</ul>
+<h4>Lưu ý:</h4>
+<ul>
+<li>Lạm dụng Global CSS có thể dẫn đến <strong>xung đột class name</strong> hoặc khó bảo trì.</li>
+<li>Chỉ nên sử dụng cho các style áp dụng trên toàn ứng dụng (ví dụ: font mặc định, màu nền, margin/padding cơ bản).</li>
+</ul>
+<h4>Ví dụ:</h4>
+<pre><code class="language-css">/* styles/globals.css */
+:root {
+  --primary-color: #0070f3;
+  --background-color: #f4f4f4;
+}
+
+body {
+  background-color: var(--background-color);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+</code></pre>
+<hr>
+<h3>2. CSS Modules</h3>
+<p><strong>CSS Modules</strong> là giải pháp tích hợp sẵn trong Next.js để viết CSS cục bộ (component-scoped). Mỗi file CSS Modules sẽ chỉ áp dụng style cho component tương ứng, tránh xung đột với các component khác.</p>
+<h4>Cách sử dụng:</h4>
+<ul>
+<li>Tạo file CSS với định dạng <code>[ComponentName].module.css</code> (ví dụ: <code>Button.module.css</code>).</li>
+<li>Import file CSS vào component:<pre><code class="language-javascript">import styles from &#39;./Button.module.css&#39;;
+</code></pre>
+</li>
+<li>Sử dụng class trong JSX:<pre><code class="language-javascript">&lt;button className={styles.primaryButton}&gt;Click Me&lt;/button&gt;
+</code></pre>
+</li>
+<li>Next.js tự động tạo <strong>class name duy nhất</strong> (ví dụ: <code>Button_primaryButton__aB3d1</code>) để đảm bảo style không bị rò rỉ ra ngoài.</li>
+</ul>
+<h4>Ưu điểm:</h4>
+<ul>
+<li><strong>Tính đóng gói</strong>: Style chỉ áp dụng cho component cụ thể.</li>
+<li><strong>Tránh xung đột</strong>: Không lo trùng tên class với các component khác.</li>
+<li><strong>Dễ bảo trì</strong>: Mỗi component có file CSS riêng, dễ dàng quản lý.</li>
+</ul>
+<h4>Ví dụ:</h4>
+<pre><code class="language-css">/* Button.module.css */
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+</code></pre>
+<pre><code class="language-javascript">// Button.js
+import styles from &#39;./Button.module.css&#39;;
+
+export default function Button({ variant }) {
+  return (
+    &lt;button className={`${styles.button} ${variant === &#39;primary&#39; ? styles.primary : &#39;&#39;}`}&gt;
+      Click Me
+    &lt;/button&gt;
+  );
+}
+</code></pre>
+<hr>
+<h3>3. SASS/SCSS Pre-processor</h3>
+<p>Next.js hỗ trợ <strong>SASS/SCSS</strong> ngay từ đầu, cho phép sử dụng các tính năng mạnh mẽ như <strong>variables</strong>, <strong>nesting</strong>, <strong>mixins</strong>, và <strong>modules</strong>. Để sử dụng, bạn cần cài đặt package <code>sass</code>:</p>
+<pre><code class="language-bash">npm install sass
+</code></pre>
+<h4>Cách sử dụng:</h4>
+<ul>
+<li>Đổi tên file <code>.css</code> thành <code>.scss</code> (ví dụ: <code>globals.css</code> → <code>globals.scss</code>, <code>Button.module.css</code> → <code>Button.module.scss</code>).</li>
+<li>Sử dụng các tính năng của SASS như:<ul>
+<li><strong>Variables</strong>: <code>$primary-color: #0070f3;</code></li>
+<li><strong>Nesting</strong>: Gộp các style liên quan trong cùng một khối.</li>
+<li><strong>Mixins</strong>: Tái sử dụng các đoạn style.</li>
+</ul>
+</li>
+</ul>
+<h4>Ví dụ:</h4>
+<pre><code class="language-scss">/* Button.module.scss */
+$primary-color: #0070f3;
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &amp;.primary {
+    background-color: $primary-color;
+    color: white;
+
+    &amp;:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+</code></pre>
+<pre><code class="language-javascript">// Button.js
+import styles from &#39;./Button.module.scss&#39;;
+
+export default function Button({ variant }) {
+  return (
+    &lt;button className={`${styles.button} ${variant === &#39;primary&#39; ? styles.primary : &#39;&#39;}`}&gt;
+      Click Me
+    &lt;/button&gt;
+  );
+}
+</code></pre>
+<h4>Ưu điểm:</h4>
+<ul>
+<li>Viết CSS ngắn gọn, dễ đọc hơn với nesting và variables.</li>
+<li>Tái sử dụng code qua mixins và modules.</li>
+<li>Tích hợp tốt với cả Global CSS và CSS Modules.</li>
+</ul>
+<h4>Nhược điểm:</h4>
+<ul>
+<li>Cần cài đặt thêm <code>sass</code>.</li>
+<li>Có thể làm tăng thời gian build nếu dự án lớn.</li>
+</ul>
+<hr>
+<h3>4. Tailwind CSS (Utility-First Framework)</h3>
+<p><strong>Tailwind CSS</strong> là một framework CSS theo triết lý <strong>utility-first</strong>, cho phép bạn style giao diện trực tiếp trong JSX bằng cách sử dụng các class tiện ích có sẵn.</p>
+<h4>Triết lý:</h4>
+<ul>
+<li>Thay vì viết file CSS riêng, bạn áp dụng style thông qua các class như <code>p-6</code>, <code>bg-white</code>, <code>rounded-xl</code>.</li>
+<li>Ví dụ:<pre><code class="language-javascript">&lt;div className=&quot;p-6 max-w-sm mx-auto bg-white rounded-xl shadow-lg flex items-center space-x-4&quot;&gt;
+  &lt;div className=&quot;text-xl font-medium text-black&quot;&gt;Hello, Tailwind!&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+</li>
+</ul>
+<h4>Ưu điểm:</h4>
+<ul>
+<li><strong>Tốc độ phát triển nhanh</strong>: Không cần viết CSS từ đầu.</li>
+<li><strong>Tính nhất quán</strong>: Các class được định nghĩa sẵn, đảm bảo giao diện đồng bộ.</li>
+<li><strong>File CSS nhỏ</strong>: Tailwind chỉ giữ lại các class được sử dụng nhờ <strong>PurgeCSS</strong>.</li>
+<li><strong>Không cần đặt tên class</strong>: Loại bỏ vấn đề nghĩ tên class (BEM, SMACSS...).</li>
+</ul>
+<h4>Nhược điểm:</h4>
+<ul>
+<li>JSX có thể trở nên dài dòng nếu sử dụng nhiều class.</li>
+<li>Cần học cú pháp các class của Tailwind.</li>
+<li>Không phù hợp với các dự án cần style tùy chỉnh phức tạp.</li>
+</ul>
+<h4>Cài đặt Tailwind CSS trong Next.js:</h4>
+<ol>
+<li>Cài đặt các package:<pre><code class="language-bash">npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+</code></pre>
+</li>
+<li>Cấu hình file <code>tailwind.config.js</code>:<pre><code class="language-javascript">/** @type {import(&#39;tailwindcss&#39;).Config} */
+module.exports = {
+  content: [
+    &#39;./pages/**/*.{js,ts,jsx,tsx}&#39;,
+    &#39;./components/**/*.{js,ts,jsx,tsx}&#39;,
+  ],
+  theme |: {
+    extend: {},
+  },
+  plugins: [],
+};
+</code></pre>
+</li>
+<li>Thêm Tailwind vào <code>styles/globals.css</code>:<pre><code class="language-css">@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</code></pre>
+</li>
+<li>Khởi động dự án Next.js:<pre><code class="language-bash">npm run dev
+</code></pre>
+</li>
+</ol>
+<h4>Ví dụ sử dụng:</h4>
+<pre><code class="language-javascript">// UserProfileCard.js
+export default function UserProfileCard() {
+  return (
+    &lt;div className=&quot;max-w-sm mx-auto bg-white rounded-xl shadow-lg p-6&quot;&gt;
+      &lt;img
+        className=&quot;w-24 h-24 rounded-full mx-auto&quot;
+        src=&quot;/avatar.jpg&quot;
+        alt=&quot;Avatar&quot;
+      /&gt;
+      &lt;h2 className=&quot;text-xl font-bold text-center mt-4&quot;&gt;John Doe&lt;/h2&gt;
+      &lt;p className=&quot;text-gray-600 text-center&quot;&gt;
+        Frontend Developer with a passion for React and Next.js
+      &lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<hr>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Global CSS</h3>
+<ol>
+<li>Tạo file <code>styles/globals.css</code>.</li>
+<li>Định nghĩa các CSS variables:<pre><code class="language-css">:root {
+  --primary-color: #0070f3;
+  --background-color: #f4f4f4;
+  --text-color: #333;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: &#39;Inter&#39;, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+</code></pre>
+</li>
+<li>Import file <code>globals.css</code> vào <code>pages/_app.js</code>:<pre><code class="language-javascript">import &#39;../styles/globals.css&#39;;
+
+export default function MyApp({ Component, pageProps }) {
+  return &lt;Component {...pageProps} /&gt;;
+}
+</code></pre>
+</li>
+<li>Kiểm tra xem style có áp dụng cho toàn ứng dụng không.</li>
+</ol>
+<h3>Bài 2: CSS Modules</h3>
+<ol>
+<li>Tạo component <code>Button.js</code>:<pre><code class="language-javascript">import styles from &#39;./Button.module.css&#39;;
+
+export default function Button({ variant, children }) {
+  return (
+    &lt;button
+      className={`${styles.button} ${variant === &#39;primary&#39; ? styles.primary : &#39;&#39;}`}
+    &gt;
+      {children}
+    &lt;/button&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Tạo file <code>Button.module.css</code>:<pre><code class="language-css">.button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+</code></pre>
+</li>
+<li>Sử dụng component trong <code>pages/index.js</code>:<pre><code class="language-javascript">import Button from &#39;../components/Button&#39;;
+
+export default function Home() {
+  return (
+    &lt;div&gt;
+      &lt;Button variant=&quot;primary&quot;&gt;Primary Button&lt;/Button&gt;
+      &lt;Button&gt;Default Button&lt;/Button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+</ol>
+<h3>Bài 3: SASS</h3>
+<ol>
+<li>Cài đặt <code>sass</code>:<pre><code class="language-bash">npm install sass
+</code></pre>
+</li>
+<li>Đổi tên <code>styles/globals.css</code> thành <code>styles/globals.scss</code>:<pre><code class="language-scss">$primary-color: #0070f3;
+$background-color: #f4f4f4;
+$text-color: #333;
+
+:root {
+  --primary-color: #{$primary-color};
+  --background-color: #{$background-color};
+  --text-color: #{$text-color};
+}
+
+body {
+  background-color: $background-color;
+  color: $text-color;
+  font-family: &#39;Inter&#39;, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+</code></pre>
+</li>
+<li>Đổi tên <code>Button.module.css</code> thành <code>Button.module.scss</code>:<pre><code class="language-scss">$primary-color: #0070f3;
+
+.button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+
+  &amp;.primary {
+    background-color: $primary-color;
+    color: white;
+
+    &amp;:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+</code></pre>
+</li>
+<li>Cập nhật import trong <code>Button.js</code>:<pre><code class="language-javascript">import styles from &#39;./Button.module.scss&#39;;
+</code></pre>
+</li>
+</ol>
+<h3>Bài 4: Cài đặt Tailwind CSS</h3>
+<ol>
+<li>Cài đặt các package:<pre><code class="language-bash">npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+</code></pre>
+</li>
+<li>Cấu hình <code>tailwind.config.js</code> như đã hướng dẫn ở phần lý thuyết.</li>
+<li>Thêm Tailwind vào <code>styles/globals.css</code>:<pre><code class="language-css">@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</code></pre>
+</li>
+<li>Kiểm tra xem Tailwind có hoạt động bằng cách thêm class <code>text-blue-500</code> vào một thẻ <code>&lt;p&gt;</code> trong <code>pages/index.js</code>.</li>
+</ol>
+<h3>Bài 5: Sử dụng Tailwind CSS</h3>
+<ol>
+<li>Tạo component <code>UserProfileCard.js</code>:<pre><code class="language-javascript">export default function UserProfileCard() {
+  return (
+    &lt;div className=&quot;max-w-sm mx-auto bg-white rounded-xl shadow-lg p-6 flex flex-col items-center&quot;&gt;
+      &lt;img
+        className=&quot;w-24 h-24 rounded-full&quot;
+        src=&quot;/avatar.jpg&quot;
+        alt=&quot;Avatar&quot;
+      /&gt;
+      &lt;h2 className=&quot;text-xl font-bold mt-4&quot;&gt;John Doe&lt;/h2&gt;
+      &lt;p className=&quot;text-gray-600 text-center mt-2&quot;&gt;
+        Frontend Developer with a passion for React and Next.js
+      &lt;/p&gt;
+      &lt;button className=&quot;mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600&quot;&gt;
+        Follow
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Sử dụng component trong <code>pages/index.js</code>:<pre><code class="language-javascript">import UserProfileCard from &#39;../components/UserProfileCard&#39;;
+
+export default function Home() {
+  return (
+    &lt;div className=&quot;min-h-screen flex items-center justify-center&quot;&gt;
+      &lt;UserProfileCard /&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Kiểm tra giao diện và đảm bảo không cần viết CSS riêng.</li>
+</ol>
+<hr>
+<h2>D. Bổ sung: So sánh các phương pháp styling</h2>
+<table>
+<thead>
+<tr>
+<th>Phương pháp</th>
+<th>Ưu điểm</th>
+<th>Nhược điểm</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Global CSS</strong></td>
+<td>Dễ áp dụng cho toàn ứng dụng, phù hợp với style chung (typography, reset).</td>
+<td>Dễ gây xung đột class name, khó bảo trì nếu lạm dụng.</td>
+</tr>
+<tr>
+<td><strong>CSS Modules</strong></td>
+<td>Tính đóng gói cao, tránh xung đột, dễ quản lý.</td>
+<td>Cần tạo file CSS riêng cho mỗi component, có thể tăng số lượng file.</td>
+</tr>
+<tr>
+<td><strong>SASS/SCSS</strong></td>
+<td>Hỗ trợ variables, nesting, mixins, code dễ đọc và tái sử dụng.</td>
+<td>Cần cài đặt thêm <code>sass</code>, tăng thời gian build.</td>
+</tr>
+<tr>
+<td><strong>Tailwind CSS</strong></td>
+<td>Phát triển nhanh, nhất quán, file CSS nhỏ, không cần đặt tên class.</td>
+<td>JSX dài dòng, cần học cú pháp class, khó tùy chỉnh style phức tạp.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>E. Tài liệu tham khảo</h2>
+<ul>
+<li><a href="https://nextjs.org/docs/basic-features/built-in-css-support">Next.js Documentation - CSS Support</a></li>
+<li><a href="https://tailwindcss.com/docs">Tailwind CSS Documentation</a></li>
+<li><a href="https://sass-lang.com/documentation">SASS Official Website</a></li>
+</ul>
+<hr>
+<h2>F. Bài tập nâng cao (tùy chọn)</h2>
+<ol>
+<li><strong>Kết hợp Tailwind và CSS Modules</strong>: Tạo một component sử dụng cả Tailwind CSS (cho layout) và CSS Modules (cho style tùy chỉnh). Ví dụ: Dùng Tailwind cho padding, margin, flexbox; dùng CSS Modules cho hover effects hoặc animations.</li>
+<li><strong>Tùy chỉnh Tailwind</strong>: Thêm màu sắc tùy chỉnh vào <code>tailwind.config.js</code> (ví dụ: <code>primary: #0070f3</code>) và sử dụng trong component.</li>
+<li><strong>Responsive Design</strong>: Sử dụng Tailwind để tạo một layout responsive cho <code>UserProfileCard</code> (ví dụ: thay đổi kích thước avatar hoặc font dựa trên kích thước màn hình).</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

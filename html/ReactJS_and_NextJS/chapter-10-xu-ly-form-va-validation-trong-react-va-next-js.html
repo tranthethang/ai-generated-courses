@@ -1,0 +1,568 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 10: Xử lý Form và Validation trong React và Next.js</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu các phương pháp xử lý form trong React, bao gồm <strong>controlled</strong> và <strong>uncontrolled components</strong>.</li>
+<li>Sử dụng <strong>React Hook Form</strong> để xây dựng các form hiệu quả, giảm thiểu re-render và boilerplate code.</li>
+<li>Thực hiện <strong>validation phía client</strong> một cách dễ dàng và hiển thị thông báo lỗi thân thiện với người dùng.</li>
+<li>Xử lý trạng thái <strong>loading</strong> và <strong>lỗi</strong> khi submit form, bao gồm mô phỏng gọi API.</li>
+<li>Áp dụng các kỹ thuật tối ưu để cải thiện trải nghiệm người dùng (UX) và hiệu năng ứng dụng.</li>
+</ul>
+<hr>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Controlled Components</h3>
+<p><strong>Controlled Components</strong> là cách tiếp cận truyền thống trong React để xử lý form. Giá trị của các input được lưu trữ trong <strong>React state</strong> và được đồng bộ hóa thông qua các sự kiện như <code>onChange</code>.</p>
+<h4>Cách hoạt động:</h4>
+<ul>
+<li>Mỗi input được gắn với một state thông qua thuộc tính <code>value</code>.</li>
+<li>Mỗi lần người dùng nhập dữ liệu, hàm <code>setState</code> được gọi, dẫn đến component re-render.</li>
+<li>Ví dụ:<pre><code class="language-javascript">import { useState } from &#39;react&#39;;
+
+export default function ControlledForm() {
+  const [formData, setFormData] = useState({ name: &#39;&#39;, email: &#39;&#39; });
+
+  const handleChange = (e) =&gt; {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  return (
+    &lt;form&gt;
+      &lt;input
+        name=&quot;name&quot;
+        value={formData.name}
+        onChange={handleChange}
+      /&gt;
+      &lt;input
+        name=&quot;email&quot;
+        value={formData.email}
+        onChange={handleChange}
+      /&gt;
+    &lt;/form&gt;
+  );
+}
+</code></pre>
+</li>
+</ul>
+<h4>Ưu điểm:</h4>
+<ul>
+<li>Dữ liệu luôn đồng bộ với state, dễ kiểm soát và xử lý.</li>
+<li>Dễ dàng thực hiện validation hoặc logic phức tạp dựa trên state.</li>
+</ul>
+<h4>Nhược điểm:</h4>
+<ul>
+<li>Gây re-render liên tục mỗi khi người dùng nhập, đặc biệt với form lớn.</li>
+<li>Code dài dòng (boilerplate) do cần quản lý state và sự kiện cho từng input.</li>
+</ul>
+<hr>
+<h3>2. Giới thiệu React Hook Form</h3>
+<p><strong>React Hook Form</strong> là một thư viện mạnh mẽ để xử lý form trong React, với triết lý <strong>uncontrolled components</strong> để giảm thiểu số lần re-render và tối ưu hiệu năng.</p>
+<h4>Triết lý:</h4>
+<ul>
+<li>Sử dụng <strong>ref</strong> để theo dõi giá trị input thay vì state, giảm re-render.</li>
+<li>Chỉ re-render khi cần thiết (ví dụ: khi có lỗi validation hoặc submit).</li>
+<li>Cung cấp API đơn giản để xử lý form và validation.</li>
+</ul>
+<h4>Ưu điểm:</h4>
+<ul>
+<li><strong>Hiệu năng cao</strong>: Giảm số lần re-render, đặc biệt với các form lớn.</li>
+<li><strong>Code gọn gàng</strong>: Giảm boilerplate so với controlled components.</li>
+<li><strong>Validation dễ dàng</strong>: Tích hợp sẵn các quy tắc validation và thông báo lỗi.</li>
+<li><strong>Tích hợp tốt với Next.js</strong>: Hoạt động mượt mà trong môi trường SSR và CSR.</li>
+</ul>
+<h4>Các khái niệm cốt lõi:</h4>
+<ul>
+<li><strong><code>useForm</code></strong>: Hook chính để khởi tạo form. Trả về các hàm và object như <code>register</code>, <code>handleSubmit</code>, <code>formState</code>.<pre><code class="language-javascript">import { useForm } from &#39;react-hook-form&#39;;
+const { register, handleSubmit, formState: { errors } } = useForm();
+</code></pre>
+</li>
+<li><strong><code>register</code></strong>: Đăng ký input với form, cho phép theo dõi giá trị và validation.<pre><code class="language-javascript">&lt;input {...register(&#39;name&#39;, { required: &#39;Tên là bắt buộc&#39; })} /&gt;
+</code></pre>
+</li>
+<li><strong><code>handleSubmit</code></strong>: Hàm bao bọc để xử lý submit, tự động chạy validation trước.<pre><code class="language-javascript">const onSubmit = (data) =&gt; console.log(data);
+&lt;form onSubmit={handleSubmit(onSubmit)} /&gt;
+</code></pre>
+</li>
+<li><strong><code>formState.errors</code></strong>: Object chứa các lỗi validation, dùng để hiển thị thông báo.<pre><code class="language-javascript">{errors.name &amp;&amp; &lt;p className=&quot;error&quot;&gt;{errors.name.message}&lt;/p&gt;}
+</code></pre>
+</li>
+</ul>
+<h4>Validation:</h4>
+<ul>
+<li>Truyền các quy tắc validation trực tiếp vào <code>register</code>:<pre><code class="language-javascript">&lt;input
+  {...register(&#39;email&#39;, {
+    required: &#39;Email là bắt buộc&#39;,
+    pattern: {
+      value: /^\S+@\S+$/i,
+      message: &#39;Email không hợp lệ&#39;,
+    },
+  })}
+/&gt;
+</code></pre>
+</li>
+<li>Các quy tắc phổ biến: <code>required</code>, <code>minLength</code>, <code>maxLength</code>, <code>pattern</code>, <code>min</code>, <code>max</code>.</li>
+</ul>
+<hr>
+<h3>3. Xử lý trạng thái Loading và Lỗi</h3>
+<p>Khi submit form, cần xử lý các trạng thái như <strong>loading</strong> (đang gửi dữ liệu) và <strong>lỗi</strong> (nếu API thất bại). Điều này giúp cải thiện UX và tránh các lỗi như submit nhiều lần.</p>
+<h4>Cách thực hiện:</h4>
+<ul>
+<li>Sử dụng state để theo dõi <code>isSubmitting</code>.</li>
+<li>Vô hiệu hóa nút submit khi <code>isSubmitting</code> là <code>true</code>.</li>
+<li>Hiển thị thông báo hoặc hiệu ứng loading (ví dụ: “Đang gửi...”).</li>
+<li>Sử dụng <code>setTimeout</code> để mô phỏng gọi API trong quá trình học.</li>
+</ul>
+<h4>Ví dụ:</h4>
+<pre><code class="language-javascript">import { useState } from &#39;react&#39;;
+import { useForm } from &#39;react-hook-form&#39;;
+
+export default function Form() {
+  const { register, handleSubmit } = useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (data) =&gt; {
+    setIsSubmitting(true);
+    await new Promise((resolve) =&gt; setTimeout(resolve, 2000)); // Mô phỏng API
+    setIsSubmitting(false);
+    console.log(data);
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;input {...register(&#39;name&#39;)} /&gt;
+      &lt;button type=&quot;submit&quot; disabled={isSubmitting}&gt;
+        {isSubmitting ? &#39;Đang gửi...&#39; : &#39;Gửi&#39;}
+      &lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+</code></pre>
+<hr>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Cài đặt React Hook Form</h3>
+<ol>
+<li>Cài đặt thư viện:<pre><code class="language-bash">npm install react-hook-form
+</code></pre>
+</li>
+<li>Kiểm tra cài đặt bằng cách import <code>useForm</code> trong một component bất kỳ:<pre><code class="language-javascript">import { useForm } from &#39;react-hook-form&#39;;
+</code></pre>
+</li>
+</ol>
+<h3>Bài 2: Tạo form liên hệ trong <code>pages/contact.js</code></h3>
+<ol>
+<li>Tạo file <code>pages/contact.js</code>:<pre><code class="language-javascript">import { useForm } from &#39;react-hook-form&#39;;
+
+export default function Contact() {
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = (data) =&gt; {
+    console.log(data);
+  };
+
+  return (
+    &lt;div className=&quot;max-w-md mx-auto mt-10&quot;&gt;
+      &lt;h1 className=&quot;text-2xl font-bold mb-4&quot;&gt;Liên hệ&lt;/h1&gt;
+      &lt;form onSubmit={handleSubmit(onSubmit)} className=&quot;space-y-4&quot;&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;name&quot; className=&quot;block&quot;&gt;Họ tên&lt;/label&gt;
+          &lt;input
+            id=&quot;name&quot;
+            {...register(&#39;name&#39;)}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;email&quot; className=&quot;block&quot;&gt;Email&lt;/label&gt;
+          &lt;input
+            id=&quot;email&quot;
+            {...register(&#39;email&#39;)}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;message&quot; className=&quot;block&quot;&gt;Tin nhắn&lt;/label&gt;
+          &lt;textarea
+            id=&quot;message&quot;
+            {...register(&#39;message&#39;)}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+        &lt;/div&gt;
+        &lt;button
+          type=&quot;submit&quot;
+          className=&quot;bg-blue-500 text-white px-4 py-2 rounded&quot;
+        &gt;
+          Gửi
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Kiểm tra: Submit form và xem dữ liệu trong console.</li>
+</ol>
+<h3>Bài 3: Thêm validation cho form</h3>
+<ol>
+<li>Cập nhật <code>pages/contact.js</code> với các quy tắc validation:<pre><code class="language-javascript">import { useForm } from &#39;react-hook-form&#39;;
+
+export default function Contact() {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = (data) =&gt; {
+    console.log(data);
+  };
+
+  return (
+    &lt;div className=&quot;max-w-md mx-auto mt-10&quot;&gt;
+      &lt;h1 className=&quot;text-2xl font-bold mb-4&quot;&gt;Liên hệ&lt;/h1&gt;
+      &lt;form onSubmit={handleSubmit(onSubmit)} className=&quot;space-y-4&quot;&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;name&quot; className=&quot;block&quot;&gt;Họ tên&lt;/label&gt;
+          &lt;input
+            id=&quot;name&quot;
+            {...register(&#39;name&#39;, { required: &#39;Họ tên là bắt buộc&#39; })}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+          {errors.name &amp;&amp; &lt;p className=&quot;text-red-500&quot;&gt;{errors.name.message}&lt;/p&gt;}
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;email&quot; className=&quot;block&quot;&gt;Email&lt;/label&gt;
+          &lt;input
+            id=&quot;email&quot;
+            {...register(&#39;email&#39;, {
+              required: &#39;Email là bắt buộc&#39;,
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: &#39;Email không hợp lệ&#39;,
+              },
+            })}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+          {errors.email &amp;&amp; &lt;p className=&quot;text-red-500&quot;&gt;{errors.email.message}&lt;/p&gt;}
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;message&quot; className=&quot;block&quot;&gt;Tin nhắn&lt;/label&gt;
+          &lt;textarea
+            id=&quot;message&quot;
+            {...register(&#39;message&#39;, {
+              required: &#39;Tin nhắn là bắt buộc&#39;,
+              minLength: {
+                value: 10,
+                message: &#39;Tin nhắn phải có ít nhất 10 ký tự&#39;,
+              },
+            })}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+          {errors.message &amp;&amp; &lt;p className=&quot;text-red-500&quot;&gt;{errors.message.message}&lt;/p&gt;}
+        &lt;/div&gt;
+        &lt;button
+          type=&quot;submit&quot;
+          className=&quot;bg-blue-500 text-white px-4 py-2 rounded&quot;
+        &gt;
+          Gửi
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Kiểm tra: Thử submit form với dữ liệu không hợp lệ (ví dụ: để trống hoặc nhập email sai định dạng).</li>
+</ol>
+<h3>Bài 4: Style thông báo lỗi</h3>
+<ol>
+<li>Cập nhật style cho thông báo lỗi trong <code>pages/contact.js</code>:<pre><code class="language-css">/* styles/globals.css */
+.error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+</code></pre>
+</li>
+<li>Đảm bảo các thông báo lỗi hiển thị bên dưới mỗi input với màu đỏ.</li>
+</ol>
+<h3>Bài 5: Mô phỏng submit form lên API</h3>
+<ol>
+<li>Cập nhật <code>pages/contact.js</code> để thêm trạng thái <code>isSubmitting</code> và mô phỏng API:<pre><code class="language-javascript">import { useForm } from &#39;react-hook-form&#39;;
+import { useState } from &#39;react&#39;;
+
+export default function Contact() {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const onSubmit = async (data) =&gt; {
+    setIsSubmitting(true);
+    setSubmitSuccess(false);
+    await new Promise((resolve) =&gt; setTimeout(resolve, 2000)); // Mô phỏng API
+    setIsSubmitting(false);
+    setSubmitSuccess(true);
+    console.log(data);
+  };
+
+  return (
+    &lt;div className=&quot;max-w-md mx-auto mt-10&quot;&gt;
+      &lt;h1 className=&quot;text-2xl font-bold mb-4&quot;&gt;Liên hệ&lt;/h1&gt;
+      {submitSuccess &amp;&amp; (
+        &lt;p className=&quot;text-green-500 mb-4&quot;&gt;Form đã được gửi thành công!&lt;/p&gt;
+      )}
+      &lt;form onSubmit={handleSubmit(onSubmit)} className=&quot;space-y-4&quot;&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;name&quot; className=&quot;block&quot;&gt;Họ tên&lt;/label&gt;
+          &lt;input
+            id=&quot;name&quot;
+            {...register(&#39;name&#39;, { required: &#39;Họ tên là bắt buộc&#39; })}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+          {errors.name &amp;&amp; &lt;p className=&quot;text-red-500&quot;&gt;{errors.name.message}&lt;/p&gt;}
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;email&quot; className=&quot;block&quot;&gt;Email&lt;/label&gt;
+          &lt;input
+            id=&quot;email&quot;
+            {...register(&#39;email&#39;, {
+              required: &#39;Email là bắt buộc&#39;,
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: &#39;Email không hợp lệ&#39;,
+              },
+            })}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+          {errors.email &amp;&amp; &lt;p className=&quot;text-red-500&quot;&gt;{errors.email.message}&lt;/p&gt;}
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label htmlFor=&quot;message&quot; className=&quot;block&quot;&gt;Tin nhắn&lt;/label&gt;
+          &lt;textarea
+            id=&quot;message&quot;
+            {...register(&#39;message&#39;, {
+              required: &#39;Tin nhắn là bắt buộc&#39;,
+              minLength: {
+                value: 10,
+                message: &#39;Tin nhắn phải có ít nhất 10 ký tự&#39;,
+              },
+            })}
+            className=&quot;w-full p-2 border rounded&quot;
+          /&gt;
+          {errors.message &amp;&amp; &lt;p className=&quot;text-red-500&quot;&gt;{errors.message.message}&lt;/p&gt;}
+        &lt;/div&gt;
+        &lt;button
+          type=&quot;submit&quot;
+          disabled={isSubmitting}
+          className={`bg-blue-500 text-white px-4 py-2 rounded ${
+            isSubmitting ? &#39;opacity-50 cursor-not-allowed&#39; : &#39;hover:bg-blue-600&#39;
+          }`}
+        &gt;
+          {isSubmitting ? &#39;Đang gửi...&#39; : &#39;Gửi&#39;}
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Kiểm tra:<ul>
+<li>Nhấn submit và quan sát nút chuyển thành “Đang gửi...” và bị vô hiệu hóa.</li>
+<li>Sau 2 giây, kiểm tra thông báo thành công xuất hiện.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>D. Bổ sung: Tối ưu hóa UX cho Form</h2>
+<h3>1. Reset Form sau khi Submit</h3>
+<ul>
+<li>Sử dụng <code>reset</code> từ <code>useForm</code> để xóa dữ liệu form sau khi submit thành công:<pre><code class="language-javascript">const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+const onSubmit = async (data) =&gt; {
+  setIsSubmitting(true);
+  await new Promise((resolve) =&gt; setTimeout(resolve, 2000));
+  setIsSubmitting(false);
+  setSubmitSuccess(true);
+  reset(); // Xóa dữ liệu form
+};
+</code></pre>
+</li>
+</ul>
+<h3>2. Xử lý lỗi API</h3>
+<ul>
+<li>Mô phỏng lỗi API bằng cách thêm state <code>errorMessage</code>:<pre><code class="language-javascript">const [errorMessage, setErrorMessage] = useState(&#39;&#39;);
+
+const onSubmit = async (data) =&gt; {
+  setIsSubmitting(true);
+  setErrorMessage(&#39;&#39;);
+  try {
+    await new Promise((resolve, reject) =&gt; setTimeout(() =&gt; reject(new Error(&#39;Lỗi API&#39;)), 2000));
+  } catch (error) {
+    setErrorMessage(error.message);
+  }
+  setIsSubmitting(false);
+};
+
+// Hiển thị lỗi
+{errorMessage &amp;&amp; &lt;p className=&quot;text-red-500&quot;&gt;{errorMessage}&lt;/p&gt;}
+</code></pre>
+</li>
+</ul>
+<h3>3. Tăng trải nghiệm người dùng</h3>
+<ul>
+<li>Thêm hiệu ứng loading (spinner) thay vì chỉ hiển thị “Đang gửi...”:<pre><code class="language-css">.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</code></pre>
+<pre><code class="language-javascript">&lt;button
+  type=&quot;submit&quot;
+  disabled={isSubmitting}
+  className={`bg-blue-500 text-white px-4 py-2 rounded flex items-center ${
+    isSubmitting ? &#39;opacity-50 cursor-not-allowed&#39; : &#39;hover:bg-blue-600&#39;
+  }`}
+&gt;
+  {isSubmitting ? (
+    &lt;&gt;
+      &lt;span className=&quot;spinner mr-2&quot;&gt;&lt;/span&gt; Đang gửi...
+    &lt;/&gt;
+  ) : (
+    &#39;Gửi&#39;
+  )}
+&lt;/button&gt;
+</code></pre>
+</li>
+</ul>
+<hr>
+<h2>E. So sánh Controlled vs. Uncontrolled Components (React Hook Form)</h2>
+<table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>Controlled Components</th>
+<th>React Hook Form (Uncontrolled)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Hiệu năng</strong></td>
+<td>Re-render mỗi khi input thay đổi</td>
+<td>Ít re-render, sử dụng ref để theo dõi input</td>
+</tr>
+<tr>
+<td><strong>Code</strong></td>
+<td>Dài dòng, cần quản lý state và sự kiện</td>
+<td>Gọn gàng, ít boilerplate</td>
+</tr>
+<tr>
+<td><strong>Validation</strong></td>
+<td>Phải tự viết logic validation</td>
+<td>Tích hợp sẵn validation, dễ cấu hình</td>
+</tr>
+<tr>
+<td><strong>Tích hợp API</strong></td>
+<td>Phải tự xử lý loading và lỗi</td>
+<td>Dễ dàng tích hợp với API và xử lý trạng thái</td>
+</tr>
+<tr>
+<td><strong>Phù hợp</strong></td>
+<td>Form nhỏ, logic đơn giản</td>
+<td>Form lớn, cần hiệu năng cao và validation phức tạp</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>F. Tài liệu tham khảo</h2>
+<ul>
+<li><a href="https://react-hook-form.com/get-started">React Hook Form Documentation</a></li>
+<li><a href="https://nextjs.org/docs/guides/building-forms">Next.js Documentation - Forms</a></li>
+<li><a href="https://react.dev/reference/react-dom/components/form">React Documentation - Forms</a></li>
+</ul>
+<hr>
+<h2>G. Bài tập nâng cao (tùy chọn)</h2>
+<ol>
+<li><strong>Tích hợp thư viện validation</strong>: Sử dụng thư viện <code>yup</code> kết hợp với <code>react-hook-form</code> để validation form phức tạp hơn (ví dụ: password confirmation).<pre><code class="language-bash">npm install @hookform/resolvers yup
+</code></pre>
+<pre><code class="language-javascript">import { useForm } from &#39;react-hook-form&#39;;
+import { yupResolver } from &#39;@hookform/resolvers/yup&#39;;
+import * as yup from &#39;yup&#39;;
+
+const schema = yup.object().shape({
+  name: yup.string().required(&#39;Họ tên là bắt buộc&#39;),
+  email: yup.string().email(&#39;Email không hợp lệ&#39;).required(&#39;Email là bắt buộc&#39;),
+  message: yup.string().min(10, &#39;Tin nhắn phải có ít nhất 10 ký tự&#39;).required(&#39;Tin nhắn là bắt buộc&#39;),
+});
+
+const { register, handleSubmit, formState: { errors } } = useForm({
+  resolver: yupResolver(schema),
+});
+</code></pre>
+</li>
+<li><strong>Tùy chỉnh thông báo lỗi</strong>: Hiển thị thông báo lỗi dưới dạng tooltip thay vì văn bản bên dưới input.</li>
+<li><strong>Gọi API thực tế</strong>: Thay <code>setTimeout</code> bằng một API thực tế (ví dụ: <code>fetch</code> đến <code>jsonplaceholder.typicode.com</code>). Xử lý cả trường hợp thành công và thất bại.</li>
+<li><strong>Form multi-step</strong>: Tạo một form liên hệ nhiều bước (bước 1: thông tin cá nhân, bước 2: tin nhắn, bước 3: xác nhận) sử dụng React Hook Form.</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

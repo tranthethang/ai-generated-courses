@@ -1,0 +1,399 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 07: Data Fetching trong Next.js</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Nắm vững các hàm <strong>data fetching</strong> phía server của Next.js: <strong><code>getStaticProps</code></strong>, <strong><code>getServerSideProps</code></strong>, và <strong><code>getStaticPaths</code></strong>.</li>
+<li>Biết cách chọn phương pháp phù hợp giữa <strong>SSG</strong> và <strong>SSR</strong> dựa trên yêu cầu ứng dụng.</li>
+<li>Xây dựng các trang động với <strong>SSG</strong> sử dụng <strong><code>getStaticPaths</code></strong>.</li>
+<li>Hiểu và áp dụng <strong>Incremental Static Regeneration (ISR)</strong> để cập nhật nội dung tĩnh.</li>
+</ul>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Tổng quan về Data Fetching trong Next.js</h3>
+<p>Next.js mở rộng React bằng cách cung cấp các phương pháp <strong>fetch dữ liệu phía server</strong> hoặc tại thời điểm <strong>build</strong>. Điều này giúp:</p>
+<ul>
+<li>Cải thiện <strong>SEO</strong> bằng cách cung cấp HTML hoàn chỉnh cho bot tìm kiếm.</li>
+<li>Giảm thời gian tải ban đầu so với <strong>Client-Side Rendering (CSR)</strong>.</li>
+<li>Tăng tính linh hoạt khi kết hợp các phương pháp rendering trong cùng một dự án.</li>
+</ul>
+<p>Các hàm chính:</p>
+<ul>
+<li><strong><code>getStaticProps</code></strong>: Dùng cho <strong>Static Site Generation (SSG)</strong>.</li>
+<li><strong><code>getServerSideProps</code></strong>: Dùng cho <strong>Server-Side Rendering (SSR)</strong>.</li>
+<li><strong><code>getStaticPaths</code></strong>: Dùng cho các trang động trong SSG.</li>
+</ul>
+<h3>2. getStaticProps (Static Site Generation - SSG)</h3>
+<ul>
+<li><strong>Cách hoạt động</strong>: Hàm chạy tại thời điểm <strong>build</strong> trên server, fetch dữ liệu và render trang thành HTML tĩnh.</li>
+<li><strong>Cú pháp</strong>:<pre><code class="language-jsx">export async function getStaticProps(context) {
+  const data = await fetchData();
+  return {
+    props: { data }, // Truyền vào component qua props
+    revalidate: 60, // Optional: ISR sau 60 giây
+  };
+}
+</code></pre>
+</li>
+<li><strong>Context object</strong>: Chứa <code>params</code> (cho dynamic routes), <code>preview</code> (cho chế độ xem trước).</li>
+<li><strong>Giá trị trả về</strong>:<ul>
+<li><code>{ props: { ... } }</code>: Dữ liệu truyền vào component.</li>
+<li><code>{ notFound: true }</code>: Hiển thị trang 404.</li>
+<li><code>{ redirect: { destination: &#39;/new-url&#39;, permanent: false } }</code>: Chuyển hướng.</li>
+</ul>
+</li>
+<li><strong>Khi nào sử dụng</strong>: Dữ liệu tĩnh, không thay đổi sau mỗi request (blog, sản phẩm, tài liệu).</li>
+<li><strong>Ví dụ</strong>:<pre><code class="language-jsx">export async function getStaticProps() {
+  const res = await fetch(&#39;https://api.example.com/data&#39;);
+  const data = await res.json();
+  return { props: { data } };
+}
+
+function Page({ data }) {
+  return &lt;div&gt;{data.title}&lt;/div&gt;;
+}
+export default Page;
+</code></pre>
+</li>
+</ul>
+<h3>3. getServerSideProps (Server-Side Rendering - SSR)</h3>
+<ul>
+<li><strong>Cách hoạt động</strong>: Hàm chạy trên mỗi <strong>request</strong>, fetch dữ liệu mới nhất, render HTML và gửi về client.</li>
+<li><strong>Cú pháp</strong>:<pre><code class="language-jsx">export async function getServerSideProps(context) {
+  const { req, res, query, params } = context;
+  const data = await fetchData();
+  return { props: { data } };
+}
+</code></pre>
+</li>
+<li><strong>Context object</strong>: Bao gồm <code>req</code>, <code>res</code>, <code>query</code>, <code>params</code>,...</li>
+<li><strong>Giá trị trả về</strong>: Tương tự <code>getStaticProps</code>.</li>
+<li><strong>Khi nào sử dụng</strong>: Dữ liệu thay đổi liên tục, phụ thuộc vào người dùng (dashboard, giỏ hàng).</li>
+<li><strong>Ví dụ</strong>:<pre><code class="language-jsx">export async function getServerSideProps({ params }) {
+  const res = await fetch(`https://api.example.com/users/${params.id}`);
+  const user = await res.json();
+  return { props: { user } };
+}
+
+function Profile({ user }) {
+  return &lt;div&gt;{user.name}&lt;/div&gt;;
+}
+export default Profile;
+</code></pre>
+</li>
+</ul>
+<h3>4. getStaticPaths (Cho Dynamic SSG Pages)</h3>
+<ul>
+<li><strong>Vấn đề</strong>: Với trang động như <code>pages/posts/[id].js</code>, Next.js cần biết những giá trị <code>id</code> nào để render trước.</li>
+<li><strong>Cách hoạt động</strong>: Hàm chạy tại thời điểm <strong>build</strong>, tạo danh sách các đường dẫn cần render.</li>
+<li><strong>Cú pháp</strong>:<pre><code class="language-jsx">export async function getStaticPaths() {
+  const res = await fetch(&#39;https://api.example.com/posts&#39;);
+  const posts = await res.json();
+  const paths = posts.map(post =&gt; ({
+    params: { id: post.id.toString() },
+  }));
+  return { paths, fallback: false };
+}
+</code></pre>
+</li>
+<li><strong>Giá trị trả về</strong>:<ul>
+<li><code>paths</code>: Mảng các object <code>{ params: { key: value } }</code>.</li>
+<li><code>fallback</code>:<ul>
+<li><code>false</code>: 404 cho các path không được liệt kê.</li>
+<li><code>true</code>: Hiển thị trạng thái &quot;fallback&quot; và render động.</li>
+<li><code>&#39;blocking&#39;</code>: Chờ server render xong trước khi hiển thị.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Khi nào sử dụng</strong>: Kết hợp với <code>getStaticProps</code> cho trang động trong SSG.</li>
+<li><strong>Ví dụ</strong>:<pre><code class="language-jsx">export async function getStaticPaths() {
+  return {
+    paths: [{ params: { id: &#39;1&#39; } }, { params: { id: &#39;2&#39; } }],
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }) {
+  const res = await fetch(`https://api.example.com/posts/${params.id}`);
+  const post = await res.json();
+  return { props: { post } };
+}
+</code></pre>
+</li>
+</ul>
+<h3>5. Incremental Static Regeneration (ISR)</h3>
+<ul>
+<li><strong>Cách hoạt động</strong>: Kết hợp tốc độ của SSG với dữ liệu tươi mới. Trang được render tĩnh tại thời điểm build, nhưng Next.js tự động cập nhật sau một khoảng thời gian (<code>revalidate</code>).</li>
+<li><strong>Cú pháp</strong>:<pre><code class="language-jsx">export async function getStaticProps() {
+  const res = await fetch(&#39;https://api.example.com/data&#39;);
+  const data = await res.json();
+  return {
+    props: { data },
+    revalidate: 10, // Cập nhật sau 10 giây
+  };
+}
+</code></pre>
+</li>
+<li><strong>Lợi ích</strong>:<ul>
+<li>Phục vụ trang tĩnh nhanh chóng.</li>
+<li>Tự động cập nhật dữ liệu mà không cần build lại toàn bộ site.</li>
+</ul>
+</li>
+<li><strong>Khi nào sử dụng</strong>: Blog, danh sách sản phẩm, trang tin tức không cần dữ liệu thời gian thực.</li>
+</ul>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: SSG - Danh sách bài viết</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo trang <code>/posts</code> hiển thị danh sách tiêu đề bài viết từ API <code>https://jsonplaceholder.typicode.com/posts</code> bằng <code>getStaticProps</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>pages/posts/index.js</code>:<pre><code class="language-jsx">import Link from &#39;next/link&#39;;
+import Layout from &#39;../../components/Layout&#39;;
+
+function PostsPage({ posts }) {
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;Danh sách bài viết&lt;/h1&gt;
+      &lt;ul&gt;
+        {posts.map(post =&gt; (
+          &lt;li key={post.id}&gt;
+            &lt;Link href={`/posts/${post.id}`}&gt;{post.title}&lt;/Link&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/Layout&gt;
+  );
+}
+
+export async function getStaticProps() {
+  const res = await fetch(&#39;https://jsonplaceholder.typicode.com/posts&#39;);
+  const posts = await res.json();
+  return { props: { posts } };
+}
+
+export default PostsPage;
+</code></pre>
+</li>
+<li>Kiểm tra tại <code>http://localhost:3000/posts</code>.</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 2: Dynamic SSG - Chi tiết bài viết</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo trang chi tiết bài viết <code>/posts/[id]</code> với <code>getStaticPaths</code> và <code>getStaticProps</code>, đặt <code>fallback: false</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>pages/posts/[id].js</code>:<pre><code class="language-jsx">import Layout from &#39;../../components/Layout&#39;;
+
+function PostPage({ post }) {
+  if (!post) return &lt;p&gt;Bài viết không tồn tại&lt;/p&gt;;
+
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;{post.title}&lt;/h1&gt;
+      &lt;p&gt;{post.body}&lt;/p&gt;
+    &lt;/Layout&gt;
+  );
+}
+
+export async function getStaticPaths() {
+  const res = await fetch(&#39;https://jsonplaceholder.typicode.com/posts&#39;);
+  const posts = await res.json();
+  const paths = posts.map(post =&gt; ({
+    params: { id: post.id.toString() },
+  }));
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${params.id}`);
+  const post = await res.json();
+  return { props: { post } };
+}
+
+export default PostPage;
+</code></pre>
+</li>
+<li>Kiểm tra tại <code>http://localhost:3000/posts/1</code>.</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 3: SSR - Trang hồ sơ người dùng</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo trang <code>/profile</code> sử dụng <code>getServerSideProps</code> để fetch dữ liệu từ <code>https://randomuser.me/api/</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>pages/profile.js</code>:<pre><code class="language-jsx">import Layout from &#39;../components/Layout&#39;;
+
+function ProfilePage({ user }) {
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;Hồ sơ người dùng&lt;/h1&gt;
+      &lt;img src={user.picture.large} alt=&quot;Avatar&quot; /&gt;
+      &lt;p&gt;Họ tên: {user.name.first} {user.name.last}&lt;/p&gt;
+      &lt;p&gt;Email: {user.email}&lt;/p&gt;
+    &lt;/Layout&gt;
+  );
+}
+
+export async function getServerSideProps() {
+  const res = await fetch(&#39;https://randomuser.me/api/&#39;);
+  const data = await res.json();
+  const user = data.results[0];
+  return { props: { user } };
+}
+
+export default ProfilePage;
+</code></pre>
+</li>
+<li>Kiểm tra tại <code>http://localhost:3000/profile</code>. Tải lại trang để thấy dữ liệu mới.</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 4: Fallback với getStaticPaths</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Chỉ render trước 10 bài viết đầu tiên trong <code>getStaticPaths</code>, đặt <code>fallback: true</code>, hiển thị trạng thái &quot;Loading...&quot; khi truy cập bài viết ngoài danh sách.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Cập nhật <code>pages/posts/[id].js</code>:<pre><code class="language-jsx">import { useRouter } from &#39;next/router&#39;;
+import Layout from &#39;../../components/Layout&#39;;
+
+function PostPage({ post }) {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return &lt;div&gt;Loading...&lt;/div&gt;;
+  }
+
+  if (!post) return &lt;p&gt;Bài viết không tồn tại&lt;/p&gt;;
+
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;{post.title}&lt;/h1&gt;
+      &lt;p&gt;{post.body}&lt;/p&gt;
+    &lt;/Layout&gt;
+  );
+}
+
+export async function getStaticPaths() {
+  const res = await fetch(&#39;https://jsonplaceholder.typicode.com/posts&#39;);
+  const posts = await res.json();
+  const paths = posts.slice(0, 10).map(post =&gt; ({
+    params: { id: post.id.toString() },
+  }));
+  return { paths, fallback: true };
+}
+
+export async function getStaticProps({ params }) {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${params.id}`);
+  const post = await res.json();
+  return { props: { post } };
+}
+
+export default PostPage;
+</code></pre>
+</li>
+<li>Kiểm tra tại <code>http://localhost:3000/posts/11</code>. Trang sẽ hiển thị &quot;Loading...&quot; trước khi render nội dung.</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 5: ISR - Cập nhật danh sách bài viết</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Thêm <code>revalidate: 10</code> vào <code>getStaticProps</code> của trang <code>/posts</code>. Kiểm tra cập nhật dữ liệu sau 10 giây.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Cập nhật <code>pages/posts/index.js</code>:<pre><code class="language-jsx">import Link from &#39;next/link&#39;;
+import Layout from &#39;../../components/Layout&#39;;
+
+function PostsPage({ posts }) {
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;Danh sách bài viết&lt;/h1&gt;
+      &lt;ul&gt;
+        {posts.map(post =&gt; (
+          &lt;li key={post.id}&gt;
+            &lt;Link href={`/posts/${post.id}`}&gt;{post.title}&lt;/Link&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/Layout&gt;
+  );
+}
+
+export async function getStaticProps() {
+  const res = await fetch(&#39;https://jsonplaceholder.typicode.com/posts&#39;);
+  const posts = await res.json();
+  return {
+    props: { posts },
+    revalidate: 10, // Cập nhật sau 10 giây
+  };
+}
+
+export default PostsPage;
+</code></pre>
+</li>
+<li>Build và start dự án:<pre><code class="language-bash">npm run build
+npm run start
+</code></pre>
+</li>
+<li>Truy cập <code>http://localhost:3000/posts</code>. Dùng Postman để gửi POST request thêm bài viết mới vào API (nếu API hỗ trợ, hoặc mô phỏng bằng cách chỉnh sửa dữ liệu cục bộ). Tải lại trang sau 10 giây để thấy thay đổi.</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

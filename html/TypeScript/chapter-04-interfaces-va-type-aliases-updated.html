@@ -1,0 +1,590 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 4: Định Hình Dữ Liệu: Interfaces và Type Aliases</h4>
+<p><strong>Mô tả tổng quát</strong>
+Chapter này giới thiệu hai công cụ cốt lõi trong TypeScript để định nghĩa <strong>hình dạng</strong> (shape) của dữ liệu: <code>Interface</code> và <code>Type Alias</code>. Cả hai giúp bạn tạo ra các <strong>hợp đồng</strong> (contracts) để đảm bảo dữ liệu tuân theo cấu trúc cụ thể, áp dụng cho đối tượng, hàm, và cả class. Bạn sẽ học cách sử dụng chúng, so sánh sự khác biệt, và chọn công cụ phù hợp cho từng tình huống.</p>
+<p><strong>Mục tiêu học tập</strong>:</p>
+<ul>
+<li>Hiểu cách sử dụng <code>Interface</code> và <code>Type Alias</code> để định nghĩa kiểu dữ liệu.</li>
+<li>Nắm được sự khác biệt giữa <code>Interface</code> và <code>Type Alias</code>, bao gồm các trường hợp sử dụng cụ thể.</li>
+<li>Thực hành tạo và sử dụng <code>Interface</code>, <code>Type Alias</code> trong các ví dụ thực tế.</li>
+</ul>
+<hr>
+<h2>Tóm tắt lý thuyết chính</h2>
+<h3>1. Interfaces</h3>
+<p><code>Interface</code> là một cách mạnh mẽ để định nghĩa cấu trúc của đối tượng hoặc class. Nó giống như một bản thiết kế (blueprint), yêu cầu các thực thể tuân theo phải có đủ các thuộc tính/phương thức được khai báo.</p>
+<h4>Định nghĩa Interface cho đối tượng</h4>
+<pre><code class="language-typescript">interface User {
+    id: number;
+    username: string;
+    email: string;
+    isActive: boolean;
+}
+
+let user1: User = {
+    id: 1,
+    username: &quot;typescriptFan&quot;,
+    email: &quot;fan@example.com&quot;,
+    isActive: true
+};
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>interface User</code> định nghĩa một đối tượng phải có 4 thuộc tính: <code>id</code> (số), <code>username</code> (chuỗi), <code>email</code> (chuỗi), <code>isActive</code> (boolean).</li>
+<li>Nếu thiếu thuộc tính (như <code>email</code> hoặc <code>isActive</code>) hoặc sai kiểu dữ liệu, TypeScript sẽ báo lỗi ngay lập tức.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để kiểm tra dữ liệu người dùng từ API hoặc form nhập liệu trong ứng dụng web.</li>
+</ul>
+<h4>Thuộc tính tùy chọn (<code>?</code>)</h4>
+<pre><code class="language-typescript">interface Profile {
+    userId: number;
+    bio?: string; // Tùy chọn
+    websiteUrl?: string; // Tùy chọn
+}
+
+let profile1: Profile = { userId: 101 }; // OK
+let profile2: Profile = { userId: 102, bio: &quot;Loves coding!&quot;, websiteUrl: &quot;http://example.com&quot; }; // OK
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Dấu <code>?</code> chỉ định thuộc tính không bắt buộc. Điều này hữu ích khi dữ liệu có thể thiếu (ví dụ: người dùng chưa điền bio).</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng cho các form tùy chỉnh, nơi một số trường có thể để trống.</li>
+</ul>
+<h4>Thuộc tính chỉ đọc (<code>readonly</code>)</h4>
+<pre><code class="language-typescript">interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+
+let p1: Point = { x: 10, y: 20 };
+// p1.x = 5; // Lỗi: Cannot assign to &#39;x&#39; because it is a read-only property.
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>readonly</code> ngăn việc thay đổi giá trị thuộc tính sau khi khởi tạo.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để bảo vệ dữ liệu bất biến, như tọa độ của một điểm hoặc ID của đối tượng.</li>
+</ul>
+<h4>Index Signatures (Chữ ký chỉ mục)</h4>
+<pre><code class="language-typescript">interface StringValueDictionary {
+    [key: string]: string; // Key là chuỗi, giá trị là chuỗi
+}
+
+let myDict: StringValueDictionary = {
+    prop1: &quot;value1&quot;,
+    prop2: &quot;value2&quot;
+};
+// myDict.prop3 = 123; // Lỗi: Type &#39;number&#39; is not assignable to type &#39;string&#39;.
+
+interface MixedDictionary {
+    [index: string]: string | number; // Key là chuỗi, giá trị là chuỗi hoặc số
+    length: number; // Tương thích
+    name: string;  // Tương thích
+}
+
+let config: MixedDictionary = { length: 10, name: &quot;AppConfig&quot;, version: &quot;1.0&quot; };
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Chữ ký chỉ mục cho phép định nghĩa kiểu cho các thuộc tính động (không biết trước tên).</li>
+<li>Lưu ý: Các thuộc tính cụ thể (như <code>length</code>, <code>name</code>) phải có kiểu tương thích với chữ ký chỉ mục.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để mô tả các cấu trúc dữ liệu động, như cấu hình ứng dụng hoặc dữ liệu từ API không cố định.</li>
+</ul>
+<p><strong>Lưu ý tránh lỗi</strong>:</p>
+<ul>
+<li>Nếu chữ ký chỉ mục khai báo <code>[key: string]: string</code>, thì tất cả giá trị phải là chuỗi. Thêm <code>length: number</code> sẽ gây lỗi, trừ khi mở rộng chữ ký chỉ mục thành <code>[key: string]: string | number</code>.</li>
+</ul>
+<h4>Function Types trong Interfaces</h4>
+<pre><code class="language-typescript">interface SearchFunction {
+    (source: string, subString: string): boolean;
+}
+
+let mySearch: SearchFunction = (src, sub) =&gt; src.search(sub) &gt; -1;
+console.log(mySearch(&quot;hello world&quot;, &quot;world&quot;)); // true
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Interface có thể định nghĩa chữ ký hàm, chỉ định kiểu tham số và giá trị trả về.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để kiểm tra kiểu của các callback trong hàm xử lý sự kiện hoặc API.</li>
+</ul>
+<h4>Extending Interfaces (Kế thừa Interface)</h4>
+<pre><code class="language-typescript">interface Shape {
+    color: string;
+}
+
+interface Square extends Shape {
+    sideLength: number;
+}
+
+let mySquare: Square = { color: &quot;blue&quot;, sideLength: 10 };
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>extends</code> cho phép kế thừa từ interface khác, mở rộng cấu trúc dữ liệu.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để xây dựng hệ thống phân cấp kiểu, như mô tả các loại sản phẩm (sản phẩm cơ bản, sản phẩm cao cấp).</li>
+</ul>
+<h4>Class Implementing Interface</h4>
+<pre><code class="language-typescript">interface ClockInterface {
+    currentTime: Date;
+    setTime(d: Date): void;
+}
+
+class DigitalClock implements ClockInterface {
+    currentTime: Date = new Date();
+    setTime(d: Date) {
+        this.currentTime = d;
+    }
+    constructor(h: number, m: number) { /* ... */ }
+}
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Class phải triển khai tất cả thuộc tính/phương thức của interface.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để đảm bảo các class (như <code>DigitalClock</code>) tuân theo hợp đồng, ví dụ trong các ứng dụng quản lý thời gian.</li>
+</ul>
+<h3>2. Type Aliases</h3>
+<p><code>Type Alias</code> tạo tên mới cho một kiểu dữ liệu, áp dụng cho cả kiểu nguyên thủy, union types, intersection types, tuples, và các kiểu phức tạp.</p>
+<h4>Type Alias cho kiểu nguyên thủy</h4>
+<pre><code class="language-typescript">type MyString = string;
+let pageTitle: MyString = &quot;Homepage&quot;;
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Đơn giản nhưng hữu ích để tăng tính rõ ràng khi đặt tên kiểu.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để đặt tên ngữ nghĩa cho các kiểu đơn giản, như <code>UserId</code> thay vì <code>string | number</code>.</li>
+</ul>
+<h4>Type Alias cho Union Types</h4>
+<pre><code class="language-typescript">type StringOrNumber = string | number;
+let input: StringOrNumber = &quot;test&quot;;
+input = 123; // OK
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Union type cho phép giá trị thuộc một trong các kiểu được liệt kê.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để xử lý dữ liệu đa dạng, như input từ người dùng có thể là chuỗi hoặc số.</li>
+</ul>
+<h4>Type Alias cho kiểu đối tượng</h4>
+<pre><code class="language-typescript">type Point2D = {
+    x: number;
+    y: number;
+    label?: string;
+};
+
+let p2: Point2D = { x: 5, y: 15, label: &quot;Center&quot; };
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Tương tự <code>interface</code>, nhưng cú pháp ngắn gọn hơn.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để mô tả dữ liệu từ API hoặc cấu trúc dữ liệu trong React state.</li>
+</ul>
+<h4>Type Alias cho kiểu hàm</h4>
+<pre><code class="language-typescript">type GreetHandler = (name: string) =&gt; void;
+const greetUser: GreetHandler = (name) =&gt; console.log(`Hello, ${name}!`);
+greetUser(&quot;TypeScript User&quot;);
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Định nghĩa chữ ký hàm tương tự interface.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng trong các component React để định nghĩa kiểu cho props là hàm.</li>
+</ul>
+<h4>Type Alias với Generics</h4>
+<pre><code class="language-typescript">type Container&lt;T&gt; = { value: T };
+let numberContainer: Container&lt;number&gt; = { value: 100 };
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Generic cho phép định nghĩa kiểu linh hoạt, tái sử dụng.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng trong các thư viện hoặc hàm xử lý dữ liệu đa dạng, như Redux store.</li>
+</ul>
+<h3>3. Sự khác biệt giữa Interfaces và Type Aliases</h3>
+<table>
+<thead>
+<tr>
+<th><strong>Tiêu chí</strong></th>
+<th><strong>Interface</strong></th>
+<th><strong>Type Alias</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Declaration Merging</strong></td>
+<td>Hỗ trợ (có thể khai báo lại để hợp nhất)</td>
+<td>Không hỗ trợ (lỗi nếu khai báo lại)</td>
+</tr>
+<tr>
+<td><strong>Extending</strong></td>
+<td>Sử dụng <code>extends</code> (rõ ràng, trực quan)</td>
+<td>Sử dụng <code>&amp;</code> (intersection type, ít trực quan)</td>
+</tr>
+<tr>
+<td><strong>Class Implements</strong></td>
+<td>Hỗ trợ trực tiếp</td>
+<td>Chỉ hỗ trợ với union/intersection của class</td>
+</tr>
+<tr>
+<td><strong>Kiểu phức tạp</strong></td>
+<td>Hạn chế với union, intersection, mapped types</td>
+<td>Linh hoạt hơn, hỗ trợ mọi kiểu dữ liệu</td>
+</tr>
+</tbody></table>
+<p><strong>Khi nào dùng cái nào?</strong></p>
+<ul>
+<li><strong>Dùng <code>Interface</code></strong>:<ul>
+<li>Khi định nghĩa hình dạng đối tượng hoặc class.</li>
+<li>Khi cần declaration merging (ví dụ: mở rộng thư viện bên thứ ba).</li>
+<li>Khi làm việc với lập trình hướng đối tượng.</li>
+</ul>
+</li>
+<li><strong>Dùng <code>Type Alias</code></strong>:<ul>
+<li>Khi cần định nghĩa union types, intersection types, hoặc kiểu phức tạp (mapped types, conditional types).</li>
+<li>Khi đặt tên cho kiểu nguyên thủy hoặc tuples.</li>
+</ul>
+</li>
+<li><strong>Lưu ý</strong>: Trong nhiều trường hợp, cả hai đều hoạt động. Ưu tiên <code>interface</code> cho đối tượng vì tính phổ biến và dễ bảo trì.</li>
+</ul>
+<p><strong>Ví dụ minh họa</strong>:</p>
+<pre><code class="language-typescript">interface AnimalInterface {
+    name: string;
+    makeSound(): void;
+}
+
+type AnimalType = {
+    name: string;
+    makeSound(): void;
+};
+</code></pre>
+<h3>4. Code ví dụ tổng hợp</h3>
+<pre><code class="language-typescript">// ---- Interfaces ----
+interface Vehicle {
+    readonly id: string;
+    brand: string;
+    model: string;
+    year: number;
+    start(): void;
+    stop(): void;
+    getDetails(): string;
+    serviceDate?: Date;
+}
+
+interface ElectricVehicle extends Vehicle {
+    batteryLevel: number;
+    charge(): void;
+}
+
+class Car implements Vehicle {
+    readonly id: string;
+    brand: string;
+    model: string;
+    year: number;
+    serviceDate?: Date;
+
+    constructor(id: string, brand: string, model: string, year: number) {
+        this.id = id;
+        this.brand = brand;
+        this.model = model;
+        this.year = year;
+    }
+
+    start(): void {
+        console.log(`${this.brand} ${this.model} started.`);
+    }
+
+    stop(): void {
+        console.log(`${this.brand} ${this.model} stopped.`);
+    }
+
+    getDetails(): string {
+        return `ID: ${this.id}, Brand: ${this.brand}, Model: ${this.model}, Year: ${this.year}`;
+    }
+}
+
+let myCar = new Car(&quot;CAR-001&quot;, &quot;Toyota&quot;, &quot;Corolla&quot;, 2022);
+console.log(myCar.getDetails());
+myCar.start();
+
+let myTesla: ElectricVehicle = {
+    id: &quot;EV-002&quot;,
+    brand: &quot;Tesla&quot;,
+    model: &quot;Model S&quot;,
+    year: 2023,
+    batteryLevel: 85,
+    start: () =&gt; console.log(&quot;Tesla Model S started silently.&quot;),
+    stop: () =&gt; console.log(&quot;Tesla Model S stopped.&quot;),
+    getDetails: function() { return `EV: ${this.brand} ${this.model}, Battery: ${this.batteryLevel}%`; },
+    charge: () =&gt; console.log(&quot;Charging Tesla Model S...&quot;)
+};
+console.log(myTesla.getDetails());
+myTesla.charge();
+
+// ---- Type Aliases ----
+type UserID = string | number;
+type ProductStatus = &quot;Available&quot; | &quot;OutOfStock&quot; | &quot;Discontinued&quot;;
+
+type Product = {
+    sku: string;
+    name: string;
+    price: number;
+    status: ProductStatus;
+    tags?: string[];
+};
+
+let product1: Product = {
+    sku: &quot;SKU123&quot;,
+    name: &quot;Awesome Gadget&quot;,
+    price: 99.99,
+    status: &quot;Available&quot;,
+    tags: [&quot;tech&quot;, &quot;gadget&quot;]
+};
+
+function displayProduct(product: Product): void {
+    console.log(`Product: ${product.name} (SKU: ${product.sku})`);
+    console.log(`Price: $${product.price}, Status: ${product.status}`);
+    if (product.tags) {
+        console.log(`Tags: ${product.tags.join(&quot;, &quot;)}`);
+    }
+}
+
+displayProduct(product1);
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Mã trên minh họa cách sử dụng <code>interface</code> và <code>type alias</code> trong các tình huống thực tế, như mô tả xe cộ (<code>Vehicle</code>, <code>ElectricVehicle</code>) và sản phẩm (<code>Product</code>).</li>
+<li><strong>Ứng dụng thực tế</strong>: Có thể dùng trong ứng dụng quản lý kho hoặc giao diện hiển thị danh sách sản phẩm.</li>
+</ul>
+<hr>
+<h2>Danh sách bài tập</h2>
+<h3>1. Trắc nghiệm: Kiến thức về Interfaces</h3>
+<p><strong>Câu hỏi</strong>: Phát biểu nào sau đây là ĐÚNG về Interfaces trong TypeScript?</p>
+<ul>
+<li>A. Interface chỉ có thể được sử dụng để mô tả hình dạng của đối tượng, không dùng cho class.</li>
+<li>B. Interface có thể kế thừa từ nhiều interface khác.</li>
+<li>C. Interface không hỗ trợ thuộc tính tùy chọn (<code>?</code>).</li>
+<li>D. Interface không thể được hợp nhất (declaration merging).</li>
+</ul>
+<p><strong>Đáp án</strong>: B<br><strong>Giải thích</strong>:</p>
+<ul>
+<li>A sai vì interface có thể dùng cho class (<code>implements</code>).</li>
+<li>B đúng vì interface hỗ trợ kế thừa nhiều interface bằng <code>extends</code>.</li>
+<li>C sai vì interface hỗ trợ thuộc tính tùy chọn (<code>?</code>).</li>
+<li>D sai vì interface hỗ trợ declaration merging.</li>
+</ul>
+<h3>2. Code: Tạo interface <code>Product</code></h3>
+<p><strong>Mô tả</strong>: Tạo <code>interface Product</code> với các thuộc tính:</p>
+<ul>
+<li><code>id</code> (number, readonly)</li>
+<li><code>name</code> (string)</li>
+<li><code>price</code> (number)</li>
+<li><code>description</code> (string, tùy chọn)</li>
+<li><code>inStock</code> (boolean)</li>
+</ul>
+<p>Tạo đối tượng <code>sampleProduct</code> tuân theo interface này.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">interface Product {
+    readonly id: number;
+    name: string;
+    price: number;
+    description?: string;
+    inStock: boolean;
+}
+
+let sampleProduct: Product = {
+    id: 1,
+    name: &quot;Tai nghe Bluetooth XYZ&quot;,
+    price: 1200000,
+    description: &quot;Tai nghe chống ồn, pin trâu&quot;,
+    inStock: true
+};
+
+console.log(&quot;Sản phẩm mẫu:&quot;, sampleProduct);
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Interface đảm bảo đối tượng có đúng cấu trúc và kiểu dữ liệu.</li>
+<li>Thuộc tính <code>description</code> là tùy chọn, nên có thể bỏ qua.</li>
+</ul>
+<h3>3. Code: Tạo type alias <code>HttpCode</code></h3>
+<p><strong>Mô tả</strong>: Tạo <code>type alias HttpCode</code> cho kiểu <code>number</code>. Khai báo biến <code>responseStatus</code> và gán giá trị mã HTTP (200, 404, 500).</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">type HttpCode = number;
+
+let responseStatus: HttpCode = 200;
+console.log(&quot;Response Status:&quot;, responseStatus);
+
+responseStatus = 404; // OK
+console.log(&quot;New Response Status:&quot;, responseStatus);
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>HttpCode</code> là bí danh cho <code>number</code>, giúp mã rõ ràng hơn khi làm việc với mã trạng thái HTTP.</li>
+</ul>
+<h3>4. Code: Kế thừa interface</h3>
+<p><strong>Mô tả</strong>: Tạo <code>interface BookProduct</code> kế thừa từ <code>Product</code>, thêm:</p>
+<ul>
+<li><code>author</code> (string)</li>
+<li><code>pages</code> (number)</li>
+</ul>
+<p>Tạo đối tượng <code>programmingBook</code> tuân theo <code>BookProduct</code>.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">interface Product {
+    readonly id: number;
+    name: string;
+    price: number;
+    description?: string;
+    inStock: boolean;
+}
+
+interface BookProduct extends Product {
+    author: string;
+    pages: number;
+}
+
+let programmingBook: BookProduct = {
+    id: 10,
+    name: &quot;Effective TypeScript&quot;,
+    price: 750000,
+    inStock: true,
+    author: &quot;Dan Vanderkam&quot;,
+    pages: 322
+};
+
+console.log(&quot;Sách lập trình:&quot;, programmingBook);
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>BookProduct</code> kế thừa tất cả thuộc tính của <code>Product</code> và thêm <code>author</code>, <code>pages</code>.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để mô tả sản phẩm sách trong ứng dụng bán hàng.</li>
+</ul>
+<h3>5. Code: Type alias cho API Response</h3>
+<p><strong>Mô tả</strong>: Tạo <code>type alias ApiResponse&lt;TData&gt;</code> với:</p>
+<ul>
+<li><code>success</code> (boolean)</li>
+<li><code>data</code> (TData)</li>
+<li><code>message</code> (string, tùy chọn)</li>
+<li><code>errorCode</code> (number, tùy chọn)</li>
+</ul>
+<p>Tạo <code>successResponse</code> và <code>errorResponse</code>.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">type ApiResponse&lt;TData&gt; = {
+    success: boolean;
+    data: TData;
+    message?: string;
+    errorCode?: number;
+};
+
+type UserData = { userId: string; username: string };
+
+let successUserResponse: ApiResponse&lt;UserData&gt; = {
+    success: true,
+    data: { userId: &quot;user123&quot;, username: &quot;ts_pro&quot; },
+    message: &quot;User data fetched successfully.&quot;
+};
+
+let errorUserResponse: ApiResponse&lt;null&gt; = {
+    success: false,
+    data: null,
+    message: &quot;User not found.&quot;,
+    errorCode: 404
+};
+
+console.log(&quot;Success Response:&quot;, successUserResponse);
+console.log(&quot;Error Response:&quot;, errorUserResponse);
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Generic <code>TData</code> cho phép <code>data</code> có kiểu linh hoạt.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để mô tả phản hồi từ API trong ứng dụng web.</li>
+</ul>
+<hr>
+<h2>Bài tập bổ sung</h2>
+<h3>6. Code: Intersection Types với Type Alias</h3>
+<p><strong>Mô tả</strong>: Tạo hai <code>type alias</code>:</p>
+<ul>
+<li><code>BasicInfo</code>: <code>{ name: string; age: number }</code></li>
+<li><code>ContactInfo</code>: <code>{ email: string; phone?: string }</code></li>
+</ul>
+<p>Tạo <code>type alias Person</code> là intersection của <code>BasicInfo</code> và <code>ContactInfo</code>. Tạo đối tượng <code>person</code> tuân theo <code>Person</code>.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">type BasicInfo = {
+    name: string;
+    age: number;
+};
+
+type ContactInfo = {
+    email: string;
+    phone?: string;
+};
+
+type Person = BasicInfo &amp; ContactInfo;
+
+let person: Person = {
+    name: &quot;Nguyen Van A&quot;,
+    age: 25,
+    email: &quot;nva@example.com&quot;,
+    phone: &quot;0123456789&quot;
+};
+
+console.log(&quot;Person:&quot;, person);
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Intersection type (<code>&amp;</code>) kết hợp các thuộc tính của cả hai type alias.</li>
+<li><strong>Ứng dụng thực tế</strong>: Dùng để mô tả đối tượng có nhiều nhóm thông tin, như hồ sơ người dùng.</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

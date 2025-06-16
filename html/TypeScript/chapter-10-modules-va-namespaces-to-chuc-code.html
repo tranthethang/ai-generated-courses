@@ -1,0 +1,729 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 10: Modules và Namespaces - Tổ Chức Code Hiệu Quả</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Khi dự án TypeScript phát triển lớn hơn, việc tổ chức code thành các phần nhỏ, dễ quản lý và tái sử dụng là yếu tố sống còn. Trong chapter này, chúng ta sẽ khám phá hai cơ chế chính để tổ chức code trong TypeScript: <strong>Modules</strong> (theo chuẩn ES Modules) và <strong>Namespaces</strong>. Bạn sẽ học cách sử dụng <code>export</code> và <code>import</code> để chia sẻ code giữa các file, cũng như cách sử dụng Namespaces để nhóm code liên quan và tránh xung đột tên trong phạm vi toàn cục (global scope). Chúng ta cũng sẽ so sánh khi nào nên dùng Modules và khi nào nên dùng Namespaces.</p>
+<p><strong>Mục tiêu học tập</strong>:</p>
+<ul>
+<li>Hiểu được vấn đề của global scope pollution và tại sao cần tổ chức code.</li>
+<li>Thành thạo cú pháp <code>export</code> và <code>import</code> trong ES Modules.</li>
+<li>Biết cách sử dụng Namespaces để nhóm code logic.</li>
+<li>Phân biệt được khi nào nên sử dụng Modules hay Namespaces trong dự án thực tế.</li>
+</ul>
+<h2>Tiêu đề Chapter</h2>
+<p><strong>Tổ Chức Code Hiệu Quả với Modules và Namespaces</strong></p>
+<h2>Lý thuyết chính</h2>
+<h3>1. Tại sao cần tổ chức code? Vấn đề của Global Scope Pollution</h3>
+<p>Trong JavaScript truyền thống (trước ES6), các biến, hàm, hoặc class thường được khai báo ở <strong>global scope</strong> (phạm vi toàn cục). Điều này dẫn đến các vấn đề nghiêm trọng:</p>
+<ul>
+<li><p><strong>Xung đột tên (Naming Collisions)</strong>: Nếu hai phần code (hoặc hai thư viện) định nghĩa biến hoặc hàm cùng tên trong global scope, chúng sẽ ghi đè lên nhau, gây lỗi khó lường. Ví dụ:</p>
+<pre><code class="language-typescript">// File 1
+var counter = 1;
+
+// File 2
+var counter = &quot;Hello&quot;; // Ghi đè lên counter của File 1
+</code></pre>
+</li>
+<li><p><strong>Khó quản lý dependency</strong>: Không có cách rõ ràng để biết một đoạn code phụ thuộc vào đoạn code nào khác.</p>
+</li>
+<li><p><strong>Khó bảo trì và mở rộng</strong>: Khi tất cả code nằm trong một file hoặc global scope, việc tìm kiếm, chỉnh sửa, hoặc mở rộng code trở nên phức tạp.</p>
+</li>
+</ul>
+<p><strong>Modules</strong> và <strong>Namespaces</strong> giúp giải quyết các vấn đề này bằng cách:</p>
+<ul>
+<li>Tạo ra các <strong>phạm vi riêng biệt</strong> (isolated scopes) cho code.</li>
+<li>Cho phép chia nhỏ code thành các đơn vị độc lập, dễ quản lý và tái sử dụng.</li>
+</ul>
+<h3>2. Modules trong TypeScript (Chuẩn ES Modules)</h3>
+<p>TypeScript hỗ trợ đầy đủ <strong>ES Modules</strong> (chuẩn modules của JavaScript từ ES6 trở đi). Một file <code>.ts</code> được coi là một module nếu nó chứa ít nhất một câu lệnh <code>import</code> hoặc <code>export</code> ở cấp độ cao nhất. Các biến, hàm, class, hoặc interface trong module chỉ có phạm vi cục bộ trong file đó, trừ khi được <code>export</code> tường minh.</p>
+<h4>2.1. <code>export</code> (Xuất dữ liệu từ Module)</h4>
+<p>Có ba cách chính để export dữ liệu từ một module:</p>
+<ul>
+<li><p><strong>Named Export (Xuất theo tên)</strong>: Cho phép export nhiều thành phần từ một file. Các thành phần này phải được import chính xác bằng tên.</p>
+<pre><code class="language-typescript">// File: mathUtils.ts
+export const PI = 3.14159;
+
+export function add(a: number, b: number): number {
+    return a + b;
+}
+
+export class Calculator {
+    multiply(a: number, b: number) {
+        return a * b;
+    }
+}
+</code></pre>
+<p>Bạn cũng có thể export danh sách ở cuối file:</p>
+<pre><code class="language-typescript">// File: stringUtils.ts
+function toUpperCase(str: string): string {
+    return str.toUpperCase();
+}
+function toLowerCase(str: string): string {
+    return str.toLowerCase();
+}
+export { toUpperCase, toLowerCase };
+</code></pre>
+</li>
+<li><p><strong>Default Export (Xuất mặc định)</strong>: Mỗi module chỉ có thể có <strong>một</strong> default export. Đây thường là thành phần chính của module, và khi import, bạn có thể đặt tên tùy ý.</p>
+<pre><code class="language-typescript">// File: logger.ts
+export default class Logger {
+    log(message: string) {
+        console.log(message);
+    }
+}
+</code></pre>
+</li>
+<li><p><strong>Re-exporting (Xuất lại)</strong>: Cho phép import từ một module khác và export lại, hoặc export trực tiếp từ module khác.</p>
+<pre><code class="language-typescript">// File: mainExporter.ts
+export { add as sumNumbers } from &#39;./mathUtils&#39;; // Đổi tên add thành sumNumbers
+export * from &#39;./stringUtils&#39;; // Export tất cả named exports từ stringUtils
+export { default as MyLogger } from &#39;./logger&#39;; // Export default Logger với tên mới
+</code></pre>
+</li>
+</ul>
+<h4>2.2. <code>import</code> (Nhập dữ liệu vào Module)</h4>
+<p>Tương ứng với các kiểu export, TypeScript hỗ trợ các cách import sau:</p>
+<ul>
+<li><p><strong>Named Import (Nhập theo tên)</strong>: Import các thành phần được named export.</p>
+<pre><code class="language-typescript">// File: app.ts
+import { PI, add, Calculator } from &#39;./mathUtils&#39;;
+import { toUpperCase } from &#39;./stringUtils&#39;;
+
+console.log(PI); // 3.14159
+const calc = new Calculator();
+console.log(calc.multiply(2, 3)); // 6
+</code></pre>
+</li>
+<li><p><strong>Default Import (Nhập mặc định)</strong>: Import default export với tên tùy ý.</p>
+<pre><code class="language-typescript">// File: app.ts
+import MyCustomLogger from &#39;./logger&#39;;
+const logger = new MyCustomLogger();
+logger.log(&quot;App started&quot;);
+</code></pre>
+</li>
+<li><p><strong>Namespace Import (Nhập tất cả dưới dạng namespace)</strong>: Import tất cả named exports vào một đối tượng duy nhất.</p>
+<pre><code class="language-typescript">// File: app.ts
+import * as MathHelpers from &#39;./mathUtils&#39;;
+console.log(MathHelpers.PI); // 3.14159
+console.log(MathHelpers.add(1, 2)); // 3
+</code></pre>
+</li>
+<li><p><strong>Import for side effects only (Nhập chỉ để chạy code)</strong>: Dùng để chạy code trong module (ví dụ: thiết lập polyfills).</p>
+<pre><code class="language-typescript">import &#39;./polyfills&#39;; // Chạy code trong polyfills.ts mà không import gì cụ thể
+</code></pre>
+</li>
+</ul>
+<h4>2.3. Dynamic Import (Nhập động)</h4>
+<p>TypeScript hỗ trợ <strong>dynamic import</strong> để tải module theo cách bất đồng bộ, rất hữu ích cho <strong>code splitting</strong> và <strong>lazy loading</strong> trong các ứng dụng lớn.</p>
+<pre><code class="language-typescript">// File: app.ts
+async function loadMathUtils() {
+    const { add, PI } = await import(&#39;./mathUtils&#39;);
+    console.log(`PI: ${PI}, Sum: ${add(5, 10)}`);
+}
+loadMathUtils();
+</code></pre>
+<p><strong>Khi nào dùng dynamic import?</strong> Khi bạn muốn tải một module chỉ khi cần thiết, giúp giảm thời gian tải ban đầu của ứng dụng.</p>
+<h4>2.4. Module Resolution Strategies (Chiến lược phân giải Module)</h4>
+<p>TypeScript cần biết cách tìm file module khi bạn sử dụng <code>import</code>. Các chiến lược phân giải module bao gồm:</p>
+<ul>
+<li><strong><code>node</code></strong>: Mô phỏng cách Node.js tìm module, tìm trong thư mục hiện tại và <code>node_modules</code>. Đây là chiến lược mặc định cho <code>module: commonjs</code>, <code>es2015</code>, hoặc cao hơn.</li>
+<li><strong><code>node16</code></strong>: Tương tự <code>node</code> nhưng tuân thủ chuẩn module của Node.js từ phiên bản 16, hỗ trợ tốt cho ESM trong Node.js.</li>
+<li><strong><code>bundler</code></strong>: Dành cho các công cụ như Webpack, Vite, hoặc Rollup, nơi module được đóng gói bởi bundler.</li>
+<li><strong><code>classic</code></strong>: Chiến lược cũ, ít dùng, tìm module trong thư mục hiện tại và các thư mục cha.</li>
+</ul>
+<p>Cấu hình trong <code>tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;module&quot;: &quot;esnext&quot;,
+    &quot;moduleResolution&quot;: &quot;bundler&quot; // Hoặc &quot;node&quot;, &quot;node16&quot;
+  }
+}
+</code></pre>
+<p><strong>Lưu ý</strong>: <code>moduleResolution</code> nên được đặt thành <code>bundler</code> hoặc <code>node16</code> cho các dự án hiện đại sử dụng ESM. Nếu làm việc với Node.js, hãy kiểm tra phiên bản Node.js để chọn <code>node</code> hoặc <code>node16</code>.</p>
+<h4>2.5. Cấu hình <code>tsconfig.json</code> cho Modules</h4>
+<p>Một số tùy chọn quan trọng trong <code>tsconfig.json</code> khi làm việc với Modules:</p>
+<ul>
+<li><strong><code>module</code></strong>: Xác định hệ thống module (<code>commonjs</code>, <code>esnext</code>, <code>es2015</code>, <code>amd</code>, <code>system</code>, v.v.).</li>
+<li><strong><code>baseUrl</code></strong>: Đường dẫn cơ sở để phân giải các module không tương đối (non-relative imports).</li>
+<li><strong><code>paths</code></strong>: Ánh xạ các alias cho đường dẫn module (rất hữu ích trong dự án lớn).</li>
+</ul>
+<p>Ví dụ:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;module&quot;: &quot;esnext&quot;,
+    &quot;moduleResolution&quot;: &quot;bundler&quot;,
+    &quot;baseUrl&quot;: &quot;src&quot;,
+    &quot;paths&quot;: {
+      &quot;@utils/*&quot;: [&quot;utils/*&quot;],
+      &quot;@services/*&quot;: [&quot;services/*&quot;]
+    }
+  }
+}
+</code></pre>
+<p>Với cấu hình trên, bạn có thể viết:</p>
+<pre><code class="language-typescript">import { formatDate } from &#39;@utils/formatter&#39;; // Thay vì &#39;./utils/formatter&#39;
+</code></pre>
+<h3>3. Namespaces trong TypeScript</h3>
+<p><strong>Namespaces</strong> (trước đây gọi là internal modules) là cách TypeScript tổ chức code trong phạm vi toàn cục mà không cần sử dụng hệ thống file-based modules. Chúng giúp nhóm các thành phần liên quan (hàm, class, interface) vào một đối tượng lớn, tránh xung đột tên trong global scope.</p>
+<p><strong>Khi nào dùng Namespaces?</strong></p>
+<ul>
+<li>Trong các dự án nhỏ, không cần thiết lập hệ thống module phức tạp.</li>
+<li>Khi làm việc với các file JavaScript cũ hoặc nhúng trực tiếp vào HTML qua thẻ <code>&lt;script&gt;</code>.</li>
+<li>Khi cần nhóm code logic liên quan mà không muốn chia thành nhiều file.</li>
+</ul>
+<h4>3.1. Khai báo Namespace</h4>
+<pre><code class="language-typescript">namespace Validation {
+    export interface StringValidator {
+        isAcceptable(s: string): boolean;
+    }
+
+    const lettersRegexp = /^[A-Za-z]+$/;
+    const numberRegexp = /^[0-9]+$/;
+
+    export class LettersOnlyValidator implements StringValidator {
+        isAcceptable(s: string) {
+            return lettersRegexp.test(s);
+        }
+    }
+
+    export class ZipCodeValidator implements StringValidator {
+        isAcceptable(s: string) {
+            return s.length === 5 &amp;&amp; numberRegexp.test(s);
+        }
+    }
+}
+</code></pre>
+<ul>
+<li>Các thành phần bên trong namespace cần được <code>export</code> để có thể truy cập từ bên ngoài.</li>
+<li>Namespace tạo ra một đối tượng toàn cục (như <code>Validation</code>) chứa tất cả các thành phần được export.</li>
+</ul>
+<h4>3.2. Sử dụng Namespace</h4>
+<pre><code class="language-typescript">let strings = [&quot;Hello&quot;, &quot;98052&quot;, &quot;101&quot;];
+let validators: { [s: string]: Validation.StringValidator } = {};
+validators[&quot;ZIP code&quot;] = new Validation.ZipCodeValidator();
+validators[&quot;Letters only&quot;] = new Validation.LettersOnlyValidator();
+
+strings.forEach(s =&gt; {
+    for (let name in validators) {
+        console.log(`&quot;${s}&quot; - ${validators[name].isAcceptable(s) ? &quot;matches&quot; : &quot;does not match&quot;} ${name}`);
+    }
+});
+</code></pre>
+<h4>3.3. Nested Namespaces (Namespace lồng nhau)</h4>
+<pre><code class="language-typescript">namespace Forms {
+    export namespace Controls {
+        export class Button {
+            constructor() {
+                console.log(&quot;Button created&quot;);
+            }
+        }
+        export class TextBox {
+            constructor() {
+                console.log(&quot;TextBox created&quot;);
+            }
+        }
+    }
+}
+
+let button = new Forms.Controls.Button(); // Button created
+</code></pre>
+<h4>3.4. Namespace Aliases (Bí danh Namespace)</h4>
+<p>Nếu namespace lồng sâu, bạn có thể tạo bí danh để truy cập dễ dàng hơn:</p>
+<pre><code class="language-typescript">import FCV = Forms.Controls;
+let button = new FCV.Button();
+</code></pre>
+<h4>3.5. Namespaces trong nhiều file</h4>
+<p>Nếu namespace được chia thành nhiều file, bạn cần sử dụng <code>/// &lt;reference path=&quot;…&quot;&gt;</code> và biên dịch với tùy chọn <code>outFile</code> trong <code>tsconfig.json</code> để gộp các file thành một file JavaScript duy nhất.</p>
+<pre><code class="language-typescript">// File: ValidatorInterfaces.ts
+namespace Validation {
+    export interface StringValidator {
+        isAcceptable(s: string): boolean;
+    }
+}
+
+// File: LetterValidator.ts
+/// &lt;reference path=&quot;ValidatorInterfaces.ts&quot; /&gt;
+namespace Validation {
+    export class LettersOnlyValidator implements StringValidator {
+        isAcceptable(s: string) {
+            return /^[A-Za-z]+$/.test(s);
+        }
+    }
+}
+</code></pre>
+<p>Cấu hình <code>tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;module&quot;: &quot;system&quot;, // Hoặc &quot;amd&quot;
+    &quot;outFile&quot;: &quot;app.js&quot;
+  }
+}
+</code></pre>
+<p>Biên dịch: <code>tsc --outFile app.js ValidatorInterfaces.ts LetterValidator.ts</code></p>
+<p><strong>Lưu ý</strong>: Cách này ít được sử dụng trong các dự án hiện đại vì các công cụ như Webpack hoặc Vite đã thay thế việc gộp file thủ công.</p>
+<h3>4. So sánh Modules và Namespaces</h3>
+<table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>Modules (ES Modules)</th>
+<th>Namespaces</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Cách hoạt động</strong></td>
+<td>Mỗi file <code>.ts</code> là một module nếu có <code>import</code>/<code>export</code>.</td>
+<td>Nhóm code trong một phạm vi cục bộ, thường trong global scope.</td>
+</tr>
+<tr>
+<td><strong>Phạm vi</strong></td>
+<td>Phạm vi cục bộ trong file, cô lập hoàn toàn.</td>
+<td>Phạm vi toàn cục, trừ khi được export.</td>
+</tr>
+<tr>
+<td><strong>Quản lý dependency</strong></td>
+<td>Rõ ràng qua <code>import</code>/<code>export</code>.</td>
+<td>Dùng <code>/// &lt;reference&gt;</code> hoặc gộp file thủ công.</td>
+</tr>
+<tr>
+<td><strong>Hỗ trợ công cụ</strong></td>
+<td>Hỗ trợ tốt bởi Webpack, Rollup, Vite, Node.js.</td>
+<td>Phù hợp cho script nhúng HTML hoặc dự án cũ.</td>
+</tr>
+<tr>
+<td><strong>Khả năng tái sử dụng</strong></td>
+<td>Cao, dễ chia sẻ giữa các dự án.</td>
+<td>Thấp, chủ yếu dùng trong một file hoặc dự án nhỏ.</td>
+</tr>
+<tr>
+<td><strong>Khi nào dùng?</strong></td>
+<td>Dự án hiện đại, lớn, cần code splitting, lazy loading.</td>
+<td>Dự án nhỏ, nhúng script vào HTML, hoặc chuyển đổi code cũ.</td>
+</tr>
+</tbody></table>
+<p><strong>Khuyến nghị</strong>:</p>
+<ul>
+<li><strong>Ưu tiên Modules</strong> cho hầu hết các dự án TypeScript hiện đại, đặc biệt khi làm việc với Node.js, React, hoặc các bundler.</li>
+<li>Chỉ dùng <strong>Namespaces</strong> cho các trường hợp đặc biệt, như làm việc với code JavaScript cũ hoặc khi cần một file output duy nhất mà không dùng bundler.</li>
+<li>Tránh trộn lẫn Modules và Namespaces trong cùng dự án để tránh nhầm lẫn.</li>
+</ul>
+<h3>5. Code ví dụ tổng hợp</h3>
+<h4>5.1. Ví dụ về Modules</h4>
+<pre><code class="language-typescript">// File: services/userService.ts
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+export function getUserById(id: number): User | undefined {
+    const users: User[] = [
+        { id: 1, name: &quot;Alice&quot;, email: &quot;alice@example.com&quot; },
+        { id: 2, name: &quot;Bob&quot;, email: &quot;bob@example.com&quot; }
+    ];
+    return users.find(user =&gt; user.id === id);
+}
+
+export default class UserAPI {
+    static async fetchAllUsers(): Promise&lt;User[]&gt; {
+        console.log(&quot;Fetching all users...&quot;);
+        return [
+            { id: 1, name: &quot;Alice&quot;, email: &quot;alice@example.com&quot; },
+            { id: 2, name: &quot;Bob&quot;, email: &quot;bob@example.com&quot; }
+        ];
+    }
+}
+
+// File: utils/formatter.ts
+export function formatDate(date: Date): string {
+    return date.toLocaleDateString(&quot;vi-VN&quot;);
+}
+
+export const DEFAULT_CURRENCY = &quot;VND&quot;;
+
+// File: app.ts
+import UserApiService, { getUserById as findUser, type User as UserType } from &#39;./services/userService&#39;;
+import { formatDate, DEFAULT_CURRENCY } from &#39;./utils/formatter&#39;;
+import * as _ from &#39;lodash&#39;; // Giả sử đã cài @types/lodash
+
+function displayUser(userId: number) {
+    const user = findUser(userId);
+    if (user) {
+        console.log(`User Found: ${user.name} (${user.email}), Currency: ${DEFAULT_CURRENCY}`);
+    } else {
+        console.log(`User with ID ${userId} not found.`);
+    }
+}
+
+displayUser(1);
+displayUser(3);
+
+UserApiService.fetchAllUsers().then(users =&gt; {
+    console.log(&quot;All Users:&quot;, users.map(u =&gt; u.name).join(&quot;, &quot;));
+});
+
+console.log(&quot;Today&#39;s date:&quot;, formatDate(new Date()));
+
+const numbers = [1, 5, 2, 8, 3];
+console.log(&quot;Sorted numbers (lodash):&quot;, _.sortBy(numbers));
+</code></pre>
+<h4>5.2. Ví dụ về Namespaces</h4>
+<pre><code class="language-typescript">// File: app.ts
+namespace MyCompany.Utilities {
+    export function isEmpty(str: string | null | undefined): boolean {
+        return !str || str.trim().length === 0;
+    }
+}
+
+namespace MyCompany.Models {
+    export interface Item {
+        id: string;
+        value: any;
+    }
+}
+
+function processItem(item: MyCompany.Models.Item): void {
+    if (MyCompany.Utilities.isEmpty(item.id)) {
+        console.error(&quot;Item ID cannot be empty.&quot;);
+        return;
+    }
+    console.log(`Processing item ${item.id} with value:`, item.value);
+}
+
+let item1: MyCompany.Models.Item = { id: &quot;item-001&quot;, value: { data: &quot;sample&quot; } };
+let item2: MyCompany.Models.Item = { id: &quot; &quot;, value: 123 };
+
+processItem(item1);
+processItem(item2);
+</code></pre>
+<h2>Danh sách bài tập</h2>
+<h3>Bài 1: Trắc nghiệm - Hiểu về Default Export</h3>
+<p><strong>Mô tả</strong>: Chọn cú pháp đúng để export một giá trị mặc định từ một module.</p>
+<p><strong>Câu hỏi</strong>: Trong TypeScript, cách nào sau đây là đúng để export một giá trị mặc định?</p>
+<ul>
+<li>A. <code>export default const myValue = 10;</code></li>
+<li>B. <code>export { myValue as default };</code> (với <code>const myValue = 10;</code> khai báo trước)</li>
+<li>C. <code>default export const myValue = 10;</code></li>
+<li>D. <code>export default myValue;</code> (với <code>const myValue = 10;</code> khai báo trước)</li>
+</ul>
+<p><strong>Đáp án đúng</strong>: <strong>D</strong>.<br><strong>Giải thích</strong>: </p>
+<ul>
+<li>Cách đúng để export mặc định là <code>export default expression;</code> hoặc <code>export default variable;</code> sau khi biến đã được khai báo. Ví dụ:<pre><code class="language-typescript">const myValue = 10;
+export default myValue;
+</code></pre>
+</li>
+<li><strong>A</strong> sai vì <code>export default</code> không thể kết hợp trực tiếp với khai báo biến (<code>const</code>, <code>let</code>, <code>var</code>).</li>
+<li><strong>B</strong> đúng nhưng không phải cách phổ biến. Nó hoạt động nếu <code>myValue</code> đã được khai báo.</li>
+<li><strong>C</strong> sai vì <code>default export</code> không phải cú pháp hợp lệ trong TypeScript/JavaScript.</li>
+</ul>
+<h3>Bài 2: Code - Tạo module <code>logger.ts</code></h3>
+<p><strong>Mô tả</strong>:</p>
+<ol>
+<li>Tạo file <code>logger.ts</code> với hai hàm:<ul>
+<li><code>logInfo(message: string)</code>: In ra <code>[INFO] message</code>.</li>
+<li><code>logError(message: string)</code>: In ra <code>[ERROR] message</code>.</li>
+</ul>
+</li>
+<li>Tạo file <code>main.ts</code> để import và sử dụng hai hàm này.</li>
+</ol>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<p><code>logger.ts</code>:</p>
+<pre><code class="language-typescript">export function logInfo(message: string): void {
+    console.log(`[INFO] ${message}`);
+}
+
+export function logError(message: string): void {
+    console.error(`[ERROR] ${message}`);
+}
+</code></pre>
+<p><code>main.ts</code>:</p>
+<pre><code class="language-typescript">import { logInfo, logError } from &#39;./logger&#39;;
+
+logInfo(&quot;Application has started successfully.&quot;);
+logError(&quot;A minor issue occurred, but was handled.&quot;);
+</code></pre>
+<p><strong>Hướng dẫn thực hành</strong>:</p>
+<ol>
+<li>Tạo hai file <code>logger.ts</code> và <code>main.ts</code> trong cùng thư mục.</li>
+<li>Biên dịch: <code>tsc logger.ts main.ts</code>.</li>
+<li>Chạy: <code>node main.js</code> (nếu dùng <code>module: commonjs</code>) hoặc dùng <code>ts-node main.ts</code>.</li>
+</ol>
+<h3>Bài 3: Code - Tạo module <code>constants.ts</code> với Default và Named Export</h3>
+<p><strong>Mô tả</strong>:</p>
+<ol>
+<li>Tạo file <code>constants.ts</code>:<ul>
+<li>Export hằng số <code>MAX_RETRIES = 5</code> (named export).</li>
+<li>Export <code>enum UserRole { ADMIN, EDITOR, GUEST }</code> (default export).</li>
+</ul>
+</li>
+<li>Tạo file <code>appConfig.ts</code> để import và sử dụng <code>MAX_RETRIES</code> và <code>UserRole</code>.</li>
+</ol>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<p><code>constants.ts</code>:</p>
+<pre><code class="language-typescript">export const MAX_RETRIES: number = 5;
+
+enum UserRole {
+    ADMIN = &quot;ADMIN&quot;,
+    EDITOR = &quot;EDITOR&quot;,
+    GUEST = &quot;GUEST&quot;
+}
+export default UserRole;
+</code></pre>
+<p><code>appConfig.ts</code>:</p>
+<pre><code class="language-typescript">import DefaultUserRole, { MAX_RETRIES } from &#39;./constants&#39;;
+
+console.log(&quot;Maximum Retries Allowed:&quot;, MAX_RETRIES);
+console.log(&quot;Default Admin Role:&quot;, DefaultUserRole.ADMIN);
+console.log(&quot;Guest Role Value:&quot;, DefaultUserRole.GUEST);
+
+let currentUserRole: DefaultUserRole = DefaultUserRole.EDITOR;
+console.log(&quot;Current User Role:&quot;, currentUserRole);
+</code></pre>
+<p><strong>Hướng dẫn thực hành</strong>:</p>
+<ol>
+<li>Tạo hai file <code>constants.ts</code> và <code>appConfig.ts</code>.</li>
+<li>Biên dịch và chạy tương tự Bài 2.</li>
+<li>Thử thay đổi giá trị của <code>currentUserRole</code> để kiểm tra các giá trị khác của <code>UserRole</code>.</li>
+</ol>
+<h3>Bài 4: Code - Tạo namespace <code>Utils.StringHelper</code></h3>
+<p><strong>Mô tả</strong>:
+Tạo namespace <code>Utils.StringHelper</code> với hai hàm:</p>
+<ul>
+<li><code>reverse(s: string)</code>: Đảo ngược chuỗi.</li>
+<li><code>countWords(s: string)</code>: Đếm số từ trong chuỗi (từ được phân cách bởi khoảng trắng).
+Sử dụng namespace trong cùng file để kiểm tra.</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">namespace Utils {
+    export namespace StringHelper {
+        export function reverse(s: string): string {
+            return s.split(&quot;&quot;).reverse().join(&quot;&quot;);
+        }
+
+        export function countWords(s: string): number {
+            if (!s || s.trim().length === 0) {
+                return 0;
+            }
+            return s.trim().split(/\s+/).length;
+        }
+    }
+}
+
+let originalString = &quot;Hello TypeScript World&quot;;
+let reversed = Utils.StringHelper.reverse(originalString);
+let wordCount = Utils.StringHelper.countWords(originalString);
+
+console.log(`Original: &quot;${originalString}&quot;`);
+console.log(`Reversed: &quot;${reversed}&quot;`);
+console.log(`Word Count: ${wordCount}`);
+
+let emptyStr = &quot;   &quot;;
+console.log(`Word Count for empty string: ${Utils.StringHelper.countWords(emptyStr)}`);
+</code></pre>
+<p><strong>Hướng dẫn thực hành</strong>:</p>
+<ol>
+<li>Tạo file <code>stringHelper.ts</code> chứa code trên.</li>
+<li>Biên dịch: <code>tsc stringHelper.ts --module system --outFile app.js</code>.</li>
+<li>Chạy: <code>node app.js</code>.</li>
+<li>Thử thêm các chuỗi khác nhau để kiểm tra hàm <code>reverse</code> và <code>countWords</code>.</li>
+</ol>
+<h3>Bài 5: Code - Chuyển đổi Namespace thành Module</h3>
+<p><strong>Mô tả</strong>:
+Chuyển namespace <code>Utils.StringHelper</code> từ Bài 4 thành module trong file <code>stringUtilsModule.ts</code>. Tạo file <code>mainApp.ts</code> để import và sử dụng các hàm.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<p><code>stringUtilsModule.ts</code>:</p>
+<pre><code class="language-typescript">export function reverse(s: string): string {
+    return s.split(&quot;&quot;).reverse().join(&quot;&quot;);
+}
+
+export function countWords(s: string): number {
+    if (!s || s.trim().length === 0) {
+        return 0;
+    }
+    return s.trim().split(/\s+/).length;
+}
+</code></pre>
+<p><code>mainApp.ts</code>:</p>
+<pre><code class="language-typescript">import { reverse as reverseString, countWords as countStringWords } from &#39;./stringUtilsModule&#39;;
+
+let textToProcess = &quot;Learning modules in TypeScript&quot;;
+
+let reversedText = reverseString(textToProcess);
+let wordsInText = countStringWords(textToProcess);
+
+console.log(`Original Text: &quot;${textToProcess}&quot;`);
+console.log(`Reversed Text: &quot;${reversedText}&quot;`);
+console.log(`Number of Words: ${wordsInText}`);
+</code></pre>
+<p><strong>Hướng dẫn thực hành</strong>:</p>
+<ol>
+<li>Tạo hai file <code>stringUtilsModule.ts</code> và <code>mainApp.ts</code>.</li>
+<li>Biên dịch và chạy như các bài trước.</li>
+<li>So sánh cách sử dụng module với namespace ở Bài 4. Module có ưu điểm gì trong trường hợp này?</li>
+</ol>
+<h3>Bài 6: Thực hành nâng cao - Dự án nhỏ với Modules</h3>
+<p><strong>Mô tả</strong>:
+Tạo một dự án nhỏ với cấu trúc thư mục như sau:</p>
+<pre><code>src/
+  ├── models/
+  │   └── user.ts
+  ├── utils/
+  │   └── formatter.ts
+  ├── services/
+  │   └── userService.ts
+  ├── app.ts
+  └── tsconfig.json
+</code></pre>
+<ul>
+<li><strong>Yêu cầu</strong>:<ol>
+<li>Trong <code>user.ts</code>, định nghĩa interface <code>User</code> và export.</li>
+<li>Trong <code>formatter.ts</code>, tạo hàm <code>formatUser(user: User)</code> để định dạng thông tin user thành chuỗi.</li>
+<li>Trong <code>userService.ts</code>, tạo hàm <code>getUserById(id: number)</code> và default export class <code>UserAPI</code>.</li>
+<li>Trong <code>app.ts</code>, import và sử dụng các module trên để hiển thị thông tin user.</li>
+<li>Cấu hình <code>tsconfig.json</code> với <code>baseUrl</code> và <code>paths</code> để dùng alias <code>@models</code>, <code>@utils</code>, <code>@services</code>.</li>
+</ol>
+</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<p><code>src/models/user.ts</code>:</p>
+<pre><code class="language-typescript">export interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+</code></pre>
+<p><code>src/utils/formatter.ts</code>:</p>
+<pre><code class="language-typescript">import { User } from &#39;@models/user&#39;;
+
+export function formatUser(user: User): string {
+    return `${user.name} &lt;${user.email}&gt; (ID: ${user.id})`;
+}
+</code></pre>
+<p><code>src/services/userService.ts</code>:</p>
+<pre><code class="language-typescript">import { User } from &#39;@models/user&#39;;
+
+export function getUserById(id: number): User | undefined {
+    const users: User[] = [
+        { id: 1, name: &quot;Alice&quot;, email: &quot;alice@example.com&quot; },
+        { id: 2, name: &quot;Bob&quot;, email: &quot;bob@example.com&quot; }
+    ];
+    return users.find(user =&gt; user.id === id);
+}
+
+export default class UserAPI {
+    static async fetchAllUsers(): Promise&lt;User[]&gt; {
+        return [
+            { id: 1, name: &quot;Alice&quot;, email: &quot;alice@example.com&quot; },
+            { id: 2, name: &quot;Bob&quot;, email: &quot;bob@example.com&quot; }
+        ];
+    }
+}
+</code></pre>
+<p><code>src/app.ts</code>:</p>
+<pre><code class="language-typescript">import { getUserById } from &#39;@services/userService&#39;;
+import UserAPI from &#39;@services/userService&#39;;
+import { formatUser } from &#39;@utils/formatter&#39;;
+
+async function main() {
+    const user = getUserById(1);
+    if (user) {
+        console.log(&quot;User:&quot;, formatUser(user));
+    }
+
+    const users = await UserAPI.fetchAllUsers();
+    console.log(&quot;All Users:&quot;, users.map(formatUser).join(&quot;, &quot;));
+}
+
+main();
+</code></pre>
+<p><code>src/tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;esnext&quot;,
+    &quot;module&quot;: &quot;esnext&quot;,
+    &quot;moduleResolution&quot;: &quot;bundler&quot;,
+    &quot;baseUrl&quot;: &quot;src&quot;,
+    &quot;paths&quot;: {
+      &quot;@models/*&quot;: [&quot;models/*&quot;],
+      &quot;@utils/*&quot;: [&quot;utils/*&quot;],
+      &quot;@services/*&quot;: [&quot;services/*&quot;]
+    },
+    &quot;outDir&quot;: &quot;dist&quot;,
+    &quot;strict&quot;: true
+  }
+}
+</code></pre>
+<p><strong>Hướng dẫn thực hành</strong>:</p>
+<ol>
+<li>Tạo cấu trúc thư mục và các file như trên.</li>
+<li>Chạy <code>tsc</code> để biên dịch và kiểm tra file trong thư mục <code>dist</code>.</li>
+<li>Chạy <code>node dist/app.js</code> để xem kết quả.</li>
+<li>Thử thêm một user mới trong <code>userService.ts</code> và kiểm tra lại.</li>
+</ol>
+<h2>Kết luận</h2>
+<ul>
+<li><strong>Modules</strong> là lựa chọn tiêu chuẩn cho các dự án TypeScript hiện đại, với cú pháp <code>import</code>/<code>export</code> rõ ràng và hỗ trợ tốt từ các công cụ như Vite, Webpack.</li>
+<li><strong>Namespaces</strong> phù hợp cho các dự án nhỏ hoặc khi làm việc với code JavaScript cũ, nhưng nên hạn chế sử dụng trong các dự án mới.</li>
+<li>Thực hành thường xuyên với các bài tập trên để nắm vững cách tổ chức code hiệu quả trong TypeScript.</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

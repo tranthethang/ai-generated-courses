@@ -1,0 +1,433 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 09: Tối ưu hóa hiệu năng với Next.js</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu và sử dụng <strong>next/image</strong> để tối ưu hóa hình ảnh, giảm thời gian tải trang và cải thiện trải nghiệm người dùng.</li>
+<li>Tích hợp và tối ưu hóa font chữ với <strong>next/font</strong>, loại bỏ các yêu cầu mạng không cần thiết và ngăn chặn layout shift.</li>
+<li>Sử dụng <strong>next/dynamic</strong> để lazy-load các component, giảm kích thước JavaScript ban đầu và cải thiện hiệu năng.</li>
+<li>Nắm được cơ chế <strong>code splitting</strong> tự động của Next.js và cách tận dụng nó để tối ưu hóa ứng dụng.</li>
+<li>Biết cách kiểm tra hiệu năng ứng dụng qua DevTools và các công cụ phân tích như Lighthouse.</li>
+</ul>
+<hr>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Tối ưu hóa hình ảnh với next/image</h3>
+<p>Hình ảnh là một trong những yếu tố ảnh hưởng lớn đến hiệu năng của trang web. Thẻ <code>&lt;img&gt;</code> truyền thống có nhiều hạn chế:</p>
+<ul>
+<li><strong>Tải ảnh kích thước gốc</strong>: Dù ảnh chỉ hiển thị nhỏ, trình duyệt vẫn tải toàn bộ kích thước gốc.</li>
+<li><strong>Không có lazy-loading mặc định</strong>: Ảnh được tải ngay cả khi nằm ngoài khung nhìn.</li>
+<li><strong>Cumulative Layout Shift (CLS)</strong>: Giao diện bị xê dịch khi ảnh tải xong, gây khó chịu cho người dùng.</li>
+</ul>
+<p><strong>next/image</strong> là giải pháp tích hợp sẵn trong Next.js để giải quyết các vấn đề trên:</p>
+<ul>
+<li><strong>Tự động thay đổi kích thước</strong>: Phục vụ ảnh với kích thước phù hợp dựa trên viewport của người dùng.</li>
+<li><strong>Tối ưu hóa định dạng</strong>: Chuyển đổi ảnh sang các định dạng hiện đại như <strong>WebP</strong> hoặc <strong>AVIF</strong> nếu trình duyệt hỗ trợ.</li>
+<li><strong>Lazy-loading mặc định</strong>: Ảnh chỉ tải khi sắp xuất hiện trong khung nhìn.</li>
+<li><strong>Chống layout shift</strong>: Tự động giữ chỗ cho ảnh dựa trên kích thước được khai báo.</li>
+</ul>
+<h4>Cú pháp cơ bản:</h4>
+<ul>
+<li>Cho ảnh local:<pre><code class="language-javascript">import Image from &#39;next/image&#39;;
+import myImage from &#39;../public/images/my-image.jpg&#39;;
+
+export default function MyComponent() {
+  return (
+    &lt;Image
+      src={myImage}
+      alt=&quot;Description&quot;
+      width={500}
+      height={300}
+      placeholder=&quot;blur&quot; // Hiển thị hiệu ứng mờ khi ảnh đang tải
+    /&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Cho ảnh từ URL (ví dụ từ CMS):<pre><code class="language-javascript">import Image from &#39;next/image&#39;;
+
+export default function MyComponent() {
+  return (
+    &lt;div style={{ position: &#39;relative&#39;, width: &#39;100%&#39;, height: &#39;300px&#39; }}&gt;
+      &lt;Image
+        src=&quot;https://example.com/image.jpg&quot;
+        alt=&quot;Description&quot;
+        fill
+        style={{ objectFit: &#39;cover&#39; }}
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+</ul>
+<h4>Thuộc tính quan trọng:</h4>
+<ul>
+<li><code>priority</code>: Tải ảnh ngay lập tức (dùng cho ảnh above-the-fold như banner).</li>
+<li><code>placeholder=&quot;blur&quot;</code>: Hiển thị ảnh mờ trong khi tải (chỉ hoạt động với ảnh local).</li>
+<li><code>quality</code>: Điều chỉnh chất lượng ảnh (mặc định: 75).</li>
+<li><code>sizes</code>: Chỉ định kích thước ảnh dựa trên viewport (ví dụ: <code>(max-width: 768px) 100vw, 50vw</code>).</li>
+</ul>
+<h4>Lưu ý:</h4>
+<ul>
+<li>Ảnh local phải đặt trong thư mục <code>public</code>.</li>
+<li>Khi dùng ảnh từ URL, cần cấu hình domain trong <code>next.config.js</code>:<pre><code class="language-javascript">/** @type {import(&#39;next&#39;).NextConfig} */
+const nextConfig = {
+  images: {
+    domains: [&#39;example.com&#39;],
+  },
+};
+module.exports = nextConfig;
+</code></pre>
+</li>
+</ul>
+<hr>
+<h3>2. Tối ưu hóa Font với next/font</h3>
+<p>Việc sử dụng font tùy chỉnh (như Google Fonts) qua thẻ <code>&lt;link&gt;</code> có thể gây ra:</p>
+<ul>
+<li><strong>Yêu cầu mạng bổ sung</strong>: Trình duyệt phải tải font từ <code>fonts.googleapis.com</code>.</li>
+<li><strong>Layout shift</strong>: Giao diện bị xê dịch khi font tùy chỉnh được áp dụng.</li>
+<li><strong>Chặn render</strong>: Font tải chậm có thể làm chậm thời gian hiển thị nội dung.</li>
+</ul>
+<p><strong>next/font</strong> giải quyết các vấn đề này bằng cách:</p>
+<ul>
+<li><strong>Self-host font</strong>: Font được tải về server tại thời điểm build và phục vụ cùng các tài nguyên khác.</li>
+<li><strong>Tối ưu hóa hiệu năng</strong>: Giảm số lượng yêu cầu mạng, cải thiện thời gian tải.</li>
+<li><strong>Chống layout shift</strong>: Cung cấp thông số để trình duyệt giữ chỗ cho văn bản trước khi font tải.</li>
+</ul>
+<h4>Cú pháp:</h4>
+<pre><code class="language-javascript">import { Roboto } from &#39;next/font/google&#39;;
+
+const roboto = Roboto({
+  subsets: [&#39;latin&#39;],
+  weight: [&#39;400&#39;, &#39;700&#39;],
+  style: [&#39;normal&#39;, &#39;italic&#39;],
+});
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    &lt;main className={roboto.className}&gt;
+      &lt;Component {...pageProps} /&gt;
+    &lt;/main&gt;
+  );
+}
+</code></pre>
+<h4>Thuộc tính quan trọng:</h4>
+<ul>
+<li><code>subsets</code>: Chỉ định tập hợp ký tự cần tải (ví dụ: <code>latin</code>, <code>cyrillic</code>).</li>
+<li><code>weight</code>: Trọng lượng font (ví dụ: <code>400</code>, <code>700</code>).</li>
+<li><code>style</code>: Kiểu font (ví dụ: <code>normal</code>, <code>italic</code>).</li>
+<li><code>variable</code>: Tạo CSS variable để sử dụng font linh hoạt (ví dụ: <code>--font-roboto</code>).</li>
+</ul>
+<h4>Lưu ý:</h4>
+<ul>
+<li>Chỉ import font trong <code>pages/_app.js</code> để áp dụng toàn cục.</li>
+<li>Kiểm tra DevTools (Network tab) để xác nhận không có yêu cầu đến <code>fonts.googleapis.com</code>.</li>
+</ul>
+<hr>
+<h3>3. Lazy Loading Components với next/dynamic</h3>
+<p>Next.js tự động thực hiện <strong>code splitting</strong> theo trang, nghĩa là mỗi trang chỉ tải JavaScript cần thiết. Tuy nhiên, trong một trang, có thể có các component nặng (ví dụ: thư viện biểu đồ, modal phức tạp) không cần tải ngay từ đầu.</p>
+<p><strong>next/dynamic</strong> cho phép lazy-load các component, tách chúng thành file JavaScript riêng và chỉ tải khi cần thiết.</p>
+<h4>Cú pháp:</h4>
+<pre><code class="language-javascript">import dynamic from &#39;next/dynamic&#39;;
+
+const HeavyComponent = dynamic(() =&gt; import(&#39;../components/HeavyComponent&#39;), {
+  ssr: false, // Tắt Server-Side Rendering nếu component chỉ chạy ở client
+  loading: () =&gt; &lt;p&gt;Đang tải...&lt;/p&gt;, // Hiển thị placeholder khi component đang tải
+});
+
+export default function MyPage() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Trang chính&lt;/h1&gt;
+      &lt;HeavyComponent /&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<h4>Ưu điểm:</h4>
+<ul>
+<li>Giảm kích thước JavaScript ban đầu, cải thiện thời gian tải trang.</li>
+<li>Chỉ tải component khi cần (ví dụ: khi người dùng tương tác).</li>
+<li>Hỗ trợ placeholder để cải thiện trải nghiệm người dùng.</li>
+</ul>
+<h4>Lưu ý:</h4>
+<ul>
+<li>Sử dụng <code>ssr: false</code> cho các component phụ thuộc vào <code>window</code> hoặc <code>document</code>.</li>
+<li>Đảm bảo placeholder có kích thước tương tự component để tránh layout shift.</li>
+</ul>
+<hr>
+<h3>4. Code Splitting tự động trong Next.js</h3>
+<p>Next.js tự động chia nhỏ mã JavaScript theo các tiêu chí:</p>
+<ul>
+<li><strong>Theo trang</strong>: Mỗi file trong thư mục <code>pages</code> được tách thành một bundle riêng.</li>
+<li><strong>Theo component động</strong>: Các component dùng <code>next/dynamic</code> được tách thành bundle riêng.</li>
+<li><strong>Theo thư viện bên thứ ba</strong>: Các thư viện lớn (như <code>lodash</code>, <code>chart.js</code>) được tách nếu dùng <code>next/dynamic</code>.</li>
+</ul>
+<h4>Lợi ích:</h4>
+<ul>
+<li>Giảm thời gian tải trang đầu tiên (First Contentful Paint).</li>
+<li>Chỉ tải mã cần thiết cho trang hiện tại.</li>
+<li>Cải thiện hiệu năng trên thiết bị di động hoặc mạng chậm.</li>
+</ul>
+<h4>Kiểm tra code splitting:</h4>
+<ul>
+<li>Mở DevTools → Network tab → Lọc các file <code>.js</code>.</li>
+<li>Quan sát các file JavaScript được tải khi chuyển trang hoặc tương tác.</li>
+</ul>
+<hr>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Thay thế thẻ <code>&lt;img&gt;</code> bằng <code>next/image</code></h3>
+<ol>
+<li>Trong dự án Blog, tìm tất cả các thẻ <code>&lt;img&gt;</code> (ví dụ: ảnh tác giả, ảnh bài viết).</li>
+<li>Thay thế bằng component <code>Image</code>:<pre><code class="language-javascript">import Image from &#39;next/image&#39;;
+
+export default function AuthorCard() {
+  return (
+    &lt;div&gt;
+      &lt;Image
+        src=&quot;/images/author.jpg&quot;
+        alt=&quot;Author&quot;
+        width={100}
+        height={100}
+        className=&quot;rounded-full&quot;
+      /&gt;
+      &lt;h3&gt;John Doe&lt;/h3&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Đảm bảo ảnh được đặt trong thư mục <code>public/images</code>.</li>
+<li>Kiểm tra xem ảnh có tải đúng và không gây layout shift.</li>
+</ol>
+<h3>Bài 2: Quan sát hiệu năng của <code>next/image</code></h3>
+<ol>
+<li>Mở DevTools → Network tab → Lọc các file hình ảnh.</li>
+<li>Thêm thuộc tính <code>priority</code> cho ảnh chính (ví dụ: banner ở đầu trang):<pre><code class="language-javascript">&lt;Image
+  src=&quot;/images/banner.jpg&quot;
+  alt=&quot;Banner&quot;
+  width={1200}
+  height={400}
+  priority
+/&gt;
+</code></pre>
+</li>
+<li>Quan sát thứ tự tải ảnh: Ảnh có <code>priority</code> được tải trước các ảnh khác.</li>
+<li>Thử thêm <code>placeholder=&quot;blur&quot;</code> và kiểm tra hiệu ứng khi ảnh tải.</li>
+</ol>
+<h3>Bài 3: Tích hợp font với <code>next/font</code></h3>
+<ol>
+<li>Trong <code>pages/_app.js</code>, tích hợp font <code>Roboto</code>:<pre><code class="language-javascript">import { Roboto } from &#39;next/font/google&#39;;
+
+const roboto = Roboto({
+  subsets: [&#39;latin&#39;],
+  weight: [&#39;400&#39;, &#39;700&#39;],
+});
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    &lt;main className={roboto.className}&gt;
+      &lt;Component {...pageProps} /&gt;
+    &lt;/main&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Thêm style toàn cục trong <code>styles/globals.css</code>:<pre><code class="language-css">body {
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+</code></pre>
+</li>
+<li>Mở DevTools → Network tab → Xác nhận không có yêu cầu đến <code>fonts.googleapis.com</code>.</li>
+<li>Kiểm tra giao diện để đảm bảo font được áp dụng.</li>
+</ol>
+<h3>Bài 4: Tạo component biểu đồ với <code>react-chartjs-2</code></h3>
+<ol>
+<li>Cài đặt thư viện:<pre><code class="language-bash">npm install react-chartjs-2 chart.js
+</code></pre>
+</li>
+<li>Tạo component <code>MyChart.js</code>:<pre><code class="language-javascript">import { Bar } from &#39;react-chartjs-2&#39;;
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from &#39;chart.js&#39;;
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+export default function MyChart() {
+  const data = {
+    labels: [&#39;January&#39;, &#39;February&#39;, &#39;March&#39;, &#39;April&#39;],
+    datasets: [
+      {
+        label: &#39;Sales&#39;,
+        data: [65, 59, 80, 81],
+        backgroundColor: &#39;rgba(75, 192, 192, 0.2)&#39;,
+        borderColor: &#39;rgba(75, 192, 192, 1)&#39;,
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Sales Report&lt;/h2&gt;
+      &lt;Bar data={data} /&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+</ol>
+<h3>Bài 5: Lazy-load component biểu đồ với <code>next/dynamic</code></h3>
+<ol>
+<li>Trong <code>pages/index.js</code>, sử dụng <code>next/dynamic</code> để lazy-load <code>MyChart</code>:<pre><code class="language-javascript">import { useState } from &#39;react&#39;;
+import dynamic from &#39;next/dynamic&#39;;
+
+const MyChart = dynamic(() =&gt; import(&#39;../components/MyChart&#39;), {
+  ssr: false,
+  loading: () =&gt; &lt;p&gt;Đang tải biểu đồ...&lt;/p&gt;,
+});
+
+export default function Home() {
+  const [showChart, setShowChart] = useState(false);
+
+  return (
+    &lt;div className=&quot;min-h-screen flex flex-col items-center justify-center&quot;&gt;
+      &lt;button
+        onClick={() =&gt; setShowChart(true)}
+        className=&quot;bg-blue-500 text-white px-4 py-2 rounded&quot;
+      &gt;
+        Hiển thị báo cáo
+      &lt;/button&gt;
+      {showChart &amp;&amp; &lt;MyChart /&gt;}
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</li>
+<li>Mở DevTools → Network tab → Nhấn nút “Hiển thị báo cáo”.</li>
+<li>Quan sát file JavaScript của <code>MyChart</code> chỉ được tải sau khi nhấn nút.</li>
+</ol>
+<hr>
+<h2>D. Bổ sung: Kiểm tra hiệu năng với Lighthouse</h2>
+<p>Để đánh giá hiệu năng sau khi áp dụng các tối ưu hóa, sử dụng công cụ <strong>Lighthouse</strong> trong DevTools:</p>
+<ol>
+<li>Mở DevTools → Tab Lighthouse.</li>
+<li>Chọn chế độ “Mobile” và “Performance”.</li>
+<li>Chạy phân tích và kiểm tra các chỉ số:<ul>
+<li><strong>First Contentful Paint (FCP)</strong>: Thời gian hiển thị nội dung đầu tiên.</li>
+<li><strong>Largest Contentful Paint (LCP)</strong>: Thời gian tải nội dung chính.</li>
+<li><strong>Cumulative Layout Shift (CLS)</strong>: Mức độ xê dịch giao diện.</li>
+</ul>
+</li>
+<li>So sánh kết quả trước và sau khi áp dụng <code>next/image</code>, <code>next/font</code>, và <code>next/dynamic</code>.</li>
+</ol>
+<h4>Mẹo cải thiện điểm Lighthouse:</h4>
+<ul>
+<li>Sử dụng <code>priority</code> cho các tài nguyên quan trọng (như ảnh banner).</li>
+<li>Giảm số lượng thư viện bên thứ ba.</li>
+<li>Tối ưu hóa kích thước font bằng cách chỉ tải các <code>subsets</code> và <code>weight</code> cần thiết.</li>
+</ul>
+<hr>
+<h2>E. So sánh các phương pháp tối ưu hóa</h2>
+<table>
+<thead>
+<tr>
+<th>Phương pháp</th>
+<th>Ưu điểm</th>
+<th>Nhược điểm</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>next/image</strong></td>
+<td>Giảm kích thước ảnh, lazy-load tự động, chống layout shift.</td>
+<td>Cần cấu hình domain cho ảnh từ URL, yêu cầu khai báo kích thước.</td>
+</tr>
+<tr>
+<td><strong>next/font</strong></td>
+<td>Self-host font, loại bỏ yêu cầu mạng, chống layout shift.</td>
+<td>Cần chọn subsets và weight cẩn thận để tránh tải font thừa.</td>
+</tr>
+<tr>
+<td><strong>next/dynamic</strong></td>
+<td>Giảm kích thước JavaScript ban đầu, chỉ tải khi cần.</td>
+<td>Có thể gây trễ nhẹ khi tải component lần đầu, cần placeholder hợp lý.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>F. Tài liệu tham khảo</h2>
+<ul>
+<li><a href="https://nextjs.org/docs/app/building-your-application/optimizing/images">Next.js Documentation - Image Optimization</a></li>
+<li><a href="https://nextjs.org/docs/app/building-your-application/optimizing/fonts">Next.js Documentation - Font Optimization</a></li>
+<li><a href="https://nextjs.org/docs/advanced-features/dynamic-import">Next.js Documentation - Dynamic Imports</a></li>
+<li><a href="https://developer.chrome.com/docs/lighthouse/overview">Lighthouse Documentation</a></li>
+</ul>
+<hr>
+<h2>G. Bài tập nâng cao (tùy chọn)</h2>
+<ol>
+<li><strong>Tối ưu hóa ảnh động</strong>: Sử dụng <code>next/image</code> với ảnh GIF hoặc video. Thử tích hợp thuộc tính <code>sizes</code> để tối ưu hóa trên các kích thước màn hình khác nhau.</li>
+<li><strong>Tùy chỉnh font variable</strong>: Sử dụng font có hỗ trợ variable (như <code>Inter</code>) và khai báo <code>variable</code> trong <code>next/font</code> để tạo hiệu ứng chuyển đổi mượt mà giữa các weight.</li>
+<li><strong>Lazy-load thư viện lớn</strong>: Tích hợp một thư viện phức tạp (ví dụ: <code>quill</code> cho trình soạn thảo văn bản) và lazy-load bằng <code>next/dynamic</code>. Kiểm tra hiệu năng trước và sau khi lazy-load.</li>
+<li><strong>Phân tích hiệu năng</strong>: Chạy Lighthouse trên dự án Blog trước và sau khi áp dụng các tối ưu hóa. Viết báo cáo ngắn (200 từ) so sánh các chỉ số FCP, LCP, CLS.</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

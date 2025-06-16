@@ -1,0 +1,420 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 3: Functions trong TypeScript</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chapter này tập trung vào cách <strong>TypeScript</strong> cải thiện việc làm việc với hàm so với JavaScript thuần. Chúng ta sẽ khám phá cách khai báo kiểu (type) cho tham số và giá trị trả về của hàm, tìm hiểu các loại tham số đặc biệt như <strong>tham số tùy chọn</strong>, <strong>tham số mặc định</strong>, và <strong>rest parameters</strong>. Ngoài ra, các khái niệm như <strong>kiểu hàm (function types)</strong> và <strong>nạp chồng hàm (function overloads)</strong> cũng được giới thiệu, giúp bạn viết code hàm an toàn, dễ bảo trì và linh hoạt hơn.</p>
+<p><strong>Mục tiêu học tập:</strong></p>
+<ul>
+<li>Hiểu cách sử dụng kiểu dữ liệu trong hàm để tăng tính an toàn và rõ ràng.</li>
+<li>Làm quen với các tính năng đặc biệt của hàm trong TypeScript.</li>
+<li>Áp dụng function overloads và function types vào các tình huống thực tế.</li>
+</ul>
+<h2>Tiêu đề Chapter học</h2>
+<p><strong>Functions Nâng Cao: Kiểu Trả Về, Tham Số và Overloads</strong></p>
+<h2>Tóm tắt lý thuyết chính</h2>
+<h3>1. Định nghĩa kiểu cho tham số và giá trị trả về</h3>
+<p>TypeScript cho phép khai báo kiểu dữ liệu cụ thể cho <strong>tham số</strong> và <strong>giá trị trả về</strong> của hàm, giúp trình biên dịch phát hiện lỗi ngay trong quá trình phát triển. Điều này làm cho mã nguồn rõ ràng hơn và giảm nguy cơ lỗi runtime.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">function add(x: number, y: number): number {
+    return x + y;
+}
+
+let sum: number = add(5, 10); // sum = 15
+// add(5, &quot;10&quot;); // Lỗi: Argument of type &#39;string&#39; is not assignable to parameter of type &#39;number&#39;.
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li><code>x: number, y: number</code>: Khai báo kiểu <code>number</code> cho tham số <code>x</code> và <code>y</code>. Nếu truyền sai kiểu (ví dụ: chuỗi <code>&quot;10&quot;</code>), TypeScript sẽ báo lỗi ngay lập tức.</li>
+<li><code>: number</code> sau danh sách tham số chỉ định hàm phải trả về một giá trị kiểu <code>number</code>.</li>
+<li>Lợi ích: Đảm bảo hàm chỉ nhận và trả về dữ liệu đúng kiểu, tránh lỗi logic khi chạy chương trình.</li>
+</ul>
+<h3>2. Kiểu <code>void</code> cho hàm không trả về giá trị</h3>
+<p>Nếu hàm không trả về bất kỳ giá trị nào hoặc chỉ trả về <code>undefined</code> một cách ngầm định, bạn nên khai báo kiểu trả về là <code>void</code>.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">function logMessage(message: string): void {
+    console.log(message);
+    // Không có return hoặc chỉ có return; (trả về undefined ngầm định)
+}
+logMessage(&quot;Đây là một thông báo.&quot;);
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li>Kiểu <code>void</code> biểu thị rằng hàm không trả về giá trị có ý nghĩa nào. Nếu hàm cố gắng trả về một giá trị (ví dụ: <code>return 42;</code>), TypeScript sẽ báo lỗi.</li>
+<li>Thường dùng cho các hàm chỉ thực hiện tác vụ như in ra console, cập nhật UI, hoặc gửi request mạng mà không cần trả về dữ liệu.</li>
+</ul>
+<h3>3. Tham số tùy chọn (<code>?</code>) và tham số mặc định</h3>
+<h4>Tham số tùy chọn</h4>
+<p>Tham số tùy chọn được đánh dấu bằng dấu <code>?</code> sau tên tham số, cho phép người gọi hàm bỏ qua tham số đó. Tham số tùy chọn phải nằm <strong>sau</strong> các tham số bắt buộc trong danh sách tham số.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">function greetOptional(name: string, greeting?: string): string {
+    if (greeting) {
+        return `${greeting}, ${name}!`;
+    } else {
+        return `Hello, ${name}!`;
+    }
+}
+console.log(greetOptional(&quot;Alice&quot;)); // &quot;Hello, Alice!&quot;
+console.log(greetOptional(&quot;Bob&quot;, &quot;Hi&quot;)); // &quot;Hi, Bob!&quot;
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li><code>greeting?: string</code>: Tham số <code>greeting</code> là tùy chọn. Nếu không truyền, giá trị của nó sẽ là <code>undefined</code>.</li>
+<li>Trong hàm, cần kiểm tra xem <code>greeting</code> có giá trị hay không trước khi sử dụng (thường dùng <code>if</code> hoặc toán tử <code>??</code>).</li>
+<li>Lưu ý: Nếu đặt tham số tùy chọn trước tham số bắt buộc, TypeScript sẽ báo lỗi.</li>
+</ul>
+<h4>Tham số mặc định</h4>
+<p>Tham số mặc định cho phép gán một giá trị mặc định cho tham số nếu người gọi không truyền giá trị hoặc truyền <code>undefined</code>. Tham số mặc định cũng được coi là tùy chọn.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">function greetDefault(name: string, greeting: string = &quot;Hello&quot;): string {
+    return `${greeting}, ${name}!`;
+}
+console.log(greetDefault(&quot;Charlie&quot;)); // &quot;Hello, Charlie!&quot;
+console.log(greetDefault(&quot;David&quot;, &quot;Good morning&quot;)); // &quot;Good morning, David!&quot;
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li><code>greeting: string = &quot;Hello&quot;</code>: Nếu không truyền <code>greeting</code>, nó sẽ lấy giá trị mặc định là <code>&quot;Hello&quot;</code>.</li>
+<li>Tham số mặc định giúp giảm bớt sự phức tạp khi gọi hàm, đặc biệt khi một số tham số thường có giá trị giống nhau.</li>
+<li>Lưu ý: Tham số mặc định không cần dấu <code>?</code>, vì chúng đã là tùy chọn.</li>
+</ul>
+<h3>4. Rest Parameters (<code>…</code>)</h3>
+<p>Rest parameters cho phép hàm chấp nhận một số lượng tham số không xác định, được gom lại thành một mảng. Rest parameter phải là tham số cuối cùng và có kiểu là một mảng.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">function sumAllNumbers(...numbers: number[]): number {
+    let total = 0;
+    for (const num of numbers) {
+        total += num;
+    }
+    return total;
+}
+console.log(sumAllNumbers(1, 2, 3)); // 6
+console.log(sumAllNumbers(10, 20, 30, 40, 50)); // 150
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li><code>...numbers: number[]</code>: Cú pháp <code>...</code> (spread operator) thu thập tất cả các tham số được truyền vào thành một mảng <code>numbers</code> kiểu <code>number[]</code>.</li>
+<li>Rest parameter phải là tham số cuối cùng, vì sau nó không thể có tham số nào khác.</li>
+<li>Ứng dụng: Dùng khi hàm cần xử lý số lượng tham số linh hoạt, như tính tổng, nối chuỗi, hoặc xử lý danh sách.</li>
+</ul>
+<h3>5. Function Types (Kiểu hàm)</h3>
+<p>Kiểu hàm (function types) cho phép định nghĩa chữ ký (signature) của một hàm, bao gồm kiểu của tham số và giá trị trả về. Điều này hữu ích khi gán hàm cho biến hoặc truyền hàm làm tham số (callback).</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">let multiply: (a: number, b: number) =&gt; number;
+
+multiply = function(x: number, y: number): number {
+    return x * y;
+};
+// Hoặc dùng arrow function
+// multiply = (x, y) =&gt; x * y;
+
+console.log(multiply(5, 4)); // 20
+// multiply = function(message: string): void { console.log(message); }; // Lỗi: Kiểu không tương thích
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li><code>(a: number, b: number) =&gt; number</code>: Định nghĩa kiểu hàm với hai tham số kiểu <code>number</code> và trả về giá trị kiểu <code>number</code>.</li>
+<li>Biến <code>multiply</code> chỉ có thể được gán bởi một hàm có chữ ký phù hợp. Nếu gán hàm không khớp kiểu, TypeScript sẽ báo lỗi.</li>
+<li>Ứng dụng: Dùng trong callback, event handler, hoặc khi cần tái sử dụng hàm với chữ ký cố định.</li>
+</ul>
+<h3>6. Arrow Functions và kiểu</h3>
+<p>Arrow functions trong TypeScript có cú pháp giống JavaScript ES6, nhưng TypeScript có thể suy luận kiểu hoặc cho phép khai báo kiểu tường minh.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">const subtract = (x: number, y: number): number =&gt; {
+    return x - y;
+};
+
+// TypeScript suy luận kiểu nếu gán cho biến có kiểu hàm
+let divide: (a: number, b: number) =&gt; number;
+divide = (n1, n2) =&gt; n1 / n2; // n1, n2 tự động suy luận là number
+console.log(divide(10, 2)); // 5
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li>Arrow function <code>(x: number, y: number): number =&gt; { ... }</code> có cú pháp ngắn gọn và dễ đọc.</li>
+<li>TypeScript có thể suy luận kiểu của tham số và giá trị trả về nếu biến đã được khai báo với kiểu hàm cụ thể.</li>
+<li>Lưu ý: Nếu không khai báo kiểu rõ ràng, cần đảm bảo ngữ cảnh đủ để TypeScript suy luận đúng.</li>
+</ul>
+<h3>7. Function Overloads (Nạp chồng hàm)</h3>
+<p>Function overloads cho phép định nghĩa nhiều chữ ký hàm (overload signatures) cho cùng một tên hàm. Chữ ký thực thi (implementation signature) phải bao quát tất cả các chữ ký nạp chồng. TypeScript sẽ chọn chữ ký phù hợp nhất dựa trên tham số truyền vào.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">// Chữ ký nạp chồng
+function processInput(input: string): string;
+function processInput(input: number): number;
+function processInput(input: string[]): string[];
+
+// Chữ ký thực thi
+function processInput(input: string | number | string[]): string | number | string[] {
+    if (typeof input === &quot;string&quot;) {
+        return input.toUpperCase();
+    } else if (typeof input === &quot;number&quot;) {
+        return input * 2;
+    } else if (Array.isArray(input)) {
+        return input.map(item =&gt; item.trim());
+    }
+    throw new Error(&quot;Invalid input type&quot;);
+}
+
+console.log(processInput(&quot;hello&quot;));   // &quot;HELLO&quot;
+console.log(processInput(10));        // 20
+console.log(processInput([&quot; one &quot;, &quot; two &quot;])); // [&quot;one&quot;, &quot;two&quot;]
+// console.log(processInput(true)); // Lỗi: No overload matches this call.
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li><strong>Chữ ký nạp chồng</strong>: Mỗi chữ ký định nghĩa một trường hợp cụ thể (ví dụ: nhận <code>string</code> trả <code>string</code>, nhận <code>number</code> trả <code>number</code>).</li>
+<li><strong>Chữ ký thực thi</strong>: Phải đủ tổng quát để bao quát tất cả các chữ ký nạp chồng (dùng <code>string | number | string[]</code>).</li>
+<li>TypeScript sử dụng chữ ký nạp chồng để kiểm tra kiểu khi gọi hàm, nhưng mã thực thi nằm trong chữ ký thực thi.</li>
+<li>Ứng dụng: Dùng khi hàm có thể xử lý nhiều kiểu đầu vào và trả về các kiểu khác nhau, ví dụ: xử lý dữ liệu đa dạng trong API.</li>
+</ul>
+<h2>Code ví dụ chính (Tổng hợp và mở rộng)</h2>
+<pre><code class="language-typescript">// Hàm cơ bản với kiểu tham số và trả về
+function createGreeting(name: string, age: number): string {
+    return `Hello, my name is ${name} and I am ${age} years old.`;
+}
+console.log(createGreeting(&quot;Elena&quot;, 28)); // &quot;Hello, my name is Elena and I am 28 years old.&quot;
+
+// Hàm với tham số tùy chọn và mặc định
+function displayProfile(username: string, bio?: string, theme: string = &quot;light&quot;): void {
+    console.log(`Username: ${username}`);
+    if (bio) {
+        console.log(`Bio: ${bio}`);
+    }
+    console.log(`Theme: ${theme}`);
+}
+displayProfile(&quot;tsDev&quot;); // Username: tsDev, Theme: light
+displayProfile(&quot;jsFan&quot;, &quot;Loves JavaScript and learning TypeScript.&quot;); // Username: jsFan, Bio: Loves..., Theme: light
+displayProfile(&quot;coderX&quot;, &quot;Full-stack developer.&quot;, &quot;dark&quot;); // Username: coderX, Bio: Full-stack..., Theme: dark
+
+// Hàm sử dụng rest parameters
+function gatherSkills(primarySkill: string, ...otherSkills: string[]): void {
+    console.log(`Primary Skill: ${primarySkill}`);
+    if (otherSkills.length &gt; 0) {
+        console.log(`Other Skills: ${otherSkills.join(&quot;, &quot;)}`);
+    }
+}
+gatherSkills(&quot;TypeScript&quot;, &quot;JavaScript&quot;, &quot;React&quot;, &quot;Node.js&quot;); // Primary Skill: TypeScript, Other Skills: JavaScript, React, Node.js
+gatherSkills(&quot;Problem Solving&quot;); // Primary Skill: Problem Solving
+
+// Định nghĩa kiểu hàm và sử dụng
+type StringManipulator = (input: string) =&gt; string;
+
+const toUpperCaseConverter: StringManipulator = (text) =&gt; text.toUpperCase();
+const toLowerCaseConverter: StringManipulator = (text) =&gt; text.toLowerCase();
+
+function applyStringOperation(text: string, manipulator: StringManipulator): string {
+    return manipulator(text);
+}
+console.log(applyStringOperation(&quot;Hello World&quot;, toUpperCaseConverter)); // &quot;HELLO WORLD&quot;
+console.log(applyStringOperation(&quot;Hello World&quot;, toLowerCaseConverter)); // &quot;hello world&quot;
+
+// Function Overloads ví dụ phức tạp hơn
+interface Coordinate { x: number; y: number; }
+
+function parseCoordinate(obj: Coordinate): Coordinate;
+function parseCoordinate(x: number, y: number): Coordinate;
+function parseCoordinate(arg1: unknown, arg2?: unknown): Coordinate {
+    let coord: Coordinate = { x: 0, y: 0 };
+
+    if (typeof arg1 === &#39;object&#39; &amp;&amp; arg1 !== null) {
+        coord = { ...(arg1 as Coordinate) }; // Ép kiểu để truy cập thuộc tính
+    } else if (typeof arg1 === &#39;number&#39; &amp;&amp; typeof arg2 === &#39;number&#39;) {
+        coord = { x: arg1, y: arg2 };
+    } else {
+        throw new Error(&quot;Invalid arguments for parseCoordinate&quot;);
+    }
+    return coord;
+}
+
+console.log(parseCoordinate({ x: 10, y: 20 })); // { x: 10, y: 20 }
+console.log(parseCoordinate(5, 15)); // { x: 5, y: 15 }
+// console.log(parseCoordinate(&quot;5&quot;, &quot;15&quot;)); // Lỗi: No overload matches this call.
+</code></pre>
+<h2>Danh sách bài tập</h2>
+<h3>1. Trắc nghiệm: Tham số <code>…args: string[]</code> trong một hàm có ý nghĩa gì?</h3>
+<p><strong>Tiêu đề</strong>: Hiểu về Rest Parameters</p>
+<p><strong>Mô tả</strong>: Chọn mô tả đúng nhất cho cú pháp rest parameters.</p>
+<p><strong>Câu hỏi</strong>: Trong một hàm TypeScript, khai báo tham số <code>…args: string[]</code> có ý nghĩa gì?</p>
+<ul>
+<li><strong>A.</strong> Hàm chỉ chấp nhận một tham số duy nhất là một mảng các chuỗi.</li>
+<li><strong>B.</strong> Hàm chấp nhận một số lượng bất kỳ các tham số kiểu chuỗi, và chúng được gom lại thành một mảng tên là <code>args</code>.</li>
+<li><strong>C.</strong> <code>args</code> là một tham số tùy chọn kiểu mảng chuỗi.</li>
+<li><strong>D.</strong> Hàm yêu cầu ít nhất một tham số kiểu chuỗi, các tham số sau đó có thể là bất kỳ kiểu gì.</li>
+</ul>
+<p><strong>Đáp án</strong>: <strong>B</strong></p>
+<p><strong>Giải thích chi tiết</strong>: Rest parameters (<code>...args: string[]</code>) cho phép hàm nhận một số lượng không xác định các tham số kiểu chuỗi, và tất cả chúng được gom vào một mảng tên <code>args</code>. Đây không phải là tham số tùy chọn (C), không yêu cầu tham số đầu tiên bắt buộc (D), và không phải chỉ nhận một mảng (A).</p>
+<h3>2. Code: Viết hàm tính diện tích hình chữ nhật</h3>
+<p><strong>Tiêu đề</strong>: Thực hành định nghĩa kiểu cho hàm</p>
+<p><strong>Mô tả</strong>: Viết hàm <code>calculateRectangleArea</code> nhận vào hai tham số <code>width</code> và <code>height</code> (kiểu <code>number</code>), trả về diện tích hình chữ nhật (kiểu <code>number</code>).</p>
+<p><strong>Yêu cầu</strong>:</p>
+<ul>
+<li>Định nghĩa hàm với kiểu tham số và trả về rõ ràng.</li>
+<li>Gọi hàm với một vài giá trị và in kết quả.</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function calculateRectangleArea(width: number, height: number): number {
+    if (width &lt;= 0 || height &lt;= 0) {
+        console.warn(&quot;Width and height must be positive numbers.&quot;);
+        return 0;
+    }
+    return width * height;
+}
+
+console.log(&quot;Diện tích (5x10):&quot;, calculateRectangleArea(5, 10)); // 50
+console.log(&quot;Diện tích (7x3):&quot;, calculateRectangleArea(7, 3)); // 21
+console.log(&quot;Diện tích (-2x5):&quot;, calculateRectangleArea(-2, 5)); // Cảnh báo và trả về 0
+</code></pre>
+<p><strong>Giải thích chi tiết</strong>:</p>
+<ul>
+<li>Hàm kiểm tra xem <code>width</code> và <code>height</code> có hợp lệ (lớn hơn 0) để tránh kết quả không mong muốn.</li>
+<li>Kiểu <code>number</code> được khai báo rõ ràng cho cả tham số và giá trị trả về, đảm bảo an toàn kiểu.</li>
+<li>In kết quả giúp kiểm tra hàm hoạt động đúng.</li>
+</ul>
+<h3>3. Code: Viết hàm tạo thông tin người dùng với tham số mặc định</h3>
+<p><strong>Tiêu đề</strong>: Thực hành với tham số mặc định</p>
+<p><strong>Mô tả</strong>: Viết hàm <code>createUserInfo</code> nhận vào <code>userId</code> (number, bắt buộc), <code>username</code> (string, bắt buộc) và <code>role</code> (string, mặc định là &quot;user&quot;). Hàm trả về chuỗi mô tả thông tin người dùng.</p>
+<p><strong>Yêu cầu</strong>:</p>
+<ul>
+<li>Định nghĩa hàm với các tham số và kiểu như mô tả.</li>
+<li>Gọi hàm với đủ tham số và không truyền <code>role</code> để kiểm tra giá trị mặc định.</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function createUserInfo(userId: number, username: string, role: string = &quot;user&quot;): string {
+    return `User ID: ${userId}, Username: ${username}, Role: ${role}`;
+}
+
+console.log(createUserInfo(1, &quot;john.doe&quot;)); // User ID: 1, Username: john.doe, Role: user
+console.log(createUserInfo(2, &quot;jane.admin&quot;, &quot;administrator&quot;)); // User ID: 2, Username: jane.admin, Role: administrator
+</code></pre>
+<p><strong>Giải thích chi tiết</strong>:</p>
+<ul>
+<li><code>role: string = &quot;user&quot;</code>: Tham số <code>role</code> có giá trị mặc định, nên không bắt buộc truyền khi gọi hàm.</li>
+<li>Hàm trả về chuỗi định dạng thông tin người dùng, dễ dàng kiểm tra giá trị mặc định và giá trị truyền vào.</li>
+</ul>
+<h3>4. Code: Định nghĩa kiểu hàm và sử dụng</h3>
+<p><strong>Tiêu đề</strong>: Thực hành với Function Types</p>
+<p><strong>Mô tả</strong>:</p>
+<ol>
+<li>Định nghĩa kiểu hàm <code>NumberOperation</code> nhận hai số và trả về một số.</li>
+<li>Tạo hai biến kiểu <code>NumberOperation</code>: <code>addOperation</code> (phép cộng) và <code>subtractOperation</code> (phép trừ).</li>
+<li>Gọi và in kết quả của hai biến hàm này.</li>
+</ol>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">type NumberOperation = (a: number, b: number) =&gt; number;
+
+const addOperation: NumberOperation = (x, y) =&gt; x + y;
+const subtractOperation: NumberOperation = (x, y) =&gt; x - y;
+
+console.log(&quot;5 + 3 =&quot;, addOperation(5, 3)); // 8
+console.log(&quot;10 - 4 =&quot;, subtractOperation(10, 4)); // 6
+</code></pre>
+<p><strong>Giải thích chi tiết</strong>:</p>
+<ul>
+<li>Kiểu <code>NumberOperation</code> định nghĩa chữ ký hàm với hai tham số <code>number</code> và trả về <code>number</code>.</li>
+<li>Hai arrow function <code>addOperation</code> và <code>subtractOperation</code> tuân thủ chữ ký này.</li>
+<li>Gọi hàm thông qua biến giúp tái sử dụng và kiểm tra tính đúng đắn của kiểu.</li>
+</ul>
+<h3>5. Code: Viết hàm với Function Overloads</h3>
+<p><strong>Tiêu đề</strong>: Thực hành với Function Overloads</p>
+<p><strong>Mô tả</strong>: Viết hàm <code>formatData</code> sử dụng function overloads:</p>
+<ul>
+<li>Nếu đầu vào là <code>string</code>, trả về chuỗi viết hoa.</li>
+<li>Nếu đầu vào là <code>number</code>, trả về chuỗi &quot;Number: [số đó]&quot;.</li>
+<li>Nếu đầu vào là <code>boolean</code>, trả về chuỗi &quot;Boolean: [true/false]&quot;.</li>
+</ul>
+<p><strong>Yêu cầu</strong>:</p>
+<ul>
+<li>Viết 3 chữ ký nạp chồng cho các trường hợp trên.</li>
+<li>Viết chữ ký thực thi bao quát tất cả.</li>
+<li>Gọi hàm với các kiểu đầu vào khác nhau và in kết quả.</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function formatData(input: string): string;
+function formatData(input: number): string;
+function formatData(input: boolean): string;
+function formatData(input: string | number | boolean): string {
+    if (typeof input === &quot;string&quot;) {
+        return input.toUpperCase();
+    } else if (typeof input === &quot;number&quot;) {
+        return `Number: ${input}`;
+    } else if (typeof input === &quot;boolean&quot;) {
+        return `Boolean: ${input}`;
+    }
+    const exhaustiveCheck: never = input;
+    return `Unknown type: ${exhaustiveCheck}`;
+}
+
+console.log(formatData(&quot;typescript&quot;)); // &quot;TYPESCRIPT&quot;
+console.log(formatData(2024)); // &quot;Number: 2024&quot;
+console.log(formatData(true)); // &quot;Boolean: true&quot;
+// console.log(formatData({})); // Lỗi: No overload matches this call.
+</code></pre>
+<p><strong>Giải thích chi tiết</strong>:</p>
+<ul>
+<li>Ba chữ ký nạp chồng định nghĩa rõ các trường hợp đầu vào và đầu ra.</li>
+<li>Chữ ký thực thi sử dụng <code>string | number | boolean</code> để bao quát tất cả kiểu đầu vào.</li>
+<li>Biến <code>exhaustiveCheck: never</code> giúp đảm bảo không có trường hợp nào bị bỏ sót (TypeScript sẽ báo lỗi nếu có kiểu đầu vào mới không được xử lý).</li>
+<li>Ứng dụng: Xử lý đa dạng kiểu dữ liệu trong một hàm, thường thấy trong các thư viện hoặc API.</li>
+</ul>
+<h2>Kết luận</h2>
+<p>Chapter này cung cấp nền tảng vững chắc để làm việc với hàm trong TypeScript, từ việc định nghĩa kiểu cơ bản đến các tính năng nâng cao như function overloads và rest parameters. Các bài tập thực hành giúp bạn củng cố kiến thức và áp dụng vào các tình huống thực tế. Hãy luyện tập nhiều để làm quen với cú pháp và cách TypeScript giúp code an toàn hơn!</p>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,0 +1,370 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 03: Vòng đời của Component và Hook useEffect trong ReactJS</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu rõ vòng đời của một component: <strong>Mounting</strong>, <strong>Updating</strong>, và <strong>Unmounting</strong>.</li>
+<li>Thành thạo việc sử dụng hook <code>useEffect</code> để quản lý các <strong>side effects</strong>.</li>
+<li>Biết cách thực hiện và dọn dẹp các side effects như gọi API, thao tác DOM, hoặc quản lý subscription.</li>
+</ul>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Vòng đời của Component (Component Lifecycle)</h3>
+<p>Một component trong React trải qua ba giai đoạn chính:</p>
+<ul>
+<li><strong>Mounting</strong>: Component được tạo và chèn vào DOM. Đây là lúc component được khởi tạo và render lần đầu tiên.</li>
+<li><strong>Updating</strong>: Component được render lại khi có sự thay đổi trong <strong>props</strong> hoặc <strong>state</strong>.</li>
+<li><strong>Unmounting</strong>: Component bị xóa khỏi DOM, thường khi nó không còn cần thiết trên giao diện.</li>
+</ul>
+<p>Trong <strong>Class Components</strong> (chỉ để tham khảo), các phương thức như <code>componentDidMount</code>, <code>componentDidUpdate</code>, và <code>componentWillUnmount</code> được sử dụng để xử lý các giai đoạn này. Tuy nhiên, trong <strong>Functional Components</strong>, hook <code>useEffect</code> thay thế hoàn toàn các phương thức trên, giúp mã đơn giản và dễ bảo trì hơn.</p>
+<h3>2. Side Effects là gì?</h3>
+<p><strong>Side effects</strong> là các hành động trong component ảnh hưởng đến &quot;thế giới bên ngoài&quot; (ngoài việc render JSX). Ví dụ:</p>
+<ul>
+<li>Gọi API để lấy dữ liệu.</li>
+<li>Thay đổi trực tiếp DOM (như cập nhật <code>document.title</code>).</li>
+<li>Thiết lập hoặc hủy bỏ các subscription (như <code>setInterval</code>, WebSocket).</li>
+</ul>
+<p><strong>Vấn đề nếu thực hiện side effects trong body của component</strong>:</p>
+<ul>
+<li>Side effects chạy sau mỗi lần render, dẫn đến hành vi không mong muốn (ví dụ: gọi API liên tục).</li>
+<li>Gây ra vấn đề về hiệu năng hoặc lỗi logic (như memory leaks).</li>
+</ul>
+<p>Hook <code>useEffect</code> được thiết kế để quản lý các side effects một cách an toàn và có kiểm soát.</p>
+<h3>3. Hook <code>useEffect</code> - Quản lý Side Effects</h3>
+<h4>Cú pháp</h4>
+<pre><code class="language-jsx">useEffect(() =&gt; {
+  // Side effect code (setup function)
+  return () =&gt; {
+    // Cleanup function (optional)
+  };
+}, [dependencyArray]);
+</code></pre>
+<ul>
+<li><strong><code>setupFunction</code></strong>: Hàm chứa logic của side effect, chạy sau khi component render và commit lên DOM.</li>
+<li><strong><code>dependencyArray</code></strong> (mảng phụ thuộc): Quyết định khi nào <code>useEffect</code> chạy lại.</li>
+<li><strong>Cleanup function</strong>: Hàm trả về từ <code>setupFunction</code>, chạy trước khi component unmount hoặc trước khi <code>useEffect</code> chạy lại.</li>
+</ul>
+<h4>Các trường hợp sử dụng <code>dependencyArray</code></h4>
+<ul>
+<li><strong>Không có mảng phụ thuộc</strong> (<code>useEffect(() =&gt; {...})</code>):<ul>
+<li>Effect chạy sau <strong>mỗi lần render</strong>.</li>
+<li>Ít được sử dụng vì dễ gây ra lặp vô hạn hoặc hiệu năng kém.</li>
+</ul>
+</li>
+<li><strong>Mảng rỗng</strong> (<code>useEffect(() =&gt; {...}, [])</code>):<ul>
+<li>Effect chỉ chạy <strong>một lần</strong> sau khi component được mount.</li>
+<li>Tương đương <code>componentDidMount</code>, lý tưởng cho các tác vụ như gọi API ban đầu.</li>
+</ul>
+</li>
+<li><strong>Mảng có giá trị</strong> (<code>useEffect(() =&gt; {...}, [prop, state])</code>):<ul>
+<li>Effect chạy lần đầu và chỉ chạy lại khi <strong>bất kỳ giá trị nào trong mảng phụ thuộc thay đổi</strong>.</li>
+<li>Tương đương <code>componentDidUpdate</code> cho các giá trị cụ thể.</li>
+</ul>
+</li>
+</ul>
+<h4>Hàm dọn dẹp (Cleanup Function)</h4>
+<ul>
+<li>Được trả về từ <code>setupFunction</code> và chạy trong hai trường hợp:<ol>
+<li>Trước khi <code>useEffect</code> chạy lại (do mảng phụ thuộc thay đổi).</li>
+<li>Khi component bị unmount.</li>
+</ol>
+</li>
+<li><strong>Tầm quan trọng</strong>: Ngăn chặn <strong>memory leaks</strong> (rò rỉ bộ nhớ) hoặc hành vi không mong muốn.</li>
+<li>Ví dụ: Gỡ bỏ <code>setInterval</code>, hủy API request, hoặc xóa event listener.</li>
+</ul>
+<p>Ví dụ:</p>
+<pre><code class="language-jsx">useEffect(() =&gt; {
+  const timer = setInterval(() =&gt; console.log(&#39;Tick&#39;), 1000);
+  return () =&gt; clearInterval(timer); // Cleanup
+}, []);
+</code></pre>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Tạo Component DataFetcher</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Sử dụng <code>useEffect</code> với mảng phụ thuộc rỗng để gọi API <code>https://jsonplaceholder.typicode.com/users</code> khi component được mount. Lưu dữ liệu vào state và hiển thị danh sách người dùng.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>src/components/DataFetcher.js</code>:</li>
+</ol>
+</li>
+</ul>
+<pre><code class="language-jsx">import { useState, useEffect } from &#39;react&#39;;
+
+function DataFetcher() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() =&gt; {
+    fetch(&#39;https://jsonplaceholder.typicode.com/users&#39;)
+      .then(response =&gt; response.json())
+      .then(data =&gt; setUsers(data));
+  }, []);
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Danh sách người dùng&lt;/h2&gt;
+      &lt;ul&gt;
+        {users.map(user =&gt; (
+          &lt;li key={user.id}&gt;{user.name} - {user.email}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+export default DataFetcher;
+</code></pre>
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import DataFetcher from &#39;./components/DataFetcher&#39;;
+
+function App() {
+  return &lt;DataFetcher /&gt;;
+}
+export default App;
+</code></pre>
+<h3>Bài 2: Tạo Component DocumentTitleChanger</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo một ô input với state <code>text</code>. Sử dụng <code>useEffect</code> để cập nhật <code>document.title</code> khi <code>text</code> thay đổi.</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Tạo <code>src/components/DocumentTitleChanger.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState, useEffect } from &#39;react&#39;;
+
+function DocumentTitleChanger() {
+  const [text, setText] = useState(&#39;&#39;);
+
+  useEffect(() =&gt; {
+    document.title = text || &#39;React App&#39;;
+  }, [text]);
+
+  return (
+    &lt;input
+      type=&quot;text&quot;
+      value={text}
+      onChange={(e) =&gt; setText(e.target.value)}
+      placeholder=&quot;Nhập tiêu đề trang&quot;
+    /&gt;
+  );
+}
+export default DocumentTitleChanger;
+</code></pre>
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import DocumentTitleChanger from &#39;./components/DocumentTitleChanger&#39;;
+
+function App() {
+  return &lt;DocumentTitleChanger /&gt;;
+}
+export default App;
+</code></pre>
+<h3>Bài 3: Tạo Component Timer</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Sử dụng <code>useEffect</code> để tạo một <code>setInterval</code> đếm giây tăng dần. Triển khai cleanup function để <code>clearInterval</code> khi component unmount. Thêm nút để ẩn/hiện component và kiểm tra cleanup qua console.</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Tạo <code>src/components/Timer.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState, useEffect } from &#39;react&#39;;
+
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() =&gt; {
+    const interval = setInterval(() =&gt; {
+      setSeconds(prev =&gt; prev + 1);
+    }, 1000);
+    return () =&gt; {
+      console.log(&#39;Cleaning up interval&#39;);
+      clearInterval(interval);
+    };
+  }, []);
+
+  return &lt;p&gt;Thời gian: {seconds} giây&lt;/p&gt;;
+}
+export default Timer;
+</code></pre>
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code> để kiểm tra cleanup:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+import Timer from &#39;./components/Timer&#39;;
+
+function App() {
+  const [showTimer, setShowTimer] = useState(true);
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={() =&gt; setShowTimer(!showTimer)}&gt;
+        {showTimer ? &#39;Ẩn Timer&#39; : &#39;Hiện Timer&#39;}
+      &lt;/button&gt;
+      {showTimer &amp;&amp; &lt;Timer /&gt;}
+    &lt;/div&gt;
+  );
+}
+export default App;
+</code></pre>
+<h3>Bài 4: Tạo Component WindowWidthLogger</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Lắng nghe sự kiện <code>resize</code> của <code>window</code> để hiển thị chiều rộng hiện tại. Sử dụng <code>useEffect</code> để thêm và gỡ bỏ event listener.</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Tạo <code>src/components/WindowWidthLogger.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState, useEffect } from &#39;react&#39;;
+
+function WindowWidthLogger() {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() =&gt; {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+    window.addEventListener(&#39;resize&#39;, handleResize);
+    return () =&gt; {
+      console.log(&#39;Cleaning up resize listener&#39;);
+      window.removeEventListener(&#39;resize&#39;, handleResize);
+    };
+  }, []);
+
+  return &lt;p&gt;Chiều rộng cửa sổ: {width}px&lt;/p&gt;;
+}
+export default WindowWidthLogger;
+</code></pre>
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import WindowWidthLogger from &#39;./components/WindowWidthLogger&#39;;
+
+function App() {
+  return &lt;WindowWidthLogger /&gt;;
+}
+export default App;
+</code></pre>
+<h3>Bài 5: Ứng dụng tìm kiếm người dùng (Nâng cao)</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Kết hợp các bài tập trước để tạo ứng dụng tìm kiếm người dùng. Nhập <code>userId</code>, gọi API <code>https://jsonplaceholder.typicode.com/users/{userId}</code> khi <code>userId</code> thay đổi, hiển thị thông tin người dùng, trạng thái loading, và xử lý lỗi.</li>
+<li><strong>Hướng dẫn</strong>:</li>
+</ul>
+<ol>
+<li>Tạo <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState, useEffect } from &#39;react&#39;;
+
+function App() {
+  const [userId, setUserId] = useState(&#39;&#39;);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() =&gt; {
+    if (!userId) {
+      setUser(null);
+      setError(null);
+      return;
+    }
+
+    setLoading(true);
+    fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+      .then(response =&gt; {
+        if (!response.ok) throw new Error(&#39;Không tìm thấy người dùng&#39;);
+        return response.json();
+      })
+      .then(data =&gt; {
+        setUser(data);
+        setError(null);
+      })
+      .catch(err =&gt; {
+        setUser(null);
+        setError(err.message);
+      })
+      .finally(() =&gt; setLoading(false));
+  }, [userId]);
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Tìm kiếm người dùng&lt;/h1&gt;
+      &lt;input
+        type=&quot;text&quot;
+        value={userId}
+        onChange={(e) =&gt; setUserId(e.target.value)}
+        placeholder=&quot;Nhập ID người dùng&quot;
+      /&gt;
+      {loading &amp;&amp; &lt;p&gt;Đang tải...&lt;/p&gt;}
+      {error &amp;&amp; &lt;p&gt;Lỗi: {error}&lt;/p&gt;}
+      {user &amp;&amp; (
+        &lt;div&gt;
+          &lt;h2&gt;{user.name}&lt;/h2&gt;
+          &lt;p&gt;Email: {user.email}&lt;/p&gt;
+          &lt;p&gt;Địa chỉ: {user.address.street}, {user.address.city}&lt;/p&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+export default App;
+</code></pre>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

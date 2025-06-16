@@ -1,0 +1,501 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 11: Tích Hợp TypeScript với JavaScript Hiện Có và Declaration Files</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chapter này tập trung vào cách tích hợp TypeScript vào các dự án JavaScript hiện có một cách hiệu quả, đồng thời giải thích cách sử dụng các thư viện JavaScript trong TypeScript thông qua <strong>Declaration Files</strong> (<code>.d.ts</code>). Đây là các file đặc biệt giúp TypeScript hiểu được kiểu dữ liệu của code JavaScript, từ đó cung cấp khả năng kiểm tra kiểu (type checking) và hỗ trợ lập trình viên khi làm việc với các thư viện bên ngoài hoặc code JavaScript cũ. Nội dung bao gồm các chiến lược tích hợp, cách sử dụng file <code>.d.ts</code>, và cách tạo chúng.</p>
+<p><strong>Tiêu đề Chapter</strong></p>
+<p>Làm Việc Chung: TypeScript với JavaScript và Declaration Files</p>
+<hr>
+<h3>Tóm tắt lý thuyết chính</h3>
+<h4>1. <strong>Chiến lược tích hợp TypeScript vào dự án JavaScript</strong></h4>
+<p>Việc chuyển đổi hoàn toàn một dự án JavaScript lớn sang TypeScript có thể tốn nhiều thời gian và công sức. Vì vậy, cách tiếp cận <strong>từ từ (gradual adoption)</strong> thường là lựa chọn tối ưu, đặc biệt với các dự án đã có codebase lớn.</p>
+<p><strong>Giải thích chi tiết</strong>:</p>
+<ul>
+<li><strong>Tại sao cần tích hợp từ từ?</strong> TypeScript yêu cầu định nghĩa kiểu (type) cho các biến, hàm, và đối tượng, điều này có thể phức tạp nếu dự án JavaScript hiện có không có thông tin kiểu. Thay vì chuyển đổi toàn bộ dự án cùng lúc, bạn có thể bắt đầu bằng cách thêm TypeScript vào các phần mới hoặc từng phần nhỏ, giúp giảm rủi ro lỗi và dễ dàng kiểm soát quá trình chuyển đổi.</li>
+<li><strong>Lợi ích</strong>: Giảm thiểu gián đoạn, tận dụng được các lợi ích của TypeScript (như kiểm tra kiểu) mà không cần chỉnh sửa toàn bộ code JavaScript cũ.</li>
+</ul>
+<p><strong>Cách thực hiện</strong>:</p>
+<ul>
+<li><strong>Bắt đầu với module mới</strong>: Viết các file mới bằng TypeScript (<code>.ts</code> hoặc <code>.tsx</code>) và để các file JavaScript (<code>.js</code>) cũ hoạt động song song.</li>
+<li><strong>Chuyển đổi dần</strong>: Từng bước chuyển các file <code>.js</code> sang <code>.ts</code> bằng cách thêm kiểu dữ liệu, bắt đầu từ các module nhỏ hoặc ít phụ thuộc.</li>
+<li><strong>Cấu hình <code>tsconfig.json</code></strong>: Sử dụng các tùy chọn trong <code>tsconfig.json</code> để hỗ trợ tích hợp.</li>
+</ul>
+<p><strong>Cấu hình <code>tsconfig.json</code> hỗ trợ JavaScript</strong>:</p>
+<ul>
+<li><strong><code>allowJs: true</code></strong>: Cho phép TypeScript biên dịch cả file JavaScript (<code>.js</code> và <code>.jsx</code>). Điều này giúp bạn giữ nguyên các file <code>.js</code> trong dự án mà không cần chuyển đổi ngay.<ul>
+<li><strong>Ví dụ</strong>: Nếu bạn có file <code>utils.js</code>, TypeScript sẽ nhận diện và biên dịch nó cùng với file <code>.ts</code>.</li>
+</ul>
+</li>
+<li><strong><code>checkJs: true</code></strong>: Bật kiểm tra kiểu cho file JavaScript. Bạn có thể dùng <strong>JSDoc</strong> trong file <code>.js</code> để cung cấp thông tin kiểu, giúp TypeScript hiểu code JavaScript.<ul>
+<li><strong>Ví dụ JSDoc</strong>:<pre><code class="language-javascript">// file: legacyUtils.js
+/**
+ * Adds two numbers.
+ * @param {number} a The first number.
+ * @param {number} b The second number.
+ * @returns {number} The sum of a and b.
+ */
+function add(a, b) {
+  return a + b;
+}
+module.exports = { add };
+</code></pre>
+</li>
+<li><strong>Giải thích</strong>: JSDoc là cách chú thích trong JavaScript để mô tả kiểu dữ liệu. TypeScript sẽ đọc các chú thích này để kiểm tra kiểu mà không cần chuyển file sang <code>.ts</code>.</li>
+</ul>
+</li>
+<li><strong><code>noEmit: true</code></strong>: Chỉ kiểm tra kiểu mà không tạo file output JavaScript. Thường dùng khi bạn sử dụng công cụ khác như <strong>Babel</strong> để biên dịch code.<ul>
+<li><strong>Khi nào dùng?</strong> Nếu dự án đã có quy trình build riêng (như Webpack hoặc Babel), bạn có thể dùng TypeScript chỉ để kiểm tra kiểu.</li>
+</ul>
+</li>
+<li><strong><code>outDir</code> và <code>rootDir</code></strong>: Quản lý cấu trúc thư mục khi biên dịch. Ví dụ, đặt <code>outDir: &quot;./dist&quot;</code> để lưu file output trong thư mục <code>dist</code>, và <code>rootDir: &quot;./src&quot;</code> để chỉ định thư mục nguồn.</li>
+</ul>
+<p><strong>Ví dụ cấu hình <code>tsconfig.json</code></strong>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;allowJs&quot;: true,
+ &quot;checkJs&quot;: true,
+ &quot;outDir&quot;: &quot;./dist&quot;,
+ &quot;rootDir&quot;: &quot;./src&quot;,
+ &quot;noEmit&quot;: false,
+ &quot;target&quot;: &quot;es2016&quot;,
+ &quot;module&quot;: &quot;commonjs&quot;,
+ &quot;strict&quot;: true
+  },
+  &quot;include&quot;: [&quot;src&quot;]
+}
+</code></pre>
+<hr>
+<h4>2. <strong>Sử dụng thư viện JavaScript trong TypeScript</strong></h4>
+<p>Khi sử dụng các thư viện JavaScript như <strong>jQuery</strong>, <strong>Lodash</strong>, hoặc <strong>Express</strong> trong TypeScript, bạn cần cung cấp thông tin kiểu để TypeScript hiểu cách hoạt động của thư viện. Nếu không, TypeScript sẽ coi các thành phần của thư viện là kiểu <code>any</code>, làm mất đi lợi ích kiểm tra kiểu.</p>
+<p><strong>Vấn đề</strong>:</p>
+<ul>
+<li>TypeScript không thể tự động suy ra kiểu từ code JavaScript.</li>
+<li>Nếu thiếu thông tin kiểu, TypeScript sẽ báo lỗi hoặc mặc định dùng kiểu <code>any</code>, dẫn đến việc mất kiểm soát kiểu.</li>
+</ul>
+<p><strong>Giải pháp: Declaration Files (<code>.d.ts</code>)</strong>:</p>
+<ul>
+<li><strong>File <code>.d.ts</code> là gì?</strong> Đây là file chứa các khai báo kiểu (type declarations) cho code JavaScript, không chứa logic thực thi, chỉ mô tả &quot;hình dạng&quot; (shape) của thư viện hoặc code JavaScript.</li>
+<li><strong>Ví dụ</strong>: File <code>lodash.d.ts</code> mô tả các hàm, tham số, và giá trị trả về của thư viện <strong>Lodash</strong>.</li>
+</ul>
+<p><strong>Tìm và cài đặt Declaration Files từ DefinitelyTyped</strong>:</p>
+<ul>
+<li><strong>DefinitelyTyped</strong> (<a href="https://definitelytyped.org/">https://definitelytyped.org/</a>) là kho lưu trữ cộng đồng chứa các file <code>.d.ts</code> chất lượng cao cho hàng ngàn thư viện JavaScript phổ biến.</li>
+<li>Các file này được xuất bản dưới dạng package <code>@types</code> trên npm.</li>
+<li><strong>Lệnh cài đặt</strong>:<pre><code class="language-bash">npm install --save-dev @types/package-name
+# Ví dụ cho Lodash:
+npm install --save-dev @types/lodash
+</code></pre>
+</li>
+<li><strong>Cách hoạt động</strong>: Sau khi cài đặt, TypeScript tự động nhận diện các file <code>.d.ts</code> trong thư mục <code>node_modules/@types</code>.</li>
+</ul>
+<p><strong>Ví dụ sử dụng Lodash</strong>:</p>
+<pre><code class="language-typescript">// file: example.ts
+import _ from &#39;lodash&#39;;
+
+const numbers = [1, 2, 3, 4];
+const shuffled = _.shuffle(numbers); // TypeScript biết kiểu của shuffle (hàm) và shuffled (mảng number)
+console.log(shuffled); // Ví dụ output: [3, 1, 4, 2]
+</code></pre>
+<ul>
+<li><strong>Giải thích</strong>: Nhờ <code>@types/lodash</code>, TypeScript biết rằng <code>_.shuffle</code> nhận một mảng và trả về một mảng cùng kiểu, giúp tránh lỗi khi sử dụng.</li>
+</ul>
+<hr>
+<h4>3. <strong>Viết Declaration Files cơ bản</strong></h4>
+<p>Nếu một thư viện JavaScript không có file <code>.d.ts</code> trên DefinitelyTyped hoặc bạn làm việc với code JavaScript nội bộ, bạn cần tự viết file <code>.d.ts</code>.</p>
+<p><strong>Khai báo biến, hàm, class (Ambient Declarations)</strong>:</p>
+<ul>
+<li>Sử dụng từ khóa <code>declare</code> để thông báo rằng các thành phần này tồn tại trong code JavaScript và cung cấp kiểu cho chúng.</li>
+<li><strong>Ví dụ</strong>:<pre><code class="language-typescript">// file: my-legacy-library.d.ts
+declare const GLOBAL_API_KEY: string;
+
+declare function processData(data: any): { success: boolean; result?: any };
+
+declare class LegacyWidget {
+  constructor(options: any);
+  render(elementId: string): void;
+  destroy(): void;
+}
+</code></pre>
+</li>
+<li><strong>Giải thích</strong>: File <code>.d.ts</code> trên mô tả một biến <code>GLOBAL_API_KEY</code> kiểu <code>string</code>, một hàm <code>processData</code> nhận tham số <code>any</code> và trả về một object, và một class <code>LegacyWidget</code> với các phương thức. TypeScript sẽ sử dụng thông tin này để kiểm tra kiểu mà không cần import (nếu là global).</li>
+</ul>
+<p><strong>Khai báo Module</strong>:</p>
+<ul>
+<li>Nếu thư viện JavaScript là module (CommonJS, ES Module, AMD), bạn cần khai báo module trong file <code>.d.ts</code>.</li>
+<li><strong>Ví dụ</strong>:<pre><code class="language-typescript">// file: custom-module-lib.d.ts
+declare module &#39;custom-module-lib&#39; {
+  export function greet(name: string): string;
+  export const MAX_USERS: number;
+}
+</code></pre>
+</li>
+<li><strong>Sử dụng trong file <code>.ts</code></strong>:<pre><code class="language-typescript">// file: app.ts
+import { greet, MAX_USERS } from &#39;custom-module-lib&#39;;
+
+console.log(greet(&quot;Developer&quot;)); // TypeScript biết greet trả về string
+console.log(MAX_USERS); // TypeScript biết MAX_USERS là number
+</code></pre>
+</li>
+<li><strong>Giải thích</strong>: File <code>.d.ts</code> định nghĩa &quot;hình dạng&quot; của module <code>custom-module-lib</code>, giúp TypeScript kiểm tra kiểu khi import.</li>
+</ul>
+<p><strong>Shorthand Ambient Module Declarations</strong>:</p>
+<ul>
+<li>Nếu bạn chỉ muốn khai báo module mà không cung cấp chi tiết kiểu (tạm thời dùng <code>any</code>):<pre><code class="language-typescript">// file: untyped-module.d.ts
+declare module &#39;untyped-module&#39;;
+</code></pre>
+</li>
+<li><strong>Khi nào dùng?</strong> Khi chưa có thời gian viết file <code>.d.ts</code> đầy đủ hoặc muốn nhanh chóng bỏ qua lỗi import. Tuy nhiên, nên hạn chế vì mất lợi ích kiểm tra kiểu.</li>
+</ul>
+<hr>
+<h4>4. <strong>Tạo <code>.d.ts</code> từ file <code>.ts</code> (Declaration Generation)</strong></h4>
+<p>Khi viết thư viện bằng TypeScript, bạn nên cung cấp file <code>.d.ts</code> để người dùng (dù dùng TypeScript hay JavaScript) có thể tận dụng thông tin kiểu.</p>
+<p><strong>Cách thực hiện</strong>:</p>
+<ul>
+<li>Bật tùy chọn <code>declaration: true</code> trong <code>tsconfig.json</code> để TypeScript tự động tạo file <code>.d.ts</code> khi biên dịch.</li>
+<li><strong>Cấu hình mẫu</strong>:<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;es2016&quot;,
+    &quot;module&quot;: &quot;commonjs&quot;,
+    &quot;declaration&quot;: true,
+    &quot;outDir&quot;: &quot;./dist&quot;,
+    &quot;rootDir&quot;: &quot;./src&quot;,
+    &quot;strict&quot;: true
+  },
+  &quot;include&quot;: [&quot;src&quot;]
+}
+</code></pre>
+</li>
+<li><strong>Ví dụ file nguồn</strong>:<pre><code class="language-typescript">// file: src/math-lib.ts
+export function sum(a: number, b: number): number {
+  return a + b;
+}
+export const VERSION = &quot;1.0.0&quot;;
+</code></pre>
+</li>
+<li><strong>Kết quả sau biên dịch</strong>:<ul>
+<li><code>dist/math-lib.js</code>: File JavaScript đã biên dịch.</li>
+<li><code>dist/math-lib.d.ts</code>:<pre><code class="language-typescript">export declare function sum(a: number, b: number): number;
+export declare const VERSION: string;
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Giải thích</strong>: File <code>.d.ts</code> chứa các khai báo kiểu, giúp người dùng thư viện biết cách sử dụng hàm <code>sum</code> và hằng <code>VERSION</code> mà không cần xem code nguồn.</li>
+</ul>
+<hr>
+<h3>Code ví dụ chính (Tổng hợp và mở rộng)</h3>
+<h4>1. <strong>Sử dụng thư viện có <code>@types</code> (ví dụ: <code>date-fns</code>)</strong></h4>
+<p><strong>Cài đặt</strong>:</p>
+<pre><code class="language-bash">npm install date-fns
+npm install --save-dev @types/date-fns
+</code></pre>
+<p><strong>Code TypeScript</strong>:</p>
+<pre><code class="language-typescript">// file: dateExample.ts
+import { format, addDays } from &#39;date-fns&#39;;
+
+const today = new Date();
+const threeDaysLater = addDays(today, 3);
+
+console.log(&quot;Hôm nay (mặc định):&quot;, format(today, &quot;PPP&quot;));
+console.log(&quot;3 ngày sau (mặc định):&quot;, format(threeDaysLater, &quot;dd/MM/yyyy HH:mm&quot;));
+</code></pre>
+<ul>
+<li><strong>Giải thích</strong>: Nhờ <code>@types/date-fns</code>, TypeScript biết kiểu của <code>format</code> và <code>addDays</code>, giúp đảm bảo bạn truyền đúng định dạng ngày tháng và tham số.</li>
+</ul>
+<h4>2. <strong>Viết file <code>.d.ts</code> cho module JavaScript</strong></h4>
+<p><strong>File JavaScript</strong>:</p>
+<pre><code class="language-javascript">// file: legacy-lib/string-utils.js
+function reverseString(str) {
+  return str.split(&#39;&#39;).reverse().join(&#39;&#39;);
+}
+const GREETING_PREFIX = &quot;Hello, &quot;;
+module.exports = { reverseString, GREETING_PREFIX };
+</code></pre>
+<p><strong>File Declaration</strong>:</p>
+<pre><code class="language-typescript">// file: src/types/string-utils.d.ts
+declare module &#39;legacy-lib/string-utils&#39; {
+  export function reverseString(str: string): string;
+  export const GREETING_PREFIX: string;
+}
+</code></pre>
+<p><strong>Sử dụng trong TypeScript</strong>:</p>
+<pre><code class="language-typescript">// file: appUsingLegacy.ts
+import { reverseString, GREETING_PREFIX } from &#39;../legacy-lib/string-utils&#39;;
+
+const original = &quot;TypeScript&quot;;
+const reversed = reverseString(original);
+console.log(`${GREETING_PREFIX}${reversed}`); // Output: &quot;Hello, tpircSepyT&quot;
+</code></pre>
+<ul>
+<li><strong>Giải thích</strong>: File <code>.d.ts</code> cung cấp kiểu cho module JavaScript, giúp TypeScript kiểm tra đúng kiểu của <code>reverseString</code> (nhận và trả về <code>string</code>) và <code>GREETING_PREFIX</code> (kiểu <code>string</code>).</li>
+</ul>
+<h4>3. <strong>Tích hợp file JavaScript với <code>allowJs</code> và JSDoc</strong></h4>
+<p><strong>Cấu hình <code>tsconfig.json</code></strong>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;allowJs&quot;: true,
+    &quot;checkJs&quot;: true,
+    &quot;outDir&quot;: &quot;./dist&quot;,
+    &quot;module&quot;: &quot;commonjs&quot;,
+    &quot;target&quot;: &quot;es2016&quot;,
+    &quot;strict&quot;: true
+  },
+  &quot;include&quot;: [&quot;src&quot;]
+}
+</code></pre>
+<p><strong>File JavaScript</strong>:</p>
+<pre><code class="language-javascript">// file: src/js-calculator.js
+/**
+ * @param {number} x
+ * @param {number} y
+ * @returns {number}
+ */
+function multiply(x, y) {
+  return x * y;
+}
+module.exports = { multiply };
+</code></pre>
+<p><strong>File TypeScript</strong>:</p>
+<pre><code class="language-typescript">// file: src/ts-consumer.ts
+import { multiply } from &#39;./js-calculator&#39;;
+
+const product = multiply(5, 7); // TypeScript biết product là number
+console.log(&quot;Product from JS:&quot;, product); // Output: &quot;Product from JS: 35&quot;
+
+// const errorProduct = multiply(5, &quot;7&quot;); // Lỗi: Argument of type &#39;string&#39; is not assignable to parameter of type &#39;number&#39;
+</code></pre>
+<ul>
+<li><strong>Giải thích</strong>: JSDoc trong <code>js-calculator.js</code> cung cấp thông tin kiểu, giúp TypeScript kiểm tra tham số và giá trị trả về của <code>multiply</code>.</li>
+</ul>
+<hr>
+<h3>Danh sách bài tập</h3>
+<h4>1. <strong>Trắc nghiệm: File <code>.d.ts</code> dùng để làm gì?</strong></h4>
+<p><strong>Tiêu đề</strong>: Mục đích của Declaration Files</p>
+<p><strong>Mô tả</strong>: Chọn đáp án đúng nhất mô tả công dụng của file <code>.d.ts</code>.</p>
+<p><strong>Câu hỏi</strong>: Trong TypeScript, file <code>.d.ts</code> (Declaration File) chủ yếu được sử dụng để làm gì?</p>
+<ul>
+<li>A. Chứa code JavaScript đã được biên dịch từ TypeScript.</li>
+<li>B. Cung cấp thông tin kiểu (type definitions) cho code JavaScript hiện có, giúp TypeScript hiểu và làm việc với code đó.</li>
+<li>C. Cấu hình các tùy chọn của trình biên dịch TypeScript cho một dự án.</li>
+<li>D. Chứa các unit test cho code TypeScript.</li>
+</ul>
+<p><strong>Đáp án</strong>: B</p>
+<p><strong>Giải thích</strong>: File <code>.d.ts</code> chỉ chứa khai báo kiểu, không chứa logic thực thi. Chúng giúp TypeScript hiểu code JavaScript, từ đó cung cấp kiểm tra kiểu và gợi ý code trong editor.</p>
+<hr>
+<h4>2. <strong>Code: Viết file <code>.d.ts</code> cho hàm JavaScript đơn giản</strong></h4>
+<p><strong>Tiêu đề</strong>: Thực hành viết Declaration File</p>
+<p><strong>Mô tả</strong>:<br>Giả sử bạn có file JavaScript <code>legacy-math.js</code>:</p>
+<pre><code class="language-javascript">// file: legacy-math.js
+function calculateArea(shape, dimensions) {
+  if (shape === &quot;circle&quot; &amp;&amp; typeof dimensions === &#39;number&#39;) {
+    return Math.PI * dimensions * dimensions;
+  }
+  if (shape === &quot;rectangle&quot; &amp;&amp; typeof dimensions === &#39;object&#39; &amp;&amp; dimensions.width &amp;&amp; dimensions.height) {
+    return dimensions.width * dimensions.height;
+  }
+  return -1; // Error or unknown shape
+}
+module.exports = { calculateArea };
+</code></pre>
+<p>Viết file <code>legacy-math.d.ts</code> để cung cấp kiểu cho hàm <code>calculateArea</code>. Hàm nhận:</p>
+<ul>
+<li><code>shape: &quot;circle&quot;</code>, <code>dimensions: number</code> (bán kính).</li>
+<li><code>shape: &quot;rectangle&quot;</code>, <code>dimensions: { width: number, height: number }</code>.</li>
+<li>Hàm trả về <code>number</code>.</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">// file: src/types/legacy-math.d.ts
+declare module &#39;legacy-math&#39; {
+  export function calculateArea(shape: &quot;circle&quot;, radius: number): number;
+  export function calculateArea(shape: &quot;rectangle&quot;, dimensions: { width: number; height: number }): number;
+}
+</code></pre>
+<ul>
+<li><strong>Giải thích</strong>: Sử dụng <strong>function overloads</strong> để mô tả hai cách gọi khác nhau của <code>calculateArea</code>. TypeScript sẽ kiểm tra đúng kiểu dựa trên tham số <code>shape</code>.</li>
+</ul>
+<hr>
+<h4>3. <strong>Code: Tìm và cài đặt declaration file cho thư viện <code>axios</code></strong></h4>
+<p><strong>Tiêu đề</strong>: Sử dụng DefinitelyTyped</p>
+<p><strong>Mô tả</strong>:</p>
+<ol>
+<li>Cài đặt thư viện <code>axios</code> và <code>@types/axios</code>:<pre><code class="language-bash">npm install axios
+npm install --save-dev @types/axios
+</code></pre>
+</li>
+<li>Viết code TypeScript sử dụng <code>axios.get()</code> để gọi API công khai <code>https://jsonplaceholder.typicode.com/todos/1</code> và log dữ liệu trả về.</li>
+</ol>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">// file: apiCaller.ts
+import axios, { AxiosResponse } from &#39;axios&#39;;
+
+interface Todo {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+async function fetchTodo(): Promise&lt;void&gt; {
+  try {
+    const response: AxiosResponse&lt;Todo&gt; = await axios.get(&#39;https://jsonplaceholder.typicode.com/todos/1&#39;);
+    const todoData: Todo = response.data;
+
+    console.log(&quot;Todo Fetched:&quot;);
+    console.log(`ID: ${todoData.id}`);
+    console.log(`Title: ${todoData.title}`);
+    console.log(`Completed: ${todoData.completed}`);
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error(&quot;Axios error:&quot;, error.message);
+      if (error.response) {
+        console.error(&quot;Status:&quot;, error.response.status);
+        console.error(&quot;Data:&quot;, error.response.data);
+      }
+    } else {
+      console.error(&quot;An unexpected error occurred:&quot;, error);
+    }
+  }
+}
+
+fetchTodo();
+</code></pre>
+<ul>
+<li><strong>Giải thích</strong>: Nhờ <code>@types/axios</code>, TypeScript biết kiểu của <code>response</code> và <code>data</code>. Interface <code>Todo</code> định nghĩa cấu trúc dữ liệu trả về, giúp code an toàn và dễ bảo trì.</li>
+</ul>
+<hr>
+<h4>4. <strong>Code: Tạo <code>.d.ts</code> từ file <code>.ts</code></strong></h4>
+<p><strong>Tiêu đề</strong>: Thực hành Declaration Generation</p>
+<p><strong>Mô tả</strong>:</p>
+<ol>
+<li>Tạo file <code>src/geometry.ts</code>:<pre><code class="language-typescript">// file: src/geometry.ts
+export interface ShapeInfo {
+  name: string;
+  sides: number;
+  area?: number;
+}
+
+export function getShapeDetails(info: ShapeInfo): string {
+  let details = `Shape: ${info.name}, Sides: ${info.sides}`;
+  if (info.area) {
+    details += `, Area: ${info.area}`;
+  }
+  return details;
+}
+</code></pre>
+</li>
+<li>Cấu hình <code>tsconfig.json</code> với <code>declaration: true</code>.</li>
+<li>Chạy <code>tsc</code> và kiểm tra file <code>.d.ts</code> trong thư mục <code>outDir</code>.</li>
+</ol>
+<p><strong>Giải pháp mẫu (<code>tsconfig.json</code>)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;es2016&quot;,
+    &quot;module&quot;: &quot;commonjs&quot;,
+    &quot;declaration&quot;: true,
+    &quot;outDir&quot;: &quot;./dist&quot;,
+    &quot;rootDir&quot;: &quot;./src&quot;,
+    &quot;strict&quot;: true
+  },
+  &quot;include&quot;: [&quot;src&quot;]
+}
+</code></pre>
+<p><strong>File <code>.d.ts</code> được tạo</strong>:</p>
+<pre><code class="language-typescript">// file: dist/geometry.d.ts
+export interface ShapeInfo {
+  name: string;
+  sides: number;
+  area?: number;
+}
+export declare function getShapeDetails(info: ShapeInfo): string;
+</code></pre>
+<ul>
+<li><strong>Giải thích</strong>: File <code>.d.ts</code> chứa khai báo kiểu của interface và hàm, giúp người dùng thư viện hiểu cách sử dụng mà không cần xem code nguồn.</li>
+</ul>
+<hr>
+<h4>5. <strong>Thảo luận: Khi nào nên tự viết file <code>.d.ts</code> và khi nào nên dựa vào <code>@types</code>?</strong></h4>
+<p><strong>Tiêu đề</strong>: Chiến lược sử dụng Declaration Files</p>
+<p><strong>Mô tả</strong>:
+Thảo luận khi nào nên dùng package <code>@types</code> từ DefinitelyTyped và khi nào cần tự viết file <code>.d.ts</code>.</p>
+<p><strong>Gợi ý</strong>:</p>
+<ul>
+<li><strong>Dùng <code>@types</code></strong>:<ul>
+<li>Thư viện phổ biến (như Lodash, Axios, Express) có sẵn trên DefinitelyTyped.</li>
+<li>Được cộng đồng kiểm thử, đảm bảo chất lượng.</li>
+<li>Tiết kiệm thời gian, không cần viết lại từ đầu.</li>
+</ul>
+</li>
+<li><strong>Tự viết <code>.d.ts</code></strong>:<ul>
+<li>Thư viện nội bộ hoặc code JavaScript tự viết.</li>
+<li>Thư viện nhỏ, ít phổ biến, không có <code>@types</code>.</li>
+<li>Muốn kiểm soát hoàn toàn định nghĩa kiểu.</li>
+<li>Đóng góp cho DefinitelyTyped (nếu bạn viết file <code>.d.ts</code> chất lượng, có thể chia sẻ lên DefinitelyTyped).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><strong>Lợi ích của <code>@types</code></strong>: Tiết kiệm thời gian, đáng tin cậy, được cập nhật thường xuyên bởi cộng đồng.</li>
+<li><strong>Lợi ích của tự viết</strong>: Phù hợp với nhu cầu cụ thể, đặc biệt khi làm việc với code nội bộ hoặc thư viện không có sẵn file <code>.d.ts</code>.</li>
+<li><strong>Mẹo</strong>: Nếu tự viết, bắt đầu với khai báo đơn giản (dùng <code>any</code> nếu cần) và dần cải thiện chi tiết kiểu khi có thời gian.</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,0 +1,503 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 02: Xử lý Sự kiện và Hiển thị Điều kiện trong ReactJS</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau khi hoàn thành bài học này, học viên sẽ:</p>
+<ul>
+<li>Thành thạo cách xử lý các sự kiện người dùng như click chuột và thay đổi dữ liệu nhập.</li>
+<li>Hiểu cách truyền dữ liệu từ component con lên component cha.</li>
+<li>Áp dụng kỹ thuật hiển thị điều kiện để kiểm soát giao diện người dùng.</li>
+<li>Hiển thị danh sách dữ liệu hiệu quả với việc quản lý <code>key</code> đúng cách.</li>
+</ul>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Xử lý Sự kiện</h3>
+<h4>Cú pháp sự kiện trong React</h4>
+<p>React sử dụng tên sự kiện theo chuẩn camelCase (ví dụ: <code>onClick</code>, <code>onChange</code>, <code>onSubmit</code>) để gắn hàm xử lý sự kiện vào các phần tử JSX. Hàm xử lý sự kiện là các hàm được gọi khi sự kiện xảy ra.</p>
+<p><strong>Ví dụ minh họa:</strong></p>
+<pre><code class="language-jsx">function Button() {
+  function handleClick() {
+    console.log(&#39;Nút đã được nhấn!&#39;);
+  }
+  return &lt;button onClick={handleClick}&gt;Nhấn tôi&lt;/button&gt;;
+}
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>handleClick</code> là một hàm xử lý sự kiện, được định nghĩa trong component.</li>
+<li>Thuộc tính <code>onClick</code> nhận một tham chiếu đến hàm <code>handleClick</code> (không phải gọi hàm trực tiếp <code>handleClick()</code>).</li>
+<li>Khi người dùng nhấn nút, hàm <code>handleClick</code> sẽ được gọi và in thông báo ra console.</li>
+</ul>
+<h4>Hàm xử lý sự kiện</h4>
+<ul>
+<li>Hàm xử lý thường được định nghĩa trong component.</li>
+<li>Để truyền tham số vào hàm xử lý, sử dụng arrow function hoặc phương thức <code>bind</code>:</li>
+</ul>
+<pre><code class="language-jsx">function handleClick(id) {
+  console.log(`Đã nhấn vào mục ${id}`);
+}
+&lt;button onClick={() =&gt; handleClick(1)}&gt;Nhấn&lt;/button&gt;;
+</code></pre>
+<ul>
+<li><strong>Lưu ý:</strong> Gọi trực tiếp <code>handleClick(1)</code> trong <code>onClick</code> sẽ khiến hàm chạy ngay lập tức khi component được render, thay vì chờ sự kiện.</li>
+</ul>
+<p><strong>Giải thích thêm:</strong>
+Sử dụng arrow function (<code>() =&gt; handleClick(id)</code>) đảm bảo hàm chỉ được gọi khi sự kiện xảy ra. Điều này đặc biệt quan trọng khi bạn cần truyền tham số vào hàm xử lý.</p>
+<h4>Đối tượng sự kiện (Event Object)</h4>
+<p>React cung cấp đối tượng <code>event</code> trong hàm xử lý, chứa thông tin về sự kiện. Một số thuộc tính phổ biến:</p>
+<ul>
+<li><code>event.target.value</code>: Lấy giá trị của trường input.</li>
+<li><code>event.preventDefault()</code>: Ngăn hành vi mặc định của trình duyệt (ví dụ: ngăn form gửi dữ liệu).</li>
+</ul>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-jsx">function Input() {
+  function handleChange(event) {
+    console.log(event.target.value);
+  }
+  return &lt;input type=&quot;text&quot; onChange={handleChange} placeholder=&quot;Nhập vào đây...&quot; /&gt;;
+}
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li>Khi người dùng nhập vào ô input, sự kiện <code>onChange</code> kích hoạt và hàm <code>handleChange</code> được gọi.</li>
+<li><code>event.target.value</code> trả về giá trị hiện tại của ô input, được in ra console.</li>
+</ul>
+<h4>Lưu ý về Class Components</h4>
+<p>Trong class components, bạn cần <code>bind</code> hàm xử lý vào <code>this</code> trong constructor để đảm bảo ngữ cảnh đúng:</p>
+<pre><code class="language-jsx">class Button extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+  handleClick() {
+    console.log(&#39;Nút đã được nhấn!&#39;);
+  }
+  render() {
+    return &lt;button onClick={this.handleClick}&gt;Nhấn tôi&lt;/button&gt;;
+  }
+}
+</code></pre>
+<p><strong>Giải thích thêm:</strong> Functional components với hooks không cần <code>bind</code>, giúp mã đơn giản hơn. Đây là lý do functional components được khuyến khích sử dụng.</p>
+<hr>
+<h3>2. Nâng cấp trạng thái (Lifting State Up)</h3>
+<p>Khi nhiều component cần chia sẻ và cập nhật cùng một trạng thái, trạng thái nên được quản lý bởi component cha chung gần nhất. Kỹ thuật này gọi là &quot;nâng cấp trạng thái&quot; (lifting state up).</p>
+<p><strong>Quy trình:</strong></p>
+<ul>
+<li>Định nghĩa trạng thái và hàm xử lý trong component cha.</li>
+<li>Truyền hàm xử lý xuống component con qua props.</li>
+<li>Component con gọi hàm xử lý để cập nhật trạng thái của cha.</li>
+</ul>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+
+function App() {
+  const [value, setValue] = useState(&#39;&#39;);
+  function handleChange(newValue) {
+    setValue(newValue);
+  }
+  return &lt;Child onChange={handleChange} value={value} /&gt;;
+}
+
+function Child({ onChange, value }) {
+  return &lt;input value={value} onChange={(e) =&gt; onChange(e.target.value)} /&gt;;
+}
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>App</code> quản lý trạng thái <code>value</code> và hàm <code>handleChange</code>.</li>
+<li><code>Child</code> nhận <code>value</code> và <code>onChange</code> qua props, sử dụng chúng để hiển thị và cập nhật giá trị input.</li>
+<li>Khi người dùng nhập, <code>Child</code> gọi <code>onChange</code> để cập nhật trạng thái trong <code>App</code>.</li>
+</ul>
+<p><strong>Giải thích thêm:</strong>
+Kỹ thuật này đảm bảo trạng thái được đồng bộ giữa các component, đặc biệt hữu ích trong các ứng dụng có nhiều component tương tác với cùng một dữ liệu.</p>
+<hr>
+<h3>3. Hiển thị Điều kiện (Conditional Rendering)</h3>
+<p>Hiển thị điều kiện cho phép kiểm soát giao diện dựa trên trạng thái hoặc props. Có ba cách phổ biến:</p>
+<h4>Sử dụng câu lệnh <code>if</code></h4>
+<p>Dùng <code>if</code> ngoài JSX để trả về các component khác nhau:</p>
+<pre><code class="language-jsx">function Greeting({ isLoggedIn }) {
+  if (isLoggedIn) {
+    return &lt;h1&gt;Chào mừng bạn trở lại!&lt;/h1&gt;;
+  }
+  return &lt;h1&gt;Vui lòng đăng nhập.&lt;/h1&gt;;
+}
+</code></pre>
+<p><strong>Giải thích:</strong> Dựa trên giá trị của <code>isLoggedIn</code>, component trả về JSX tương ứng. Cách này phù hợp với logic phức tạp.</p>
+<h4>Toán tử ba ngôi (Ternary Operator)</h4>
+<p>Sử dụng toán tử <code>condition ? expr1 : expr2</code> trong JSX để hiển thị điều kiện ngắn gọn:</p>
+<pre><code class="language-jsx">function Greeting({ isLoggedIn }) {
+  return (
+    &lt;h1&gt;{isLoggedIn ? &#39;Chào mừng bạn trở lại!&#39; : &#39;Vui lòng đăng nhập.&#39;}&lt;/h1&gt;
+  );
+}
+</code></pre>
+<p><strong>Giải thích:</strong> Toán tử ba ngôi phù hợp khi cần hiển thị điều kiện trực tiếp trong JSX, giúp mã gọn gàng hơn.</p>
+<h4>Toán tử <code>&amp;&amp;</code></h4>
+<p>Sử dụng <code>&amp;&amp;</code> để chỉ hiển thị một phần tử khi điều kiện đúng:</p>
+<pre><code class="language-jsx">function Notification({ hasUnread }) {
+  return (
+    &lt;div&gt;
+      {hasUnread &amp;&amp; &lt;p&gt;Bạn có tin nhắn chưa đọc!&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<p><strong>Giải thích:</strong> Nếu <code>hasUnread</code> là <code>true</code>, đoạn <code>&lt;p&gt;</code> sẽ được hiển thị; nếu <code>false</code>, không có gì được hiển thị.</p>
+<h4>So sánh các phương pháp</h4>
+<ul>
+<li><strong><code>if</code></strong>: Tốt cho logic phức tạp hoặc trả về nhiều JSX khác nhau.</li>
+<li><strong>Toán tử ba ngôi</strong>: Phù hợp cho các điều kiện đơn giản trong JSX.</li>
+<li><strong><code>&amp;&amp;</code></strong>: Lý tưởng khi chỉ cần hiển thị hoặc bỏ qua một phần tử.</li>
+</ul>
+<p><strong>Lưu ý:</strong> Chọn phương pháp dựa trên tính dễ đọc và độ phức tạp của logic.</p>
+<hr>
+<h3>4. Hiển thị Danh sách (Rendering Lists)</h3>
+<p>React sử dụng <code>Array.prototype.map()</code> để chuyển đổi mảng dữ liệu thành mảng các phần tử JSX. Mỗi phần tử cần có một prop <code>key</code> duy nhất để React quản lý hiệu quả.</p>
+<h4>Sử dụng <code>map</code></h4>
+<pre><code class="language-jsx">function ItemList({ items }) {
+  return (
+    &lt;ul&gt;
+      {items.map(item =&gt; (
+        &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>items.map()</code> chuyển mỗi phần tử trong mảng <code>items</code> thành một phần tử <code>&lt;li&gt;</code>.</li>
+<li>Prop <code>key</code> giúp React nhận diện từng phần tử, tối ưu hóa việc cập nhật DOM.</li>
+</ul>
+<h4>Tầm quan trọng của <code>key</code></h4>
+<ul>
+<li><code>key</code> là một định danh duy nhất (chuỗi hoặc số) cho mỗi phần tử trong danh sách.</li>
+<li>React sử dụng <code>key</code> để theo dõi các phần tử đã thay đổi, được thêm hoặc xóa.</li>
+<li>Nếu thiếu <code>key</code>, React có thể render lại toàn bộ danh sách, gây giảm hiệu suất.</li>
+</ul>
+<h4>Sai lầm phổ biến: Sử dụng chỉ số (index) làm <code>key</code></h4>
+<p>Sử dụng chỉ số của mảng (<code>index</code>) làm <code>key</code> là không nên, vì nó có thể gây lỗi khi danh sách thay đổi (thêm, xóa, sắp xếp):</p>
+<pre><code class="language-jsx">// Sai
+items.map((item, index) =&gt; &lt;li key={index}&gt;{item.name}&lt;/li&gt;)
+// Đúng
+items.map(item =&gt; &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;)
+</code></pre>
+<p><strong>Giải thích thêm:</strong> Sử dụng <code>id</code> duy nhất từ dữ liệu đảm bảo React có thể theo dõi chính xác các phần tử, đặc biệt khi danh sách thay đổi.</p>
+<hr>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Tạo Component SearchBar</h3>
+<p><strong>Nhiệm vụ:</strong> Tạo component <code>SearchBar.js</code> với một ô input, in giá trị nhập vào console khi có thay đổi.</p>
+<p><strong>Bước thực hiện:</strong></p>
+<ol>
+<li>Tạo file <code>src/components/SearchBar.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">function SearchBar() {
+  function handleChange(event) {
+    console.log(event.target.value);
+  }
+  return &lt;input type=&quot;text&quot; onChange={handleChange} placeholder=&quot;Tìm kiếm...&quot; /&gt;;
+}
+export default SearchBar;
+</code></pre>
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import SearchBar from &#39;./components/SearchBar&#39;;
+function App() {
+  return &lt;SearchBar /&gt;;
+}
+export default App;
+</code></pre>
+<p><strong>Giải thích:</strong> Mỗi khi người dùng nhập, giá trị được in ra console thông qua sự kiện <code>onChange</code>. Đây là ví dụ cơ bản về xử lý sự kiện trong React.</p>
+<hr>
+<h3>Bài 2: Nâng cấp trạng thái với SearchBar</h3>
+<p><strong>Nhiệm vụ:</strong> Trong <code>App.js</code>, quản lý trạng thái <code>searchTerm</code>. Truyền <code>searchTerm</code> và hàm <code>handleSearchChange</code> vào <code>SearchBar</code>. Cập nhật <code>searchTerm</code> khi người dùng nhập và hiển thị giá trị trong <code>App</code>.</p>
+<p><strong>Bước thực hiện:</strong></p>
+<ol>
+<li>Cập nhật <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+import SearchBar from &#39;./components/SearchBar&#39;;
+
+function App() {
+  const [searchTerm, setSearchTerm] = useState(&#39;&#39;);
+
+  function handleSearchChange(newTerm) {
+    setSearchTerm(newTerm);
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} /&gt;
+      &lt;p&gt;Tìm kiếm hiện tại: {searchTerm}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default App;
+</code></pre>
+<ol start="2">
+<li>Cập nhật <code>src/components/SearchBar.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">function SearchBar({ searchTerm, onSearchChange }) {
+  return (
+    &lt;input
+      type=&quot;text&quot;
+      value={searchTerm}
+      onChange={(e) =&gt; onSearchChange(e.target.value)}
+      placeholder=&quot;Tìm kiếm...&quot;
+    /&gt;
+  );
+}
+export default SearchBar;
+</code></pre>
+<p><strong>Giải thích:</strong> <code>App</code> quản lý trạng thái <code>searchTerm</code>, truyền nó và hàm <code>handleSearchChange</code> vào <code>SearchBar</code>. Khi người dùng nhập, <code>SearchBar</code> gọi <code>onSearchChange</code> để cập nhật trạng thái trong <code>App</code>.</p>
+<hr>
+<h3>Bài 3: Hiển thị điều kiện với LoginControl</h3>
+<p><strong>Nhiệm vụ:</strong> Tạo component <code>LoginControl.js</code> với trạng thái <code>isLoggedIn</code>. Hiển thị nút &quot;Đăng xuất&quot; và &quot;Chào mừng bạn trở lại!&quot; khi đăng nhập, hoặc nút &quot;Đăng nhập&quot; và &quot;Vui lòng đăng nhập.&quot; khi chưa đăng nhập. Chuyển đổi trạng thái khi nhấn nút.</p>
+<p><strong>Bước thực hiện:</strong></p>
+<ol>
+<li>Tạo <code>src/components/LoginControl.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+
+function LoginControl() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  function handleToggle() {
+    setIsLoggedIn(!isLoggedIn);
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={handleToggle}&gt;{isLoggedIn ? &#39;Đăng xuất&#39; : &#39;Đăng nhập&#39;}&lt;/button&gt;
+      &lt;p&gt;{isLoggedIn ? &#39;Chào mừng bạn trở lại!&#39; : &#39;Vui lòng đăng nhập.&#39;}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default LoginControl;
+</code></pre>
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import LoginControl from &#39;./components/LoginControl&#39;;
+function App() {
+  return &lt;LoginControl /&gt;;
+}
+export default App;
+</code></pre>
+<p><strong>Giải thích:</strong> Component sử dụng trạng thái <code>isLoggedIn</code> để hiển thị điều kiện. Nút chuyển đổi trạng thái thông qua <code>handleToggle</code>, minh họa cách sử dụng toán tử ba ngôi và xử lý sự kiện.</p>
+<hr>
+<h3>Bài 4: Hiển thị danh sách sản phẩm</h3>
+<p><strong>Nhiệm vụ:</strong> Tạo component <code>ProductList.js</code> nhận một mảng sản phẩm (<code>id</code>, <code>name</code>, <code>price</code>) và hiển thị dưới dạng danh sách <code>&lt;ul&gt;</code> với các phần tử <code>&lt;li&gt;</code>, sử dụng <code>id</code> làm <code>key</code>.</p>
+<p><strong>Bước thực hiện:</strong></p>
+<ol>
+<li>Tạo <code>src/components/ProductList.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">function ProductList({ products }) {
+  return (
+    &lt;ul&gt;
+      {products.map(product =&gt; (
+        &lt;li key={product.id}&gt;
+          {product.name} - ${product.price}
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+export default ProductList;
+</code></pre>
+<ol start="2">
+<li>Sử dụng trong <code>App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import ProductList from &#39;./components/ProductList&#39;;
+
+const products = [
+  { id: 1, name: &#39;Máy tính xách tay&#39;, price: 999 },
+  { id: 2, name: &#39;Điện thoại&#39;, price: 499 },
+  { id: 3, name: &#39;Tai nghe&#39;, price: 99 },
+];
+
+function App() {
+  return &lt;ProductList products={products} /&gt;;
+}
+export default App;
+</code></pre>
+<p><strong>Giải thích:</strong> Component <code>ProductList</code> sử dụng <code>map</code> để hiển thị danh sách sản phẩm. Prop <code>key</code> đảm bảo mỗi <code>&lt;li&gt;</code> được nhận diện duy nhất, giúp tối ưu hiệu suất.</p>
+<hr>
+<h3>Bài 5: Xây dựng ứng dụng Todo List</h3>
+<p><strong>Nhiệm vụ:</strong> Tạo ứng dụng Todo List với:</p>
+<ul>
+<li><code>App</code> quản lý trạng thái <code>todos</code> (mảng các đối tượng todo).</li>
+<li><code>TodoForm</code> để thêm todo mới (nâng cấp trạng thái).</li>
+<li><code>TodoList</code> để hiển thị danh sách todo (hiển thị danh sách).</li>
+<li>Mỗi todo có nút &quot;Xóa&quot; và nút &quot;Hoàn thành/Đảo ngược&quot; (hiển thị điều kiện cho gạch ngang).</li>
+</ul>
+<p><strong>Bước thực hiện:</strong></p>
+<ol>
+<li>Tạo <code>src/App.jsx</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+import TodoForm from &#39;./components/TodoForm&#39;;
+import TodoList from &#39;./components/TodoList&#39;;
+
+function App() {
+  const [todos, setTodos] = useState([]);
+
+  function addTodo(text) {
+    setTodos([...todos, { id: Date.now(), text, completed: false }]);
+  }
+
+  function deleteTodo(id) {
+    setTodos(todos.filter(todo =&gt; todo.id !== id));
+  }
+
+  function toggleComplete(id) {
+    setTodos(
+      todos.map(todo =&gt;
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Danh sách công việc&lt;/h1&gt;
+      &lt;TodoForm onAdd={addTodo} /&gt;
+      &lt;TodoList todos={todos} onDelete={deleteTodo} onToggle={toggleComplete} /&gt;
+    &lt;/div&gt;
+  );
+}
+export default App;
+</code></pre>
+<ol start="2">
+<li>Tạo <code>src/components/TodoForm.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+
+function TodoForm({ onAdd }) {
+  const [text, setText] = useState(&#39;&#39;);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (text.trim()) {
+      onAdd(text);
+      setText(&#39;&#39;);
+    }
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input
+        type=&quot;text&quot;
+        value={text}
+        onChange={(e) =&gt; setText(e.target.value)}
+        placeholder=&quot;Thêm công việc&quot;
+      /&gt;
+      &lt;button type=&quot;submit&quot;&gt;Thêm&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+export default TodoForm;
+</code></pre>
+<p><strong>Cập nhật:</strong> Sửa lỗi trong tài liệu gốc, sử dụng thẻ <code>&lt;form&gt;</code> thay vì <code>&lt;div&gt;</code> cho <code>onSubmit</code> để xử lý sự kiện gửi form đúng cách.</p>
+<ol start="3">
+<li>Tạo <code>src/components/TodoList.js</code>:</li>
+</ol>
+<pre><code class="language-jsx">function TodoList({ todos, onDelete, onToggle }) {
+  return (
+    &lt;ul&gt;
+      {todos.map(todo =&gt; (
+        &lt;li key={todo.id} style={{ textDecoration: todo.completed ? &#39;line-through&#39; : &#39;none&#39; }}&gt;
+          {todo.text}
+          &lt;button onClick={() =&gt; onToggle(todo.id)}&gt;
+            {todo.completed ? &#39;Đảo ngược&#39; : &#39;Hoàn thành&#39;}
+          &lt;/button&gt;
+          &lt;button onClick={() =&gt; onDelete(todo.id)}&gt;Xóa&lt;/button&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+export default TodoList;
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>App</code> quản lý danh sách <code>todos</code> và cung cấp các hàm <code>addTodo</code>, <code>deleteTodo</code>, <code>toggleComplete</code>.</li>
+<li><code>TodoForm</code> cho phép thêm công việc mới, sử dụng trạng thái cục bộ <code>text</code> và gửi dữ liệu lên <code>App</code> qua <code>onAdd</code>.</li>
+<li><code>TodoList</code> hiển thị danh sách todo, sử dụng <code>key</code> và hiển thị điều kiện để gạch ngang công việc đã hoàn thành.</li>
+</ul>
+<hr>
+<h2>D. Kiểm tra và cập nhật</h2>
+<p><strong>Kiểm tra nội dung gốc:</strong></p>
+<ul>
+<li>Nội dung gốc chính xác về mặt lý thuyết và ví dụ, nhưng thiếu giải thích chi tiết cho học viên mới.</li>
+<li>Bài tập 5 có lỗi nhỏ trong <code>TodoForm.js</code>: sử dụng <code>&lt;div&gt;</code> thay vì <code>&lt;form&gt;</code> cho sự kiện <code>onSubmit</code>, gây lỗi khi xử lý gửi form.</li>
+<li>Cập nhật đã sửa lỗi này và bổ sung giải thích chi tiết bằng tiếng Việt để dễ hiểu hơn.</li>
+<li>Nội dung được giữ nguyên cấu trúc nhưng được viết lại để rõ ràng, phù hợp với học viên Việt Nam.</li>
+</ul>
+<p><strong>Lưu ý cho học viên:</strong></p>
+<ul>
+<li>Thực hành các bài tập trên môi trường React (sử dụng Create React App hoặc Vite).</li>
+<li>Đảm bảo cài đặt React và các công cụ cần thiết trước khi bắt đầu.</li>
+<li>Sử dụng console để kiểm tra kết quả và debug khi cần.</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,0 +1,617 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 05: Quản lý State nâng cao với useReducer và useContext trong ReactJS</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu khi nào <strong><code>useState</code></strong> không đủ và cần sử dụng giải pháp mạnh mẽ hơn.</li>
+<li>Thành thạo hook <strong><code>useReducer</code></strong> để quản lý state phức tạp và logic cập nhật state.</li>
+<li>Hiểu rõ vấn đề <strong>prop drilling</strong> và cách hook <strong><code>useContext</code></strong> giải quyết nó.</li>
+<li>Kết hợp <strong><code>useReducer</code></strong> và <strong><code>useContext</code></strong> để tạo pattern quản lý state toàn cục đơn giản.</li>
+</ul>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Giới hạn của useState</h3>
+<p>Hook <strong><code>useState</code></strong> phù hợp cho state đơn giản, nhưng gặp khó khăn trong các trường hợp:</p>
+<ul>
+<li><strong>State phức tạp</strong>: Khi state là object hoặc array lớn với nhiều thuộc tính cần quản lý.</li>
+<li><strong>Logic cập nhật phức tạp</strong>: Khi logic cập nhật state phụ thuộc vào state trước đó hoặc có nhiều hành động khác nhau.</li>
+<li><strong>Tái sử dụng logic</strong>: Khi cần tách biệt logic cập nhật state để dễ test và tái sử dụng.</li>
+<li><strong>Hiệu năng</strong>: Khi nhiều thay đổi state dẫn đến render không cần thiết.</li>
+</ul>
+<p>Trong các trường hợp này, <strong><code>useReducer</code></strong> cung cấp cách tiếp cận tập trung và dễ dự đoán hơn.</p>
+<h3>2. Hook useReducer - Lựa chọn thay thế cho useState</h3>
+<h4>Cú pháp</h4>
+<pre><code class="language-jsx">const [state, dispatch] = useReducer(reducer, initialState);
+</code></pre>
+<ul>
+<li><strong><code>reducer</code></strong>: Hàm thuần túy <code>(state, action) =&gt; newState</code>, nhận state hiện tại và một <strong>action</strong> để trả về state mới.</li>
+<li><strong><code>action</code></strong>: Object mô tả hành động, thường có thuộc tính <code>type</code> (chuỗi định danh) và <code>payload</code> (dữ liệu bổ sung).</li>
+<li><strong><code>dispatch</code></strong>: Hàm gửi action đến reducer để cập nhật state.</li>
+<li><strong><code>initialState</code></strong>: Giá trị khởi tạo của state.</li>
+</ul>
+<p>Ví dụ:</p>
+<pre><code class="language-jsx">const initialState = { count: 0 };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case &#39;increment&#39;:
+      return { count: state.count + 1 };
+    case &#39;decrement&#39;:
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Đếm: {state.count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: &#39;increment&#39; })}&gt;Tăng&lt;/button&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: &#39;decrement&#39; })}&gt;Giảm&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<h4>Ưu điểm</h4>
+<ul>
+<li>Tách biệt logic cập nhật state ra khỏi component.</li>
+<li>Dễ dự đoán vì reducer là hàm thuần túy.</li>
+<li>Tối ưu hiệu năng vì <code>dispatch</code> không thay đổi giữa các lần render.</li>
+<li>Dễ test và tái sử dụng logic reducer.</li>
+</ul>
+<h3>3. Vấn đề Prop Drilling</h3>
+<p><strong>Prop drilling</strong> xảy ra khi bạn phải truyền props qua nhiều cấp component trung gian để đưa dữ liệu hoặc hàm đến component con sâu trong cây component. Ví dụ:</p>
+<pre><code class="language-jsx">function App() {
+  const [data, setData] = useState(&#39;&#39;);
+  return &lt;Parent data={data} setData={setData} /&gt;;
+}
+function Parent({ data, setData }) {
+  return &lt;Child data={data} setData={setData} /&gt;;
+}
+function Child({ data, setData }) {
+  return &lt;input value={data} onChange={(e) =&gt; setData(e.target.value)} /&gt;;
+}
+</code></pre>
+<p>Điều này làm code:</p>
+<ul>
+<li>Khó đọc và bảo trì.</li>
+<li>Dễ gây lỗi khi cấu trúc ứng dụng thay đổi.</li>
+<li>Tăng độ phức tạp khi truyền nhiều props.</li>
+</ul>
+<h3>4. Hook useContext - Giải pháp cho Prop Drilling</h3>
+<p>Hook <strong><code>useContext</code></strong> cho phép chia sẻ dữ liệu toàn cục mà không cần truyền props qua từng cấp component.</p>
+<h4>Các bước sử dụng</h4>
+<ol>
+<li><strong>Tạo Context</strong>:<pre><code class="language-jsx">import { createContext } from &#39;react&#39;;
+const MyContext = createContext(defaultValue);
+</code></pre>
+</li>
+<li><strong>Cung cấp giá trị qua Provider</strong>:<pre><code class="language-jsx">&lt;MyContext.Provider value={data}&gt;
+  &lt;Child /&gt;
+&lt;/MyContext.Provider&gt;
+</code></pre>
+</li>
+<li><strong>Sử dụng trong component con</strong>:<pre><code class="language-jsx">import { useContext } from &#39;react&#39;;
+function Child() {
+  const data = useContext(MyContext);
+  return &lt;p&gt;{data}&lt;/p&gt;;
+}
+</code></pre>
+</li>
+</ol>
+<h3>5. Pattern kết hợp useReducer và useContext</h3>
+<p>Kết hợp <strong><code>useReducer</code></strong> và <strong><code>useContext</code></strong> tạo ra hệ thống quản lý state toàn cục mạnh mẽ, phù hợp cho ứng dụng vừa và nhỏ:</p>
+<ul>
+<li>Sử dụng <code>useReducer</code> để quản lý state và logic.</li>
+<li>Đặt <code>state</code> và <code>dispatch</code> vào Context để các component con truy cập.</li>
+<li>Các component con dùng <code>useContext</code> để đọc state hoặc gửi action qua <code>dispatch</code>.</li>
+</ul>
+<p>Ví dụ:</p>
+<pre><code class="language-jsx">const MyContext = createContext();
+
+function reducer(state, action) {
+  switch (action.type) {
+    case &#39;increment&#39;:
+      return { count: state.count + 1 };
+    default:
+      return state;
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  return (
+    &lt;MyContext.Provider value={{ state, dispatch }}&gt;
+      &lt;Child /&gt;
+    &lt;/MyContext.Provider&gt;
+  );
+}
+
+function Child() {
+  const { state, dispatch } = useContext(MyContext);
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Đếm: {state.count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: &#39;increment&#39; })}&gt;Tăng&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Refactor component Counter với useReducer</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Chuyển component <code>Counter</code> từ bài 1 sang sử dụng <code>useReducer</code> với các action <code>increment</code> và <code>decrement</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>src/components/Counter.js</code>:<pre><code class="language-jsx">import { useReducer } from &#39;react&#39;;
+
+const initialState = { count: 0 };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case &#39;increment&#39;:
+      return { count: state.count + 1 };
+    case &#39;decrement&#39;:
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Đếm: {state.count}&lt;/h2&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: &#39;increment&#39; })}&gt;Tăng&lt;/button&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: &#39;decrement&#39; })}&gt;Giảm&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+export default Counter;
+</code></pre>
+</li>
+<li>Sử dụng trong <code>App.jsx</code>:<pre><code class="language-jsx">import Counter from &#39;./components/Counter&#39;;
+
+function App() {
+  return &lt;Counter /&gt;;
+}
+export default App;
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 2: Refactor ứng dụng Todo List với useReducer</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Quản lý state <code>todos</code> bằng <code>useReducer</code> với các action: <code>ADD_TODO</code>, <code>DELETE_TODO</code>, <code>TOGGLE_TODO</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>src/components/TodoList.js</code>:<pre><code class="language-jsx">function TodoList({ todos, dispatch }) {
+  return (
+    &lt;ul&gt;
+      {todos.map(todo =&gt; (
+        &lt;li key={todo.id} style={{ textDecoration: todo.completed ? &#39;line-through&#39; : &#39;none&#39; }}&gt;
+          {todo.text}
+          &lt;button onClick={() =&gt; dispatch({ type: &#39;TOGGLE_TODO&#39;, payload: todo.id })}&gt;
+            {todo.completed ? &#39;Hoàn tác&#39; : &#39;Hoàn thành&#39;}
+          &lt;/button&gt;
+          &lt;button onClick={() =&gt; dispatch({ type: &#39;DELETE_TODO&#39;, payload: todo.id })}&gt;Xóa&lt;/button&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+export default TodoList;
+</code></pre>
+</li>
+<li>Tạo <code>src/components/TodoForm.js</code>:<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+
+function TodoForm({ dispatch }) {
+  const [text, setText] = useState(&#39;&#39;);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (text.trim()) {
+      dispatch({ type: &#39;ADD_TODO&#39;, payload: { id: Date.now(), text, completed: false } });
+      setText(&#39;&#39;);
+    }
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        type=&quot;text&quot;
+        value={text}
+        onChange={(e) =&gt; setText(e.target.value)}
+        placeholder=&quot;Thêm công việc&quot;
+      /&gt;
+      &lt;button onClick={handleSubmit}&gt;Thêm&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+export default TodoForm;
+</code></pre>
+</li>
+<li>Cập nhật <code>src/App.jsx</code>:<pre><code class="language-jsx">import { useReducer } from &#39;react&#39;;
+import TodoForm from &#39;./components/TodoForm&#39;;
+import TodoList from &#39;./components/TodoList&#39;;
+
+const initialState = { todos: [] };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case &#39;ADD_TODO&#39;:
+      return { todos: [...state.todos, action.payload] };
+    case &#39;DELETE_TODO&#39;:
+      return { todos: state.todos.filter(todo =&gt; todo.id !== action.payload) };
+    case &#39;TOGGLE_TODO&#39;:
+      return {
+        todos: state.todos.map(todo =&gt;
+          todo.id === action.payload ? { ...todo, completed: !todo.completed } : todo
+        )
+      };
+    default:
+      return state;
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Todo List&lt;/h1&gt;
+      &lt;TodoForm dispatch={dispatch} /&gt;
+      &lt;TodoList todos={state.todos} dispatch={dispatch} /&gt;
+    &lt;/div&gt;
+  );
+}
+export default App;
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 3: Chuyển đổi giao diện Sáng/Tối (Light/Dark Theme)</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Sử dụng <code>useContext</code> để quản lý theme toàn cục (<code>light</code>/<code>dark</code>).</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>src/context/ThemeContext.js</code>:<pre><code class="language-jsx">import { createContext } from &#39;react&#39;;
+
+const ThemeContext = createContext();
+export default ThemeContext;
+</code></pre>
+</li>
+<li>Tạo <code>src/components/ThemeToggleButton.js</code>:<pre><code class="language-jsx">import { useContext } from &#39;react&#39;;
+import ThemeContext from &#39;../context/ThemeContext&#39;;
+
+function ThemeToggleButton() {
+  const { toggleTheme } = useContext(ThemeContext);
+  return &lt;button onClick={toggleTheme}&gt;Chuyển đổi Theme&lt;/button&gt;;
+}
+export default ThemeToggleButton;
+</code></pre>
+</li>
+<li>Tạo <code>src/components/HomePage.js</code>:<pre><code class="language-jsx">import { useContext } from &#39;react&#39;;
+import ThemeContext from &#39;../context/ThemeContext&#39;;
+
+function HomePage() {
+  const { theme } = useContext(ThemeContext);
+  return (
+    &lt;div style={{ background: theme === &#39;light&#39; ? &#39;#fff&#39; : &#39;#333&#39;, color: theme === &#39;light&#39; ? &#39;#000&#39; : &#39;#fff&#39; }}&gt;
+      &lt;h2&gt;Trang chủ&lt;/h2&gt;
+      &lt;p&gt;Theme hiện tại: {theme}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default HomePage;
+</code></pre>
+</li>
+<li>Cập nhật <code>src/App.jsx</code>:<pre><code class="language-jsx">import { useState } from &#39;react&#39;;
+import ThemeContext from &#39;./context/ThemeContext&#39;;
+import ThemeToggleButton from &#39;./components/ThemeToggleButton&#39;;
+import HomePage from &#39;./components/HomePage&#39;;
+
+function App() {
+  const [theme, setTheme] = useState(&#39;light&#39;);
+  const toggleTheme = () =&gt; setTheme(theme === &#39;light&#39; ? &#39;dark&#39; : &#39;light&#39;);
+
+  return (
+    &lt;ThemeContext.Provider value={{ theme, toggleTheme }}&gt;
+      &lt;HomePage /&gt;
+      &lt;ThemeToggleButton /&gt;
+    &lt;/ThemeContext.Provider&gt;
+  );
+}
+export default App;
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 4: Nâng cấp Todo List với useReducer và useContext</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Sử dụng <code>useReducer</code> và <code>useContext</code> để quản lý state <code>todos</code> mà không cần truyền props.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>src/context/TodoContext.js</code>:<pre><code class="language-jsx">import { createContext } from &#39;react&#39;;
+
+const TodoContext = createContext();
+export default TodoContext;
+</code></pre>
+</li>
+<li>Cập nhật <code>src/components/TodoForm.js</code>:<pre><code class="language-jsx">import { useState, useContext } from &#39;react&#39;;
+import TodoContext from &#39;../context/TodoContext&#39;;
+
+function TodoForm() {
+  const { dispatch } = useContext(TodoContext);
+  const [text, setText] = useState(&#39;&#39;);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (text.trim()) {
+      dispatch({ type: &#39;ADD_TODO&#39;, payload: { id: Date.now(), text, completed: false } });
+      setText(&#39;&#39;);
+    }
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;input
+        type=&quot;text&quot;
+        value={text}
+        onChange={(e) =&gt; setText(e.target.value)}
+        placeholder=&quot;Thêm công việc&quot;
+      /&gt;
+      &lt;button onClick={handleSubmit}&gt;Thêm&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+export default TodoForm;
+</code></pre>
+</li>
+<li>Cập nhật <code>src/components/TodoList.js</code>:<pre><code class="language-jsx">import { useContext } from &#39;react&#39;;
+import TodoContext from &#39;../context/TodoContext&#39;;
+
+function TodoList() {
+  const { state, dispatch } = useContext(TodoContext);
+  return (
+    &lt;ul&gt;
+      {state.todos.map(todo =&gt; (
+        &lt;li key={todo.id} style={{ textDecoration: todo.completed ? &#39;line-through&#39; : &#39;none&#39; }}&gt;
+          {todo.text}
+          &lt;button onClick={() =&gt; dispatch({ type: &#39;TOGGLE_TODO&#39;, payload: todo.id })}&gt;
+            {todo.completed ? &#39;Hoàn tác&#39; : &#39;Hoàn thành&#39;}
+          &lt;/button&gt;
+          &lt;button onClick={() =&gt; dispatch({ type: &#39;DELETE_TODO&#39;, payload: todo.id })}&gt;Xóa&lt;/button&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+export default TodoList;
+</code></pre>
+</li>
+<li>Cập nhật <code>src/App.jsx</code>:<pre><code class="language-jsx">import { useReducer } from &#39;react&#39;;
+import TodoContext from &#39;./context/TodoContext&#39;;
+import TodoForm from &#39;./components/TodoForm&#39;;
+import TodoList from &#39;./components/TodoList&#39;;
+
+const initialState = { todos: [] };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case &#39;ADD_TODO&#39;:
+      return { todos: [...state.todos, action.payload] };
+    case &#39;DELETE_TODO&#39;:
+      return { todos: state.todos.filter(todo =&gt; todo.id !== action.payload) };
+    case &#39;TOGGLE_TODO&#39;:
+      return {
+        todos: state.todos.map(todo =&gt;
+          todo.id === action.payload ? { ...todo, completed: !todo.completed } : todo
+        )
+      };
+    default:
+      return state;
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    &lt;TodoContext.Provider value={{ state, dispatch }}&gt;
+      &lt;h1&gt;Todo List&lt;/h1&gt;
+      &lt;TodoForm /&gt;
+      &lt;TodoList /&gt;
+    &lt;/TodoContext.Provider&gt;
+  );
+}
+export default App;
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 5: Xây dựng giỏ hàng đơn giản</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Sử dụng <code>useReducer</code> và <code>useContext</code> để quản lý giỏ hàng với các action: <code>ADD_TO_CART</code>, <code>REMOVE_FROM_CART</code>, <code>INCREASE_QUANTITY</code>, <code>DECREASE_QUANTITY</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>src/context/CartContext.js</code>:<pre><code class="language-jsx">import { createContext } from &#39;react&#39;;
+
+const CartContext = createContext();
+export default CartContext;
+</code></pre>
+</li>
+<li>Tạo <code>src/components/ProductList.js</code>:<pre><code class="language-jsx">import { useContext } from &#39;react&#39;;
+import CartContext from &#39;../context/CartContext&#39;;
+
+const products = [
+  { id: 1, name: &#39;Laptop&#39;, price: 999 },
+  { id: 2, name: &#39;Điện thoại&#39;, price: 499 },
+  { id: 3, name: &#39;Tai nghe&#39;, price: 99 },
+];
+
+function ProductList() {
+  const { dispatch } = useContext(CartContext);
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Sản phẩm&lt;/h2&gt;
+      &lt;ul&gt;
+        {products.map(product =&gt; (
+          &lt;li key={product.id}&gt;
+            {product.name} - ${product.price}
+            &lt;button onClick={() =&gt; dispatch({ type: &#39;ADD_TO_CART&#39;, payload: { ...product, quantity: 1 } })}&gt;
+              Thêm vào giỏ
+            &lt;/button&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+export default ProductList;
+</code></pre>
+</li>
+<li>Tạo <code>src/components/ShoppingCart.js</code>:<pre><code class="language-jsx">import { useContext } from &#39;react&#39;;
+import CartContext from &#39;../context/CartContext&#39;;
+
+function ShoppingCart() {
+  const { state, dispatch } = useContext(CartContext);
+  const total = state.cart.reduce((sum, item) =&gt; sum + item.price * item.quantity, 0);
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Giỏ hàng&lt;/h2&gt;
+      &lt;ul&gt;
+        {state.cart.map(item =&gt; (
+          &lt;li key={item.id}&gt;
+            {item.name} - ${item.price} x {item.quantity}
+            &lt;button onClick={() =&gt; dispatch({ type: &#39;INCREASE_QUANTITY&#39;, payload: item.id })}&gt;+&lt;/button&gt;
+            &lt;button onClick={() =&gt; dispatch({ type: &#39;DECREASE_QUANTITY&#39;, payload: item.id })}&gt;-&lt;/button&gt;
+            &lt;button onClick={() =&gt; dispatch({ type: &#39;REMOVE_FROM_CART&#39;, payload: item.id })}&gt;Xóa&lt;/button&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+      &lt;p&gt;Tổng tiền: ${total}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default ShoppingCart;
+</code></pre>
+</li>
+<li>Cập nhật <code>src/App.jsx</code>:<pre><code class="language-jsx">import { useReducer } from &#39;react&#39;;
+import CartContext from &#39;./context/CartContext&#39;;
+import ProductList from &#39;./components/ProductList&#39;;
+import ShoppingCart from &#39;./components/ShoppingCart&#39;;
+
+const initialState = { cart: [] };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case &#39;ADD_TO_CART&#39;:
+      const existingItem = state.cart.find(item =&gt; item.id === action.payload.id);
+      if (existingItem) {
+        return {
+          cart: state.cart.map(item =&gt;
+            item.id === action.payload.id ? { ...item, quantity: item.quantity + 1 } : item
+          )
+        };
+      }
+      return { cart: [...state.cart, action.payload] };
+    case &#39;REMOVE_FROM_CART&#39;:
+      return { cart: state.cart.filter(item =&gt; item.id !== action.payload) };
+    case &#39;INCREASE_QUANTITY&#39;:
+      return {
+        cart: state.cart.map(item =&gt;
+          item.id === action.payload ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      };
+    case &#39;DECREASE_QUANTITY&#39;:
+      return {
+        cart: state.cart.map(item =&gt;
+          item.id === action.payload &amp;&amp; item.quantity &gt; 1
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        )
+      };
+    default:
+      return state;
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    &lt;CartContext.Provider value={{ state, dispatch }}&gt;
+      &lt;h1&gt;Giỏ hàng&lt;/h1&gt;
+      &lt;ProductList /&gt;
+      &lt;ShoppingCart /&gt;
+    &lt;/CartContext.Provider&gt;
+  );
+}
+export default App;
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

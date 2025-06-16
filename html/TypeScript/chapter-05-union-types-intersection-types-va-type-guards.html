@@ -1,0 +1,543 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 5: Kết Hợp Kiểu - Union Types, Intersection Types và Type Guards</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chương này giúp bạn nắm vững các công cụ mạnh mẽ trong TypeScript để làm việc với các kiểu dữ liệu phức tạp một cách an toàn và hiệu quả. Bạn sẽ học cách sử dụng:</p>
+<ul>
+<li><strong>Union Types (<code>|</code>)</strong>: Cho phép một biến thuộc một trong nhiều kiểu dữ liệu khác nhau.</li>
+<li><strong>Intersection Types (<code>&amp;</code>)</strong>: Kết hợp nhiều kiểu thành một kiểu mới chứa tất cả thuộc tính của các kiểu gốc.</li>
+<li><strong>Type Guards</strong>: Các kỹ thuật như <code>typeof</code>, <code>instanceof</code>, <code>in</code>, và user-defined type guards để kiểm tra và thu hẹp kiểu dữ liệu tại runtime.</li>
+</ul>
+<p>Những khái niệm này rất quan trọng khi xây dựng ứng dụng thực tế, đặc biệt trong các dự án ReactJS hoặc NextJS sử dụng TypeScript, nơi bạn cần xử lý dữ liệu từ API hoặc các nguồn không xác định trước.</p>
+<h2>Tiêu đề chương học</h2>
+<p><strong>Kết Hợp Kiểu: Union, Intersection và Type Guards</strong></p>
+<h2>Tóm tắt lý thuyết chính</h2>
+<h3>1. Union Types (<code>|</code>)</h3>
+<p><strong>Union Types</strong> cho phép một biến, tham số hoặc giá trị trả về thuộc một trong nhiều kiểu dữ liệu được chỉ định. Toán tử <code>|</code> được sử dụng để định nghĩa union type.</p>
+<p><strong>Ví dụ đơn giản</strong>:</p>
+<pre><code class="language-typescript">let identifier: string | number;
+
+identifier = &quot;user-123&quot;; // OK
+console.log(identifier.toUpperCase()); // OK, TypeScript biết identifier là string
+
+identifier = 404; // OK
+// console.log(identifier.toUpperCase()); // Lỗi: &#39;toUpperCase&#39; không tồn tại trên kiểu number
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Khi làm việc với union types, TypeScript chỉ cho phép truy cập các thuộc tính/phương thức <strong>chung</strong> của tất cả các kiểu trong union.</li>
+<li>Để sử dụng các thuộc tính/phương thức riêng của một kiểu cụ thể, bạn cần <strong>thu hẹp kiểu</strong> (narrowing) bằng type guards (sẽ giải thích bên dưới).</li>
+<li>Union types rất hữu ích khi xử lý dữ liệu từ API, nơi một giá trị có thể là <code>string</code>, <code>number</code>, hoặc thậm chí <code>null</code>.</li>
+</ul>
+<h3>2. Làm việc với Union Types: Thu hẹp kiểu (Narrowing)</h3>
+<p><strong>Thu hẹp kiểu</strong> là quá trình TypeScript xác định một kiểu cụ thể hơn trong một khối mã dựa trên các kiểm tra điều kiện. Dưới đây là các kỹ thuật phổ biến:</p>
+<h4>a. Sử dụng <code>typeof</code></h4>
+<p>Hữu ích khi kiểm tra các kiểu nguyên thủy (<code>string</code>, <code>number</code>, <code>boolean</code>, <code>undefined</code>, v.v.).</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">function printId(id: string | number): void {
+    if (typeof id === &quot;string&quot;) {
+        // TypeScript biết id là string
+        console.log(&quot;ID (string):&quot;, id.toUpperCase());
+    } else {
+        // TypeScript biết id là number
+        console.log(&quot;ID (number):&quot;, id.toFixed(0));
+    }
+}
+
+printId(&quot;abc-123&quot;); // ID (string): ABC-123
+printId(101.56);   // ID (number): 102
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>typeof</code> trả về kiểu của biến tại runtime (<code>&quot;string&quot;</code>, <code>&quot;number&quot;</code>, v.v.).</li>
+<li>Trong khối <code>if</code>, TypeScript tự động thu hẹp kiểu của <code>id</code> dựa trên kết quả kiểm tra.</li>
+<li>Ứng dụng thực tế: Xử lý các tham số linh hoạt trong hàm hoặc dữ liệu từ form nhập liệu.</li>
+</ul>
+<h4>b. Sử dụng <code>instanceof</code></h4>
+<p>Hữu ích khi làm việc với các đối tượng được tạo từ class.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">class Dog {
+    bark() { console.log(&quot;Woof!&quot;); }
+}
+class Cat {
+    meow() { console.log(&quot;Meow!&quot;); }
+}
+
+function makeSound(animal: Dog | Cat): void {
+    if (animal instanceof Dog) {
+        animal.bark(); // animal là Dog
+    } else {
+        animal.meow(); // animal là Cat
+    }
+}
+
+makeSound(new Dog()); // Woof!
+makeSound(new Cat()); // Meow!
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>instanceof</code> kiểm tra xem một đối tượng có phải là instance của một class hay không.</li>
+<li>TypeScript sử dụng thông tin này để thu hẹp kiểu trong khối <code>if</code> hoặc <code>else</code>.</li>
+<li>Ứng dụng thực tế: Xử lý các đối tượng phức tạp trong các ứng dụng có nhiều loại thực thể (ví dụ: trong game hoặc hệ thống quản lý).</li>
+</ul>
+<h4>c. Sử dụng toán tử <code>in</code></h4>
+<p>Kiểm tra sự tồn tại của một thuộc tính trong đối tượng.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">interface Admin {
+    isAdmin: true;
+    manageUsers(): void;
+}
+interface RegularUser {
+    isUser: true;
+    viewContent(): void;
+}
+
+function performAction(user: Admin | RegularUser): void {
+    if (&quot;manageUsers&quot; in user) {
+        user.manageUsers(); // user là Admin
+    } else {
+        user.viewContent(); // user là RegularUser
+    }
+}
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Toán tử <code>in</code> kiểm tra xem một thuộc tính có tồn tại trong đối tượng không.</li>
+<li>TypeScript sử dụng kết quả này để thu hẹp kiểu.</li>
+<li>Ứng dụng thực tế: Xử lý các đối tượng người dùng với vai trò khác nhau (admin, user) trong hệ thống xác thực.</li>
+</ul>
+<h3>3. Discriminated Unions (Tagged Unions)</h3>
+<p><strong>Discriminated Unions</strong> là một pattern mạnh mẽ để làm việc với union types. Mỗi kiểu trong union có một thuộc tính chung (gọi là <strong>discriminant</strong> hoặc <strong>tag</strong>) với giá trị là một literal type cụ thể (thường là chuỗi hoặc số).</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">interface Circle {
+    kind: &quot;circle&quot;; // Discriminant
+    radius: number;
+}
+interface Square {
+    kind: &quot;square&quot;; // Discriminant
+    sideLength: number;
+}
+interface Rectangle {
+    kind: &quot;rectangle&quot;; // Discriminant
+    width: number;
+    height: number;
+}
+
+type Shape = Circle | Square | Rectangle;
+
+function getArea(shape: Shape): number {
+    switch (shape.kind) {
+        case &quot;circle&quot;:
+            return Math.PI * shape.radius ** 2;
+        case &quot;square&quot;:
+            return shape.sideLength ** 2;
+        case &quot;rectangle&quot;:
+            return shape.width * shape.height;
+        default:
+            const _exhaustiveCheck: never = shape;
+            return _exhaustiveCheck;
+    }
+}
+
+console.log(getArea({ kind: &quot;circle&quot;, radius: 5 })); // ~78.54
+console.log(getArea({ kind: &quot;square&quot;, sideLength: 4 })); // 16
+console.log(getArea({ kind: &quot;rectangle&quot;, width: 3, height: 6 })); // 18
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Thuộc tính <code>kind</code> là discriminant, giúp TypeScript phân biệt các kiểu trong union.</li>
+<li><code>switch</code> statement sử dụng <code>kind</code> để thu hẹp kiểu, cho phép truy cập các thuộc tính cụ thể (<code>radius</code>, <code>sideLength</code>, v.v.).</li>
+<li>Biến <code>_exhaustiveCheck</code> kiểu <code>never</code> đảm bảo rằng tất cả các trường hợp đã được xử lý. Nếu thêm một kiểu mới vào <code>Shape</code> mà không cập nhật <code>switch</code>, TypeScript sẽ báo lỗi.</li>
+<li>Ứng dụng thực tế: Xử lý phản hồi API với các trạng thái khác nhau (success, error, loading).</li>
+</ul>
+<h3>4. Intersection Types (<code>&amp;</code>)</h3>
+<p><strong>Intersection Types</strong> kết hợp nhiều kiểu thành một kiểu mới chứa tất cả thuộc tính của các kiểu gốc. Toán tử <code>&amp;</code> được sử dụng để định nghĩa intersection type.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">interface Draggable {
+    drag(): void;
+}
+interface Resizable {
+    resize(): void;
+}
+
+type UIWidget = Draggable &amp; Resizable;
+
+let widget: UIWidget = {
+    drag: () =&gt; console.log(&quot;Dragging...&quot;),
+    resize: () =&gt; console.log(&quot;Resizing...&quot;)
+};
+
+widget.drag(); // Dragging...
+widget.resize(); // Resizing...
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>UIWidget</code> yêu cầu đối tượng phải có cả phương thức <code>drag</code> và <code>resize</code>.</li>
+<li>Nếu các kiểu giao nhau có thuộc tính trùng tên nhưng khác kiểu, TypeScript có thể báo lỗi hoặc kết quả là kiểu <code>never</code>.</li>
+<li>Ứng dụng thực tế: Xây dựng các thành phần giao diện (UI components) trong React, nơi một component có thể có nhiều tính năng (draggable, resizable, clickable, v.v.).</li>
+</ul>
+<h3>5. Type Guards</h3>
+<p><strong>Type Guards</strong> là các kỹ thuật giúp TypeScript thu hẹp kiểu dữ liệu trong một phạm vi mã nhất định. Ngoài <code>typeof</code>, <code>instanceof</code>, và <code>in</code>, bạn có thể tự định nghĩa type guards.</p>
+<h4>User-defined Type Guards</h4>
+<p>Sử dụng từ khóa <code>is</code> để định nghĩa một hàm kiểm tra kiểu trả về boolean, với cú pháp: <code>parameter is Type</code>.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">interface Bird {
+    fly(): void;
+    layEggs(): void;
+}
+interface Fish {
+    swim(): void;
+    layEggs(): void;
+}
+
+function isBird(pet: Fish | Bird): pet is Bird {
+    return (pet as Bird).fly !== undefined;
+}
+
+function moveAnimal(pet: Fish | Bird) {
+    if (isBird(pet)) {
+        pet.fly(); // pet là Bird
+    } else {
+        pet.swim(); // pet là Fish
+    }
+    pet.layEggs(); // Có thể gọi trực tiếp vì cả Bird và Fish đều có layEggs
+}
+
+let sparrow: Bird = { fly: () =&gt; console.log(&quot;Sparrow flying&quot;), layEggs: () =&gt; console.log(&quot;Sparrow laying eggs&quot;) };
+let salmon: Fish = { swim: () =&gt; console.log(&quot;Salmon swimming&quot;), layEggs: () =&gt; console.log(&quot;Salmon laying eggs&quot;) };
+
+moveAnimal(sparrow); // Sparrow flying, Sparrow laying eggs
+moveAnimal(salmon); // Salmon swimming, Salmon laying eggs
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Hàm <code>isBird</code> trả về <code>true</code> nếu <code>pet</code> có phương thức <code>fly</code>, và TypeScript thu hẹp kiểu của <code>pet</code> thành <code>Bird</code>.</li>
+<li>Cú pháp <code>pet is Bird</code> là <strong>type predicate</strong>, giúp TypeScript hiểu kết quả của hàm.</li>
+<li>Ứng dụng thực tế: Kiểm tra kiểu dữ liệu phức tạp từ dữ liệu API hoặc các nguồn không rõ ràng.</li>
+</ul>
+<h2>Code ví dụ tổng hợp</h2>
+<p>Dưới đây là các ví dụ minh họa tất cả các khái niệm trên, được mở rộng để dễ hiểu hơn:</p>
+<pre><code class="language-typescript">// ---- Union Types và typeof ----
+function processValue(value: string | number | boolean): void {
+    if (typeof value === &quot;string&quot;) {
+        console.log(`String value: ${value.toUpperCase()}`);
+    } else if (typeof value === &quot;number&quot;) {
+        console.log(`Number value: ${value.toFixed(2)}`);
+    } else {
+        console.log(`Boolean value: ${value}`);
+    }
+}
+
+processValue(&quot;Hello TypeScript&quot;); // String value: HELLO TYPESCRIPT
+processValue(3.14159); // Number value: 3.14
+processValue(true); // Boolean value: true
+
+// ---- Discriminated Unions ----
+type NetworkResponse =
+    | { status: &quot;success&quot;; data: { userId: string; items: string[] } }
+    | { status: &quot;error&quot;; errorCode: number; errorMessage: string };
+
+function handleNetworkResponse(response: NetworkResponse): void {
+    if (response.status === &quot;success&quot;) {
+        console.log(&quot;Data received:&quot;, response.data.items.join(&quot;, &quot;));
+    } else {
+        console.error(`Error ${response.errorCode}: ${response.errorMessage}`);
+    }
+}
+
+handleNetworkResponse({ status: &quot;success&quot;, data: { userId: &quot;u1&quot;, items: [&quot;item1&quot;, &quot;item2&quot;] } });
+// Data received: item1, item2
+handleNetworkResponse({ status: &quot;error&quot;, errorCode: 500, errorMessage: &quot;Internal Server Error&quot; });
+// Error 500: Internal Server Error
+
+// ---- Intersection Types ----
+type Person = { name: string; age: number };
+type Employee = { employeeId: string; department: string };
+
+type EmployeeProfile = Person &amp; Employee;
+
+let employee1: EmployeeProfile = {
+    name: &quot;Alice Wonderland&quot;,
+    age: 30,
+    employeeId: &quot;E123&quot;,
+    department: &quot;Engineering&quot;
+};
+
+console.log(`${employee1.name} (ID: ${employee1.employeeId}) works in ${employee1.department}.`);
+// Alice Wonderland (ID: E123) works in Engineering.
+
+// ---- User-defined Type Guard với &#39;in&#39; ----
+interface Car {
+    drive(): void;
+    fuelType: &quot;gasoline&quot; | &quot;diesel&quot; | &quot;electric&quot;;
+}
+interface Bicycle {
+    pedal(): void;
+    gearCount: number;
+}
+
+function isCar(vehicle: Car | Bicycle): vehicle is Car {
+    return &quot;drive&quot; in vehicle;
+}
+
+function operateVehicle(vehicle: Car | Bicycle): void {
+    if (isCar(vehicle)) {
+        vehicle.drive();
+        console.log(`This car uses ${vehicle.fuelType}.`);
+    } else {
+        vehicle.pedal();
+        console.log(`This bicycle has ${vehicle.gearCount} gears.`);
+    }
+}
+
+let myCar: Car = { drive: () =&gt; console.log(&quot;Car driving...&quot;), fuelType: &quot;electric&quot; };
+let myBike: Bicycle = { pedal: () =&gt; console.log(&quot;Bicycle pedaling...&quot;), gearCount: 18 };
+
+operateVehicle(myCar); // Car driving..., This car uses electric.
+operateVehicle(myBike); // Bicycle pedaling..., This bicycle has 18 gears.
+</code></pre>
+<h2>Danh sách bài tập</h2>
+<h3>Bài tập 1: Trắc nghiệm - Type Guard với <code>in</code></h3>
+<p><strong>Tiêu đề</strong>: Type Guard với <code>in</code></p>
+<p><strong>Mô tả</strong>: Chọn toán tử phù hợp để kiểm tra sự tồn tại của thuộc tính trong một đối tượng, thường dùng trong type guards.</p>
+<p><strong>Câu hỏi</strong>: Để kiểm tra xem một đối tượng <code>obj</code> có thuộc tính <code>propName</code> hay không trong TypeScript, bạn sẽ sử dụng toán tử nào?</p>
+<ul>
+<li>A. <code>typeof obj.propName !== &quot;undefined&quot;</code></li>
+<li>B. <code>obj instanceof propName</code></li>
+<li>C. <code>&quot;propName&quot; in obj</code></li>
+<li>D. <code>obj.hasOwnProperty(propName)</code></li>
+</ul>
+<p><strong>Đáp án</strong>: C</p>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Toán tử <code>in</code> kiểm tra sự tồn tại của thuộc tính trong đối tượng (bao gồm cả thuộc tính kế thừa).</li>
+<li><code>hasOwnProperty</code> chỉ kiểm tra thuộc tính trực tiếp, không được ưu tiên trong type guards.</li>
+<li><code>typeof</code> dùng để kiểm tra kiểu, không phù hợp ở đây.</li>
+<li><code>instanceof</code> dùng để kiểm tra instance của class.</li>
+</ul>
+<h3>Bài tập 2: Code - Hàm xử lý <code>string</code> hoặc <code>string[]</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành với Union Type và <code>typeof</code>/<code>Array.isArray</code></p>
+<p><strong>Mô tả</strong>:
+Viết hàm <code>logItems</code> nhận tham số <code>items</code> kiểu <code>string | string[]</code>:</p>
+<ul>
+<li>Nếu <code>items</code> là <code>string</code>, in ra chuỗi đó.</li>
+<li>Nếu <code>items</code> là <code>string[]</code>, in từng phần tử trên một dòng.</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function logItems(items: string | string[]): void {
+    if (typeof items === &quot;string&quot;) {
+        console.log(&quot;Item:&quot;, items);
+    } else if (Array.isArray(items)) {
+        console.log(&quot;Items in array:&quot;);
+        items.forEach(item =&gt; console.log(&quot;- &quot; + item));
+    }
+}
+
+logItems(&quot;Một mục duy nhất&quot;); // Item: Một mục duy nhất
+logItems([&quot;Táo&quot;, &quot;Chuối&quot;, &quot;Cam&quot;]); // Items in array: - Táo, - Chuối, - Cam
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>typeof items === &quot;string&quot;</code> kiểm tra <code>items</code> là chuỗi.</li>
+<li><code>Array.isArray(items)</code> là type guard kiểm tra <code>items</code> là mảng.</li>
+<li>Hàm xử lý cả hai trường hợp một cách rõ ràng và an toàn.</li>
+</ul>
+<h3>Bài tập 3: Code - Intersection Type cho <code>FullStackDeveloper</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành với Intersection Type</p>
+<p><strong>Mô tả</strong>:</p>
+<ol>
+<li>Tạo hai interface: <code>FrontendDeveloper</code> (có <code>frontendTech: string[]</code>, <code>buildUI()</code>), <code>BackendDeveloper</code> (có <code>backendTech: string[]</code>, <code>setupServer()</code>).</li>
+<li>Tạo type alias <code>FullStackDeveloper</code> là intersection của hai interface trên.</li>
+<li>Tạo đối tượng <code>devProfile</code> kiểu <code>FullStackDeveloper</code> và in thông tin.</li>
+</ol>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">interface FrontendDeveloper {
+    frontendTech: string[];
+    buildUI(): void;
+}
+
+interface BackendDeveloper {
+    backendTech: string[];
+    setupServer(): void;
+}
+
+type FullStackDeveloper = FrontendDeveloper &amp; BackendDeveloper;
+
+let devProfile: FullStackDeveloper = {
+    frontendTech: [&quot;React&quot;, &quot;TailwindCSS&quot;, &quot;TypeScript&quot;],
+    backendTech: [&quot;Node.js&quot;, &quot;Express&quot;, &quot;PostgreSQL&quot;],
+    buildUI: () =&gt; console.log(&quot;Building user interface...&quot;),
+    setupServer: () =&gt; console.log(&quot;Setting up server environment...&quot;)
+};
+
+console.log(&quot;Full-stack Developer Profile:&quot;);
+console.log(&quot;Frontend Technologies:&quot;, devProfile.frontendTech.join(&quot;, &quot;));
+console.log(&quot;Backend Technologies:&quot;, devProfile.backendTech.join(&quot;, &quot;));
+devProfile.buildUI(); // Building user interface...
+devProfile.setupServer(); // Setting up server environment...
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>FullStackDeveloper</code> yêu cầu đối tượng phải có tất cả thuộc tính và phương thức của cả <code>FrontendDeveloper</code> và <code>BackendDeveloper</code>.</li>
+<li>Ví dụ này mô phỏng hồ sơ của một lập trình viên full-stack, thường gặp trong các dự án thực tế.</li>
+</ul>
+<h3>Bài tập 4: Code - Discriminated Unions cho API Response</h3>
+<p><strong>Tiêu đề</strong>: Thực hành với Discriminated Unions</p>
+<p><strong>Mô tả</strong>:
+Tạo các interface:</p>
+<ul>
+<li><code>ApiSuccessResponse&lt;T&gt;</code>: <code>status: &quot;success&quot;</code>, <code>data: T</code>.</li>
+<li><code>ApiErrorResponse</code>: <code>status: &quot;error&quot;</code>, <code>message: string</code>, <code>code: number</code>.
+Tạo type alias <code>ApiResponse&lt;T&gt;</code> là union của hai interface trên. Viết hàm <code>handleApiResponse&lt;T&gt;</code> để xử lý:</li>
+<li>Nếu <code>status</code> là <code>&quot;success&quot;</code>, in <code>response.data</code>.</li>
+<li>Nếu <code>status</code> là <code>&quot;error&quot;</code>, in <code>response.message</code> và <code>response.code</code>.</li>
+</ul>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">interface ApiSuccessResponse&lt;T&gt; {
+    status: &quot;success&quot;;
+    data: T;
+}
+
+interface ApiErrorResponse {
+    status: &quot;error&quot;;
+    message: string;
+    code: number;
+}
+
+type ApiResponse&lt;T&gt; = ApiSuccessResponse&lt;T&gt; | ApiErrorResponse;
+
+function handleApiResponse&lt;T&gt;(response: ApiResponse&lt;T&gt;): void {
+    switch (response.status) {
+        case &quot;success&quot;:
+            console.log(&quot;API Success! Data:&quot;, response.data);
+            break;
+        case &quot;error&quot;:
+            console.error(`API Error (Code: ${response.code}): ${response.message}`);
+            break;
+    }
+}
+
+type User = { id: number; name: string };
+let successfulUserData: ApiResponse&lt;User&gt; = {
+    status: &quot;success&quot;,
+    data: { id: 1, name: &quot;Alice&quot; }
+};
+
+let failedAuthResponse: ApiResponse&lt;User&gt; = {
+    status: &quot;error&quot;,
+    message: &quot;Authentication Failed&quot;,
+    code: 401
+};
+
+handleApiResponse(successfulUserData); // API Success! Data: { id: 1, name: &#39;Alice&#39; }
+handleApiResponse(failedAuthResponse); // API Error (Code: 401): Authentication Failed
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>status</code> là discriminant giúp phân biệt <code>ApiSuccessResponse</code> và <code>ApiErrorResponse</code>.</li>
+<li>Hàm <code>handleApiResponse</code> sử dụng <code>switch</code> để xử lý từng trường hợp.</li>
+<li>Pattern này rất phổ biến khi làm việc với API trong các ứng dụng web.</li>
+</ul>
+<h3>Bài tập 5: Code - User-defined Type Guard <code>isStringArray</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành với User-defined Type Guard</p>
+<p><strong>Mô tả</strong>:
+Viết hàm <code>isStringArray</code> kiểm tra một biến <code>unknown</code> có phải là <code>string[]</code> hay không. Hàm cần:</p>
+<ol>
+<li>Kiểm tra <code>value</code> là mảng (<code>Array.isArray</code>).</li>
+<li>Kiểm tra tất cả phần tử là <code>string</code> (<code>value.every</code>).
+Thử nghiệm với các giá trị khác nhau.</li>
+</ol>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function isStringArray(value: unknown): value is string[] {
+    return Array.isArray(value) &amp;&amp; value.every(item =&gt; typeof item === &quot;string&quot;);
+}
+
+function processStringArray(data: unknown): void {
+    if (isStringArray(data)) {
+        console.log(&quot;Processing string array:&quot;, data.map(s =&gt; s.toUpperCase()));
+    } else {
+        console.log(&quot;Input is not a string array:&quot;, data);
+    }
+}
+
+let testValue1: unknown = [&quot;hello&quot;, &quot;world&quot;, &quot;typescript&quot;];
+let testValue2: unknown = [&quot;hello&quot;, 123, &quot;world&quot;];
+let testValue3: unknown = &quot;this is a string&quot;;
+let testValue4: unknown = [1, 2, 3];
+let testValue5: unknown = null;
+
+processStringArray(testValue1); // Processing string array: [ &#39;HELLO&#39;, &#39;WORLD&#39;, &#39;TYPESCRIPT&#39; ]
+processStringArray(testValue2); // Input is not a string array: [ &#39;hello&#39;, 123, &#39;world&#39; ]
+processStringArray(testValue3); // Input is not a string array: this is a string
+processStringArray(testValue4); // Input is not a string array: [ 1, 2, 3 ]
+processStringArray(testValue5); // Input is not a string array: null
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>isStringArray</code> sử dụng <code>Array.isArray</code> và <code>every</code> để kiểm tra kiểu.</li>
+<li>Type predicate <code>value is string[]</code> giúp TypeScript thu hẹp kiểu trong khối <code>if</code>.</li>
+<li>Ví dụ này mô phỏng việc kiểm tra dữ liệu từ nguồn không rõ (như API).</li>
+</ul>
+<h2>Kết luận</h2>
+<p>Chương này cung cấp các công cụ thiết yếu để làm việc với kiểu dữ liệu phức tạp trong TypeScript. <strong>Union Types</strong>, <strong>Intersection Types</strong>, và <strong>Type Guards</strong> là nền tảng để xây dựng các ứng dụng an toàn và dễ bảo trì. Hãy thực hành các bài tập trên để nắm vững các khái niệm này, đặc biệt trong các dự án ReactJS hoặc NextJS sử dụng TypeScript.</p>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

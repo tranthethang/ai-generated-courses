@@ -1,0 +1,710 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 9: Decorators - Siêu Lập Trình (Meta-programming)</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chapter này giới thiệu về <strong>Decorators</strong>, một tính năng mạnh mẽ trong TypeScript, cho phép thực hiện <strong>siêu lập trình (meta-programming)</strong>. Decorators giúp bạn thêm chú thích (annotations) hoặc sửa đổi hành vi của class, method, property, accessor, hoặc parameter tại <strong>thời điểm thiết kế (design time)</strong> mà không cần chỉnh sửa trực tiếp mã nguồn. Đây là một công cụ hữu ích trong việc tự động hóa các tác vụ như ghi log, xác thực dữ liệu, quản lý quyền truy cập, hoặc tiêm phụ thuộc (dependency injection).</p>
+<p><strong>Lưu ý quan trọng</strong>: </p>
+<ul>
+<li>Từ TypeScript 5.0 trở lên (tính đến 2025), Decorators đã được chuẩn hóa theo đề xuất ECMAScript Stage 3 và không còn là tính năng thử nghiệm. Tuy nhiên, để sử dụng Decorators, bạn vẫn cần cấu hình <code>tsconfig.json</code> đúng cách.</li>
+<li>Decorators thường được sử dụng trong các framework như Angular, NestJS, hoặc các thư viện yêu cầu metadata (ví dụ: TypeORM).</li>
+</ul>
+<h2>Tiêu đề Chapter</h2>
+<p><strong>Decorators: Mở Rộng Chức Năng với Meta-programming</strong></p>
+<h2>Tóm tắt lý thuyết chính</h2>
+<h3>1. Khái niệm Decorators và mục đích sử dụng</h3>
+<p><strong>Decorators</strong> là các hàm đặc biệt được gắn vào class, method, property, accessor, hoặc parameter bằng cú pháp <code>@expression</code>. Hàm <code>expression</code> này sẽ được gọi tại runtime, nhận các thông tin liên quan đến đối tượng được decorate, từ đó cho phép bạn sửa đổi hoặc mở rộng hành vi của nó.</p>
+<h4>Mục đích sử dụng Decorators</h4>
+<ul>
+<li><strong>Logging và instrumentation</strong>: Ghi log khi một phương thức được gọi hoặc đo thời gian thực thi.</li>
+<li><strong>Access control và authorization</strong>: Kiểm tra quyền truy cập trước khi thực thi một phương thức.</li>
+<li><strong>Data validation</strong>: Tự động kiểm tra tính hợp lệ của thuộc tính hoặc tham số.</li>
+<li><strong>Dependency injection</strong>: Quản lý và tiêm các phụ thuộc vào class.</li>
+<li><strong>Behavior modification</strong>: Thay đổi hoặc mở rộng hành vi của class hoặc các thành viên của nó.</li>
+</ul>
+<h4>Ví dụ thực tế</h4>
+<ul>
+<li>Trong Angular, Decorators như <code>@Component</code> được dùng để định nghĩa metadata cho các thành phần giao diện.</li>
+<li>Trong NestJS, <code>@Get</code> hoặc <code>@Post</code> được dùng để định nghĩa các endpoint API.</li>
+</ul>
+<h3>2. Cấu hình Decorators trong <code>tsconfig.json</code></h3>
+<p>Để sử dụng Decorators, bạn cần bật tùy chọn sau trong <code>tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;ES2022&quot;, // Hoặc cao hơn để hỗ trợ Decorators chuẩn ECMAScript
+    &quot;experimentalDecorators&quot;: true, // Bật Decorators (cần thiết cho cú pháp cũ hoặc một số thư viện)
+    &quot;emitDecoratorMetadata&quot;: true // Cần cho các thư viện sử dụng metadata (như TypeORM, NestJS)
+  }
+}
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>experimentalDecorators</code>: Bật hỗ trợ Decorators. Mặc dù Decorators đã chuẩn hóa, tùy chọn này vẫn cần thiết cho các thư viện sử dụng cú pháp Decorators cũ.</li>
+<li><code>emitDecoratorMetadata</code>: Kích hoạt metadata reflection, thường dùng với thư viện <code>reflect-metadata</code> để lưu trữ và truy xuất thông tin về các thành viên được decorate.</li>
+</ul>
+<h3>3. Các loại Decorators</h3>
+<p>TypeScript hỗ trợ 5 loại Decorators, mỗi loại áp dụng cho một phần khác nhau của code:</p>
+<h4>3.1. Class Decorators</h4>
+<ul>
+<li><strong>Áp dụng</strong>: Cho toàn bộ class (constructor).</li>
+<li><strong>Mục đích</strong>: Quan sát, sửa đổi, hoặc thay thế định nghĩa class.</li>
+<li><strong>Tham số</strong>: Nhận một tham số là constructor của class.</li>
+<li><strong>Trả về</strong>: Nếu trả về một giá trị, giá trị đó sẽ thay thế class gốc (phải là một constructor).</li>
+</ul>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">function sealed(constructor: Function) {
+  Object.seal(constructor);
+  Object.seal(constructor.prototype);
+  console.log(`Class ${constructor.name} đã được sealed.`);
+}
+
+@sealed
+class BugReport {
+  type = &quot;report&quot;;
+  title: string;
+
+  constructor(t: string) {
+    this.title = t;
+  }
+}
+
+const bug = new BugReport(&quot;Crash on load&quot;);
+// BugReport.prototype.newMethod = () =&gt; {}; // Lỗi vì prototype đã bị seal
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>Object.seal</code> ngăn việc thêm hoặc xóa thuộc tính trên constructor hoặc prototype, đảm bảo class không bị sửa đổi ngoài ý muốn.</li>
+<li>Class Decorator thường được dùng để thêm metadata, logging, hoặc khóa cấu trúc class.</li>
+</ul>
+<h4>3.2. Method Decorators</h4>
+<ul>
+<li><strong>Áp dụng</strong>: Cho một phương thức của class.</li>
+<li><strong>Mục đích</strong>: Quan sát, sửa đổi, hoặc thay thế định nghĩa phương thức.</li>
+<li><strong>Tham số</strong>:<ul>
+<li><code>target</code>: Constructor (cho static method) hoặc prototype (cho instance method).</li>
+<li><code>propertyKey</code>: Tên phương thức (string hoặc symbol).</li>
+<li><code>descriptor</code>: Property Descriptor của phương thức (<code>TypedPropertyDescriptor&lt;T&gt;</code>).</li>
+</ul>
+</li>
+<li><strong>Trả về</strong>: Nếu trả về, giá trị sẽ thay thế Property Descriptor của phương thức.</li>
+</ul>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">function enumerable(value: boolean) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    descriptor.enumerable = value;
+    console.log(`Phương thức ${propertyKey} được đặt enumerable = ${value}`);
+  };
+}
+
+class Person {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  @enumerable(false)
+  greet() {
+    return `Hello, ${this.name}`;
+  }
+}
+
+const p = new Person(&quot;Test&quot;);
+for (const key in p) {
+  console.log(key); // Không in ra &quot;greet&quot; vì enumerable = false
+}
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>descriptor.enumerable</code> kiểm soát việc phương thức có xuất hiện trong vòng lặp <code>for...in</code> hay không.</li>
+<li>Method Decorators thường được dùng để logging, kiểm tra quyền, hoặc thay đổi hành vi phương thức.</li>
+</ul>
+<h4>3.3. Accessor Decorators</h4>
+<ul>
+<li><strong>Áp dụng</strong>: Cho getter hoặc setter của một thuộc tính.</li>
+<li><strong>Mục đích</strong>: Sửa đổi Property Descriptor của accessor.</li>
+<li><strong>Tham số</strong>: Tương tự Method Decorator (<code>target</code>, <code>propertyKey</code>, <code>descriptor</code>).</li>
+<li><strong>Lưu ý</strong>: Không thể áp dụng cho cả getter và setter cùng lúc; chỉ áp dụng cho cái khai báo đầu tiên.</li>
+</ul>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">function configurable(value: boolean) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    descriptor.configurable = value;
+  };
+}
+
+class Point {
+  private _x: number = 0;
+
+  @configurable(false)
+  get x() {
+    return this._x;
+  }
+}
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>descriptor.configurable</code> kiểm soát việc thuộc tính có thể bị xóa hoặc cấu hình lại không.</li>
+<li>Accessor Decorators hữu ích khi bạn muốn kiểm soát cách truy cập hoặc sửa đổi thuộc tính.</li>
+</ul>
+<h4>3.4. Property Decorators</h4>
+<ul>
+<li><strong>Áp dụng</strong>: Cho một thuộc tính của class.</li>
+<li><strong>Mục đích</strong>: Ghi metadata hoặc thực hiện các tác vụ liên quan đến thuộc tính.</li>
+<li><strong>Tham số</strong>:<ul>
+<li><code>target</code>: Constructor (cho static property) hoặc prototype (cho instance property).</li>
+<li><code>propertyKey</code>: Tên thuộc tính (string hoặc symbol).</li>
+</ul>
+</li>
+<li><strong>Hạn chế</strong>: Không thể trực tiếp sửa đổi giá trị thuộc tính qua Property Descriptor. Cần dùng getter/setter hoặc metadata.</li>
+</ul>
+<p><strong>Ví dụ đơn giản</strong>:</p>
+<pre><code class="language-typescript">function LogProperty(target: any, propertyKey: string) {
+  console.log(`Property ${propertyKey} được khai báo trên ${target.constructor.name}`);
+}
+
+class User {
+  @LogProperty
+  username: string;
+
+  constructor(name: string) {
+    this.username = name;
+  }
+}
+
+new User(&quot;testuser&quot;); // In ra: Property username được khai báo trên User
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Property Decorators thường được dùng với <code>reflect-metadata</code> để lưu trữ thông tin về thuộc tính, ví dụ: để xác thực hoặc định dạng giá trị.</li>
+</ul>
+<h4>3.5. Parameter Decorators</h4>
+<ul>
+<li><strong>Áp dụng</strong>: Cho tham số của constructor hoặc phương thức.</li>
+<li><strong>Mục đích</strong>: Ghi metadata hoặc thực hiện validation.</li>
+<li><strong>Tham số</strong>:<ul>
+<li><code>target</code>: Constructor (cho static method/constructor) hoặc prototype (cho instance method).</li>
+<li><code>propertyKey</code>: Tên phương thức (hoặc <code>undefined</code> nếu là constructor).</li>
+<li><code>parameterIndex</code>: Chỉ số của tham số trong danh sách tham số.</li>
+</ul>
+</li>
+<li><strong>Thường dùng</strong>: Kết hợp với <code>reflect-metadata</code> để lưu trữ thông tin tham số.</li>
+</ul>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">import &quot;reflect-metadata&quot;;
+
+const requiredMetadataKey = Symbol(&quot;required&quot;);
+
+function Required(target: Object, propertyKey: string | symbol, parameterIndex: number) {
+  let existingRequiredParameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyKey) || [];
+  existingRequiredParameters.push(parameterIndex);
+  Reflect.defineMetadata(requiredMetadataKey, existingRequiredParameters, target, propertyKey);
+}
+
+function Validate(target: any, propertyName: string, descriptor: TypedPropertyDescriptor&lt;Function&gt;) {
+  const originalMethod = descriptor.value!;
+  descriptor.value = function (...args: any[]) {
+    const requiredParameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyName);
+    if (requiredParameters) {
+      for (let parameterIndex of requiredParameters) {
+        if (parameterIndex &gt;= args.length || args[parameterIndex] === undefined || args[parameterIndex] === null) {
+          throw new Error(`Tham số bắt buộc tại vị trí ${parameterIndex} bị thiếu.`);
+        }
+      }
+    }
+    return originalMethod.apply(this, args);
+  };
+}
+
+class BugReportService {
+  @Validate
+  updateReport(id: number, @Required title: string, @Required description: string) {
+    console.log(`Cập nhật báo cáo ${id}: ${title} - ${description}`);
+  }
+}
+
+const service = new BugReportService();
+service.updateReport(1, &quot;Crash&quot;, &quot;App crashes on startup&quot;); // OK
+try {
+  service.updateReport(2, &quot;UI Bug&quot;, undefined as any); // Lỗi
+} catch (e: any) {
+  console.error(e.message);
+}
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Parameter Decorators lưu chỉ số của các tham số bắt buộc vào metadata.</li>
+<li>Method Decorator <code>@Validate</code> kiểm tra xem các tham số bắt buộc có giá trị hợp lệ không.</li>
+</ul>
+<h3>4. Thứ tự thực thi Decorators</h3>
+<ul>
+<li><strong>Đánh giá (evaluation)</strong>: Các hàm factory của Decorators được gọi theo thứ tự từ trên xuống dưới (top-down) và từ trái sang phải.</li>
+<li><strong>Thực thi (execution)</strong>: Các hàm Decorators được áp dụng từ dưới lên trên (bottom-up) cho cùng một khai báo, và từ trái sang phải cho các tham số.</li>
+</ul>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">function First(): ClassDecorator {
+  console.log(&quot;First(): factory được gọi&quot;);
+  return function (constructor: Function) {
+    console.log(&quot;First(): decorator được thực thi&quot;);
+  };
+}
+
+function Second(): ClassDecorator {
+  console.log(&quot;Second(): factory được gọi&quot;);
+  return function (constructor: Function) {
+    console.log(&quot;Second(): decorator được thực thi&quot;);
+  };
+}
+
+@First()
+@Second()
+class ExampleClass {}
+</code></pre>
+<p><strong>Kết quả</strong>:</p>
+<pre><code>First(): factory được gọi
+Second(): factory được gọi
+Second(): decorator được thực thi
+First(): decorator được thực thi
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Factory được gọi trước để tạo ra hàm Decorator.</li>
+<li>Khi áp dụng, Decorator gần class hơn (<code>@Second</code>) được thực thi trước.</li>
+</ul>
+<h3>5. Decorator Factories</h3>
+<p><strong>Decorator Factory</strong> là một hàm trả về một Decorator. Nó cho phép bạn truyền tham số để tùy chỉnh hành vi của Decorator.</p>
+<p><strong>Ví dụ</strong>:</p>
+<pre><code class="language-typescript">function Logger(logString: string) {
+  console.log(`Logger Factory: ${logString}`);
+  return function (constructor: Function) {
+    console.log(logString);
+    console.log(constructor);
+  };
+}
+
+@Logger(&quot;LOGGING - USER&quot;)
+class UserClass {
+  name = &quot;Max&quot;;
+  constructor() {
+    console.log(&quot;Tạo đối tượng user...&quot;);
+  }
+}
+</code></pre>
+<p><strong>Kết quả</strong>:</p>
+<pre><code>Logger Factory: LOGGING - USER
+LOGGING - USER
+class UserClass { ... }
+Tạo đối tượng user...
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Factory (<code>Logger</code>) nhận tham số <code>logString</code> và trả về một hàm Decorator.</li>
+<li>Điều này giúp Decorator trở nên linh hoạt hơn, có thể tái sử dụng với các cấu hình khác nhau.</li>
+</ul>
+<h2>Code ví dụ tổng hợp</h2>
+<p>Dưới đây là một ví dụ tổng hợp, kết hợp nhiều loại Decorators để minh họa cách chúng hoạt động cùng nhau:</p>
+<pre><code class="language-typescript">// Class Decorator: Thêm timestamp cho instance
+function Timestamped&lt;T extends { new (...args: any[]): {} }&gt;(originalConstructor: T) {
+  return class extends originalConstructor {
+    timestamp = new Date();
+    constructor(...args: any[]) {
+      super(...args);
+      console.log(`[${originalConstructor.name}] Tạo instance tại: ${this.timestamp.toISOString()}`);
+    }
+  };
+}
+
+// Method Decorator: Ghi log lời gọi phương thức
+function LogMethodCall(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    console.log(`[Method Log] Gọi ${propertyKey} với tham số: ${JSON.stringify(args)}`);
+    const result = originalMethod.apply(this, args);
+    console.log(`[Method Log] ${propertyKey} trả về: ${JSON.stringify(result)}`);
+    return result;
+  };
+  return descriptor;
+}
+
+// Property Decorator: Giới hạn độ dài tối thiểu
+function MinLength(length: number) {
+  return function (target: any, propertyKey: string) {
+    let value: string = target[propertyKey];
+
+    const getter = function () {
+      return value;
+    };
+    const setter = function (newValue: string) {
+      if (newValue.length &lt; length) {
+        console.warn(`[Validation] ${propertyKey} phải dài ít nhất ${length} ký tự. Nhận: &quot;${newValue}&quot;`);
+      } else {
+        value = newValue;
+      }
+    };
+
+    Object.defineProperty(target, propertyKey, {
+      get: getter,
+      set: setter,
+      enumerable: true,
+      configurable: true,
+    });
+  };
+}
+
+// Parameter Decorator: Ghi log thông tin tham số
+function LogParameter(target: any, propertyKey: string | symbol, parameterIndex: number) {
+  console.log(`[Parameter Log] Tham số ${parameterIndex} của ${String(propertyKey)} trong ${target.constructor.name}`);
+}
+
+@Timestamped
+class TaskService {
+  @MinLength(3)
+  defaultTaskName: string = &quot;Untitled&quot;;
+
+  constructor(private tasks: string[] = []) {}
+
+  @LogMethodCall
+  addTask(@LogParameter taskName: string): string[] {
+    if (taskName.length === 0) {
+      console.error(&quot;Tên task không được để trống.&quot;);
+      return this.tasks;
+    }
+    this.tasks.push(taskName);
+    console.log(`Task &quot;${taskName}&quot; được thêm.`);
+    return this.tasks;
+  }
+
+  @LogMethodCall
+  getTasks(): string[] {
+    return [...this.tasks];
+  }
+}
+
+console.log(&quot;--- Tạo instance TaskService ---&quot;);
+const taskService = new TaskService([&quot;Initial Task&quot;]);
+
+console.log(&quot;\n--- Thử gán tên task mặc định ---&quot;);
+taskService.defaultTaskName = &quot;My&quot;; // Cảnh báo vì quá ngắn
+console.log(&quot;Tên task mặc định sau khi gán ngắn:&quot;, taskService.defaultTaskName);
+taskService.defaultTaskName = &quot;My Awesome Task&quot;;
+console.log(&quot;Tên task mặc định sau khi gán hợp lệ:&quot;, taskService.defaultTaskName);
+
+console.log(&quot;\n--- Thêm task ---&quot;);
+taskService.addTask(&quot;Learn Decorators&quot;);
+taskService.addTask(&quot;&quot;); // Lỗi vì task rỗng
+
+console.log(&quot;\n--- Lấy danh sách task ---&quot;);
+const currentTasks = taskService.getTasks();
+console.log(&quot;Danh sách task hiện tại:&quot;, currentTasks);
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>@Timestamped</code>: Thêm thuộc tính <code>timestamp</code> và in thời gian tạo instance.</li>
+<li><code>@MinLength</code>: Kiểm tra độ dài tối thiểu cho <code>defaultTaskName</code>.</li>
+<li><code>@LogMethodCall</code>: Ghi log các lời gọi phương thức và kết quả trả về.</li>
+<li><code>@LogParameter</code>: Ghi log thông tin về tham số của phương thức.</li>
+</ul>
+<h2>Danh sách bài tập</h2>
+<h3>1. Trắc nghiệm: Decorator nào được áp dụng cho một phương thức của class?</h3>
+<p><strong>Tiêu đề</strong>: Nhận biết loại Decorator.</p>
+<p><strong>Mô tả</strong>: Chọn loại decorator phù hợp với mô tả.</p>
+<p><strong>Câu hỏi</strong>: Loại decorator nào sau đây được áp dụng trực tiếp lên một phương thức của class trong TypeScript?</p>
+<ul>
+<li>A. Class Decorator</li>
+<li>B. Method Decorator</li>
+<li>C. Property Decorator</li>
+<li>D. Parameter Decorator</li>
+</ul>
+<p><strong>Đáp án</strong>: B</p>
+<p><strong>Giải thích</strong>: Method Decorator được áp dụng trực tiếp lên một phương thức, nhận <code>target</code>, <code>propertyKey</code>, và <code>descriptor</code> để sửa đổi hành vi của phương thức.</p>
+<h3>2. Code: Viết Class Decorator <code>@Version</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành Class Decorator.</p>
+<p><strong>Mô tả</strong>: Viết một Class Decorator factory <code>@Version(version: string)</code> để thêm thuộc tính <code>static version</code> vào class.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function Version(versionString: string): ClassDecorator {
+  console.log(`Version factory gọi với: ${versionString}`);
+  return function &lt;TFunction extends Function&gt;(targetConstructor: TFunction): TFunction | void {
+    console.log(`Version decorator áp dụng cho: ${targetConstructor.name}`);
+    Object.defineProperty(targetConstructor, &quot;version&quot;, {
+      value: versionString,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+  };
+}
+
+@Version(&quot;1.0.2&quot;)
+class MyAppComponent {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+type ConstructorWithVersion = { new (...args: any[]): any; version: string };
+console.log(&quot;App Version:&quot;, (MyAppComponent as ConstructorWithVersion).version); // 1.0.2
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Decorator thêm thuộc tính tĩnh <code>version</code> vào class.</li>
+<li>Sử dụng <code>Object.defineProperty</code> để đảm bảo thuộc tính không bị ghi đè.</li>
+</ul>
+<h3>3. Code: Viết Method Decorator <code>@LogExecutionTime</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành Method Decorator.</p>
+<p><strong>Mô tả</strong>: Viết một Method Decorator <code>@LogExecutionTime</code> để đo thời gian thực thi của phương thức.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function LogExecutionTime(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  descriptor.value = async function (...args: any[]) {
+    const start = performance.now();
+    let result: any;
+    if (originalMethod.constructor.name === &quot;AsyncFunction&quot;) {
+      result = await originalMethod.apply(this, args);
+    } else {
+      result = originalMethod.apply(this, args);
+    }
+    const end = performance.now();
+    console.log(`[Execution Time] ${propertyKey}: ${(end - start).toFixed(2)} ms`);
+    return result;
+  };
+  return descriptor;
+}
+
+class DataService {
+  @LogExecutionTime
+  fetchDataSync(id: number): string {
+    let result = &quot;&quot;;
+    for (let i = 0; i &lt; 1000000 * id; i++) {
+      result += String.fromCharCode((i % 26) + 65);
+    }
+    return `Data for ID ${id} (length: ${result.length})`;
+  }
+
+  @LogExecutionTime
+  async fetchDataAsync(id: number): Promise&lt;string&gt; {
+    return new Promise((resolve) =&gt; {
+      setTimeout(() =&gt; {
+        resolve(`Async data for ID ${id}`);
+      }, 50 * id);
+    });
+  }
+}
+
+const service = new DataService();
+console.log(&quot;--- Sync Fetch ---&quot;);
+service.fetchDataSync(1);
+service.fetchDataSync(2);
+
+async function testAsync() {
+  console.log(&quot;\n--- Async Fetch ---&quot;);
+  await service.fetchDataAsync(1);
+  await service.fetchDataAsync(3);
+}
+testAsync();
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>@LogExecutionTime</code> đo thời gian thực thi bằng <code>performance.now()</code>.</li>
+<li>Hỗ trợ cả phương thức đồng bộ và bất đồng bộ.</li>
+</ul>
+<h3>4. Code: Viết Property Decorator <code>@DefaultValue</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành Property Decorator (Thử thách).</p>
+<p><strong>Mô tả</strong>: Viết một Property Decorator <code>@DefaultValue(value: any)</code> để gán giá trị mặc định nếu thuộc tính là <code>undefined</code>.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function DefaultValue(defaultValue: any) {
+  return function (target: any, propertyKey: string) {
+    let _value: any = target[propertyKey];
+    if (_value === undefined) {
+      _value = defaultValue;
+    }
+
+    const getter = function () {
+      return _value;
+    };
+    const setter = function (newValue: any) {
+      _value = newValue;
+    };
+
+    if (delete target[propertyKey]) {
+      Object.defineProperty(target, propertyKey, {
+        get: getter,
+        set: setter,
+        enumerable: true,
+        configurable: true,
+      });
+    }
+  };
+}
+
+class AppConfig {
+  @DefaultValue(&quot;light&quot;)
+  theme: string;
+
+  @DefaultValue(100)
+  maxUsers: number = 50;
+
+  @DefaultValue(true)
+  notificationsEnabled?: boolean;
+
+  constructor() {
+    console.log(&quot;AppConfig constructor called.&quot;);
+    console.log(`Initial theme: ${this.theme}`);
+    console.log(`Initial maxUsers: ${this.maxUsers}`);
+    console.log(`Initial notificationsEnabled: ${this.notificationsEnabled}`);
+  }
+}
+
+let config = new AppConfig();
+console.log(&quot;--- Config Instance ---&quot;);
+console.log(&quot;Theme:&quot;, config.theme); // &quot;light&quot;
+console.log(&quot;Max Users:&quot;, config.maxUsers); // 50
+console.log(&quot;Notifications:&quot;, config.notificationsEnabled); // true
+
+config.theme = &quot;dark&quot;;
+console.log(&quot;Theme after change:&quot;, config.theme); // &quot;dark&quot;
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>@DefaultValue</code> sử dụng <code>Object.defineProperty</code> để thay thế thuộc tính bằng getter/setter.</li>
+<li>Nếu thuộc tính ban đầu là <code>undefined</code>, gán giá trị mặc định.</li>
+</ul>
+<h3>5. Code: Viết Parameter Decorator <code>@Required</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành Parameter Decorator (Thử thách).</p>
+<p><strong>Mô tả</strong>: Viết <code>@Required</code> và <code>@ValidateParams</code> để kiểm tra các tham số bắt buộc.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">import &quot;reflect-metadata&quot;;
+
+const requiredMetadataKey = Symbol(&quot;requiredParams&quot;);
+
+function Required(target: Object, propertyKey: string | symbol, parameterIndex: number) {
+  let existingRequiredParameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyKey) || [];
+  existingRequiredParameters.push(parameterIndex);
+  Reflect.defineMetadata(requiredMetadataKey, existingRequiredParameters, target, propertyKey);
+  console.log(`[Required] Tham số ${parameterIndex} của ${String(propertyKey)} là bắt buộc.`);
+}
+
+function ValidateParams(target: any, propertyName: string, descriptor: TypedPropertyDescriptor&lt;(...args: any[]) =&gt; any&gt;) {
+  const originalMethod = descriptor.value!;
+  descriptor.value = function (...args: any[]) {
+    console.log(`[ValidateParams] Kiểm tra tham số cho ${propertyName}...`);
+    const requiredParameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyName);
+    if (requiredParameters) {
+      for (let parameterIndex of requiredParameters) {
+        if (parameterIndex &gt;= args.length || args[parameterIndex] === undefined || args[parameterIndex] === null) {
+          throw new Error(`Tham số bắt buộc tại vị trí ${parameterIndex} bị thiếu cho ${propertyName}.`);
+        }
+      }
+    }
+    console.log(`[ValidateParams] Tất cả tham số bắt buộc hợp lệ.`);
+    return originalMethod.apply(this, args);
+  };
+}
+
+class OrderService {
+  @ValidateParams
+  createOrder(@Required customerId: string, @Required items: string[], notes?: string) {
+    console.log(`Tạo đơn hàng cho khách ${customerId} với sản phẩm: ${items.join(&quot;, &quot;)}.`);
+    if (notes) {
+      console.log(`Ghi chú: ${notes}`);
+    }
+    return { orderId: Math.floor(Math.random() * 1000), status: &quot;created&quot; };
+  }
+}
+
+const orderService = new OrderService();
+
+try {
+  console.log(&quot;\n--- Đơn hàng hợp lệ ---&quot;);
+  orderService.createOrder(&quot;cust123&quot;, [&quot;itemA&quot;, &quot;itemB&quot;], &quot;Giao nhanh&quot;);
+} catch (e: any) {
+  console.error(&quot;Lỗi:&quot;, e.message);
+}
+
+try {
+  console.log(&quot;\n--- Đơn hàng không hợp lệ (thiếu items) ---&quot;);
+  orderService.createOrder(&quot;cust456&quot;, undefined as any);
+} catch (e: any) {
+  console.error(&quot;Lỗi:&quot;, e.message);
+}
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>@Required</code> lưu chỉ số tham số bắt buộc vào metadata.</li>
+<li><code>@ValidateParams</code> kiểm tra các tham số bắt buộc trước khi gọi phương thức.</li>
+</ul>
+<h2>Mẹo và lưu ý khi sử dụng Decorators</h2>
+<ul>
+<li><strong>Hiệu suất</strong>: Decorators có thể làm tăng thời gian xử lý tại runtime, đặc biệt khi sử dụng nhiều hoặc trong các vòng lặp phức tạp.</li>
+<li><strong>Tính tương thích</strong>: Đảm bảo môi trường runtime của bạn hỗ trợ Decorators (Node.js từ 16 trở lên, hoặc trình duyệt hiện đại).</li>
+<li><strong>Thư viện hỗ trợ</strong>: Nếu dùng <code>reflect-metadata</code>, hãy cài đặt và import nó trước khi sử dụng Decorators.</li>
+<li><strong>Debugging</strong>: Sử dụng console.log trong Decorators để theo dõi thứ tự thực thi và kiểm tra logic.</li>
+</ul>
+<h2>Ứng dụng thực tế</h2>
+<ul>
+<li><strong>Trong React</strong>: Decorators có thể được dùng để tự động gắn các hook hoặc state vào component (dù không phổ biến do cú pháp class-based ít được dùng).</li>
+<li><strong>Trong NestJS</strong>: Decorators như <code>@Get</code>, <code>@Post</code>, hoặc <code>@Inject</code> được dùng để định nghĩa API hoặc quản lý dependency.</li>
+<li><strong>Trong TypeORM</strong>: Decorators như <code>@Entity</code> hoặc <code>@Column</code> dùng để ánh xạ database.</li>
+</ul>
+<h2>Kết luận</h2>
+<p>Decorators là một công cụ mạnh mẽ để mở rộng chức năng code mà không cần thay đổi trực tiếp mã nguồn. Bằng cách hiểu rõ cách chúng hoạt động và áp dụng đúng cách, bạn có thể viết code linh hoạt, dễ bảo trì và tái sử dụng. Hãy thực hành các bài tập trên để nắm vững hơn!</p>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

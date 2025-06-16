@@ -1,0 +1,370 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h1>Chapter 06: Chuyển đổi sang Next.js - SSR, SSG và File-based Routing</h1>
+<h2>A. Mục tiêu</h2>
+<p>Sau bài học này, học viên sẽ:</p>
+<ul>
+<li>Hiểu <strong>Next.js</strong> là gì và những vấn đề nó giải quyết so với ứng dụng React thông thường.</li>
+<li>Phân biệt rõ ràng các triết lý rendering: <strong>CSR</strong>, <strong>SSR</strong>, và <strong>SSG</strong>.</li>
+<li>Nắm vững cơ chế <strong>File-system based routing</strong> của Next.js.</li>
+<li>Biết cách thiết lập dự án Next.js và xây dựng các trang cơ bản.</li>
+</ul>
+<h2>B. Nội dung lý thuyết</h2>
+<h3>1. Tại sao cần Next.js? - The React Framework</h3>
+<p>React là một <strong>thư viện</strong> tập trung vào việc xây dựng giao diện người dùng. Tuy nhiên, để phát triển một ứng dụng hoàn chỉnh, bạn cần tự xử lý nhiều vấn đề như:</p>
+<ul>
+<li><strong>Routing</strong>: Cần sử dụng thư viện như <code>react-router-dom</code>.</li>
+<li><strong>Data fetching</strong>: Tự viết logic để gọi API hoặc tải dữ liệu.</li>
+<li><strong>Tối ưu hóa hiệu năng</strong>: Tự xử lý code-splitting, lazy loading, hoặc SEO.</li>
+<li><strong>Server-side logic</strong>: Không có sẵn cơ chế để render phía server hoặc tạo API.</li>
+</ul>
+<p><strong>Next.js</strong> là một <strong>framework</strong> xây dựng trên React, cung cấp các giải pháp tích hợp sẵn cho các vấn đề trên. Nó giúp:</p>
+<ul>
+<li>Tăng tốc phát triển ứng dụng với cấu trúc rõ ràng.</li>
+<li>Tối ưu hóa hiệu năng và SEO.</li>
+<li>Hỗ trợ cả client-side và server-side rendering trong cùng một dự án.</li>
+</ul>
+<h3>2. So sánh các phương pháp Rendering</h3>
+<h4>Client-Side Rendering (CSR)</h4>
+<ul>
+<li><strong>Cách hoạt động</strong>: Browser tải một file HTML gần như trống và file JavaScript lớn. React chạy trên browser, gọi API và render nội dung.</li>
+<li><strong>Ưu điểm</strong>:<ul>
+<li>Điều hướng giữa các trang nhanh sau khi tải ban đầu.</li>
+<li>Phù hợp với ứng dụng tương tác cao (như dashboard).</li>
+</ul>
+</li>
+<li><strong>Nhược điểm</strong>:<ul>
+<li>Thời gian tải lần đầu (First Contentful Paint - FCP) chậm.</li>
+<li>SEO kém vì bot tìm kiếm chỉ thấy HTML trống.</li>
+</ul>
+</li>
+<li><strong>Ví dụ</strong>: Ứng dụng tạo bằng <code>create-react-app</code> hoặc Vite.</li>
+</ul>
+<h4>Server-Side Rendering (SSR)</h4>
+<ul>
+<li><strong>Cách hoạt động</strong>: Mỗi request từ client gửi đến server, server chạy React, fetch dữ liệu, render thành HTML và gửi về browser. Sau đó, JavaScript được tải để &quot;hydrate&quot; (kích hoạt tính tương tác).</li>
+<li><strong>Ưu điểm</strong>:<ul>
+<li>SEO tốt vì bot thấy nội dung HTML hoàn chỉnh.</li>
+<li>FCP nhanh hơn CSR.</li>
+<li>Phù hợp với trang có nội dung động (như trang tin tức).</li>
+</ul>
+</li>
+<li><strong>Nhược điểm</strong>:<ul>
+<li>Server phải xử lý mỗi request, có thể tăng tải.</li>
+<li>Điều hướng giữa các trang có thể chậm hơn CSR.</li>
+</ul>
+</li>
+<li><strong>Hàm hỗ trợ trong Next.js</strong>: <code>getServerSideProps</code>.</li>
+</ul>
+<h4>Static Site Generation (SSG)</h4>
+<ul>
+<li><strong>Cách hoạt động</strong>: Các trang được render thành HTML tĩnh tại thời điểm build. Server chỉ gửi file HTML đã tạo sẵn khi có request.</li>
+<li><strong>Ưu điểm</strong>:<ul>
+<li>Tốc độ tải cực nhanh.</li>
+<li>SEO tốt và an toàn (không cần server động).</li>
+<li>Lý tưởng cho trang tĩnh như blog, tài liệu, hoặc marketing.</li>
+</ul>
+</li>
+<li><strong>Nhược điểm</strong>:<ul>
+<li>Cần build lại khi nội dung thay đổi (trừ khi dùng Incremental Static Regeneration - ISR).</li>
+<li>Không phù hợp với dữ liệu thay đổi thường xuyên.</li>
+</ul>
+</li>
+<li><strong>Hàm hỗ trợ trong Next.js</strong>: <code>getStaticProps</code> và <code>getStaticPaths</code>.</li>
+</ul>
+<p><strong>Next.js linh hoạt</strong>: Cho phép chọn phương pháp rendering (CSR, SSR, SSG) cho từng trang trong cùng một ứng dụng.</p>
+<h3>3. File-system Based Routing</h3>
+<p>Next.js sử dụng cấu trúc thư mục để định nghĩa route, loại bỏ nhu cầu dùng thư viện như <code>react-router-dom</code>. Cụ thể:</p>
+<ul>
+<li>Thư mục <strong><code>pages</code></strong> (hoặc <code>app</code> trong App Router) ánh xạ trực tiếp đến URL.</li>
+<li><strong>Quy tắc</strong>:<ul>
+<li><code>pages/index.js</code> → <code>/</code></li>
+<li><code>pages/about.js</code> → <code>/about</code></li>
+<li><code>pages/blog/first-post.js</code> → <code>/blog/first-post</code></li>
+</ul>
+</li>
+<li><strong>Dynamic Routes</strong>:<ul>
+<li><code>pages/posts/[id].js</code> → <code>/posts/1</code>, <code>/posts/abc</code>,...</li>
+<li><code>pages/[category]/[id].js</code> → <code>/tech/123</code>, <code>/news/456</code>,...</li>
+</ul>
+</li>
+<li><strong>API Routes</strong>:<ul>
+<li>Thư mục <code>pages/api</code> chứa các endpoint API.</li>
+<li>Ví dụ: <code>pages/api/hello.js</code> → <code>/api/hello</code>.</li>
+</ul>
+</li>
+</ul>
+<h3>4. Cài đặt và cấu trúc dự án</h3>
+<h4>Cài đặt Next.js</h4>
+<p>Chạy lệnh:</p>
+<pre><code class="language-bash">npx create-next-app@latest my-next-app
+cd my-next-app
+npm run dev
+</code></pre>
+<ul>
+<li>Truy cập <code>http://localhost:3000</code> để xem ứng dụng.</li>
+</ul>
+<h4>Cấu trúc thư mục</h4>
+<ul>
+<li><strong><code>pages/</code></strong>: Chứa các file định nghĩa route.</li>
+<li><strong><code>public/</code></strong>: Chứa tài nguyên tĩnh như hình ảnh, font.</li>
+<li><strong><code>styles/</code></strong>: Chứa file CSS (Next.js hỗ trợ CSS modules mặc định).</li>
+<li><strong><code>next.config.js</code></strong>: File cấu hình Next.js (ví dụ: thêm biến môi trường, cấu hình Webpack).</li>
+</ul>
+<h4>Pages Router vs App Router</h4>
+<ul>
+<li><strong>Pages Router</strong>: Dùng thư mục <code>pages</code>, dễ học, phù hợp cho người mới. Khóa học này tập trung vào Pages Router.</li>
+<li><strong>App Router</strong>: Dùng thư mục <code>app</code>, hỗ trợ các tính năng mới như React Server Components, streaming. Sẽ được giới thiệu sơ qua để học viên định hướng.</li>
+</ul>
+<h2>C. Bài tập thực hành</h2>
+<h3>Bài 1: Tạo dự án Next.js mới</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Sử dụng <code>create-next-app</code> để tạo dự án Next.js.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Chạy lệnh:<pre><code class="language-bash">npx create-next-app@latest my-next-app
+</code></pre>
+</li>
+<li>Chọn các tùy chọn mặc định (TypeScript: No, ESLint: Yes, Tailwind: No, App Router: No).</li>
+<li>Vào thư mục và chạy:<pre><code class="language-bash">cd my-next-app
+npm run dev
+</code></pre>
+</li>
+<li>Mở trình duyệt tại <code>http://localhost:3000</code> để kiểm tra.</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 2: Tạo các trang tĩnh</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo hai trang tĩnh <code>/about</code> và <code>/contact</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>pages/about.js</code>:<pre><code class="language-jsx">function AboutPage() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Giới thiệu&lt;/h1&gt;
+      &lt;p&gt;Tôi là một lập trình viên với 10 năm kinh nghiệm trong JavaScript và React.&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default AboutPage;
+</code></pre>
+</li>
+<li>Tạo <code>pages/contact.js</code>:<pre><code class="language-jsx">function ContactPage() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Liên hệ&lt;/h1&gt;
+      &lt;p&gt;Email: example@email.com&lt;/p&gt;
+      &lt;p&gt;Điện thoại: 0123-456-789&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+export default ContactPage;
+</code></pre>
+</li>
+<li>Kiểm tra tại <code>http://localhost:3000/about</code> và <code>http://localhost:3000/contact</code>.</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 3: Tạo component Layout</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo component <code>Layout</code> với Header (có link điều hướng) và Footer, sử dụng trong các trang <code>about</code> và <code>contact</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>components/Layout.js</code>:<pre><code class="language-jsx">import Link from &#39;next/link&#39;;
+
+function Layout({ children }) {
+  return (
+    &lt;div&gt;
+      &lt;header&gt;
+        &lt;nav&gt;
+          &lt;Link href=&quot;/&quot;&gt;Trang chủ&lt;/Link&gt; | &lt;Link href=&quot;/about&quot;&gt;Giới thiệu&lt;/Link&gt; | &lt;Link href=&quot;/contact&quot;&gt;Liên hệ&lt;/Link&gt;
+        &lt;/nav&gt;
+      &lt;/header&gt;
+      &lt;main&gt;{children}&lt;/main&gt;
+      &lt;footer&gt;
+        &lt;p&gt;&amp;copy; 2025 My Next App&lt;/p&gt;
+      &lt;/footer&gt;
+    &lt;/div&gt;
+  );
+}
+export default Layout;
+</code></pre>
+</li>
+<li>Cập nhật <code>pages/about.js</code>:<pre><code class="language-jsx">import Layout from &#39;../components/Layout&#39;;
+
+function AboutPage() {
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;Giới thiệu&lt;/h1&gt;
+      &lt;p&gt;Tôi là một lập trình viên với 10 năm kinh nghiệm trong JavaScript và React.&lt;/p&gt;
+    &lt;/Layout&gt;
+  );
+}
+export default AboutPage;
+</code></pre>
+</li>
+<li>Cập nhật <code>pages/contact.js</code>:<pre><code class="language-jsx">import Layout from &#39;../components/Layout&#39;;
+
+function ContactPage() {
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;Liên hệ&lt;/h1&gt;
+      &lt;p&gt;Email: example@email.com&lt;/p&gt;
+      &lt;p&gt;Điện thoại: 0123-456-789&lt;/p&gt;
+    &lt;/Layout&gt;
+  );
+}
+export default ContactPage;
+</code></pre>
+</li>
+<li>Thêm style trong <code>styles/globals.css</code>:<pre><code class="language-css">header, footer {
+  background: #f4f4f4;
+  padding: 10px;
+  text-align: center;
+}
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: blue;
+}
+main {
+  padding: 20px;
+}
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 4: Chuyển đổi ứng dụng Blog sang Next.js</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo trang danh sách bài viết (<code>/blog</code>) và trang chi tiết bài viết (<code>/blog/[slug]</code>).</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>pages/blog/index.js</code>:<pre><code class="language-jsx">import Link from &#39;next/link&#39;;
+import Layout from &#39;../../components/Layout&#39;;
+
+const posts = [
+  { slug: &#39;post-1&#39;, title: &#39;Bài viết 1&#39;, content: &#39;Nội dung bài viết 1...&#39; },
+  { slug: &#39;post-2&#39;, title: &#39;Bài viết 2&#39;, content: &#39;Nội dung bài viết 2...&#39; },
+];
+
+function BlogPage() {
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;Danh sách bài blog&lt;/h1&gt;
+      &lt;ul&gt;
+        {posts.map(post =&gt; (
+          &lt;li key={post.slug}&gt;
+            &lt;Link href={`/blog/${post.slug}`}&gt;{post.title}&lt;/Link&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/Layout&gt;
+  );
+}
+export default BlogPage;
+</code></pre>
+</li>
+<li>Tạo <code>pages/blog/[slug].js</code>:<pre><code class="language-jsx">import Layout from &#39;../../components/Layout&#39;;
+
+const posts = [
+  { slug: &#39;post-1&#39;, title: &#39;Bài viết 1&#39;, content: &#39;Nội dung bài viết 1...&#39; },
+  { slug: &#39;post-2&#39;, title: &#39;Bài viết 2&#39;, content: &#39;Nội dung bài viết 2...&#39; },
+];
+
+function PostPage({ post }) {
+  if (!post) return &lt;p&gt;Bài viết không tồn tại&lt;/p&gt;;
+
+  return (
+    &lt;Layout&gt;
+      &lt;h1&gt;{post.title}&lt;/h1&gt;
+      &lt;p&gt;{post.content}&lt;/p&gt;
+    &lt;/Layout&gt;
+  );
+}
+
+export async function getServerSideProps({ params }) {
+  const post = posts.find(p =&gt; p.slug === params.slug);
+  return { props: { post: post || null } };
+}
+
+export default PostPage;
+</code></pre>
+</li>
+<li>Kiểm tra tại <code>http://localhost:3000/blog</code> và <code>http://localhost:3000/blog/post-1</code>.</li>
+</ol>
+</li>
+</ul>
+<h3>Bài 5: Thử nghiệm với API Routes</h3>
+<ul>
+<li><strong>Yêu cầu</strong>: Tạo API endpoint <code>/api/hello</code> trả về JSON <code>{ message: &#39;Hello from API&#39; }</code>.</li>
+<li><strong>Hướng dẫn</strong>:<ol>
+<li>Tạo <code>pages/api/hello.js</code>:<pre><code class="language-jsx">export default function handler(req, res) {
+  res.status(200).json({ message: &#39;Hello from API&#39; });
+}
+</code></pre>
+</li>
+<li>Kiểm tra tại <code>http://localhost:3000/api/hello</code> hoặc dùng <code>fetch</code> trong trình duyệt:<pre><code class="language-javascript">fetch(&#39;/api/hello&#39;).then(res =&gt; res.json()).then(data =&gt; console.log(data));
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

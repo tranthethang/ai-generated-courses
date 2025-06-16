@@ -1,0 +1,415 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 2: Arrays, Tuples, Enums và Objects</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chương này giới thiệu các cấu trúc dữ liệu quan trọng trong TypeScript để quản lý tập hợp dữ liệu một cách hiệu quả. Chúng ta sẽ học về:</p>
+<ul>
+<li><strong>Arrays</strong>: Lưu trữ danh sách các giá trị cùng kiểu.</li>
+<li><strong>Tuples</strong>: Mảng có số lượng phần tử cố định với kiểu cụ thể cho từng phần tử.</li>
+<li><strong>Enums</strong>: Tạo nhóm hằng số có tên để code dễ đọc và bảo trì.</li>
+<li><strong>Objects</strong>: Định nghĩa kiểu cho các đối tượng với các thuộc tính cụ thể.</li>
+</ul>
+<p>Mục tiêu là giúp bạn hiểu cách sử dụng các cấu trúc này và áp dụng chúng trong các tình huống thực tế.</p>
+<p><strong>Tiêu đề chương</strong></p>
+<p>Làm việc với Arrays, Tuples, Enums và Kiểu Đối Tượng.</p>
+<p><strong>Tóm tắt lý thuyết chính</strong></p>
+<h3>1. Arrays (Mảng)</h3>
+<p>Arrays trong TypeScript cho phép lưu trữ nhiều giá trị cùng kiểu, giúp quản lý danh sách dữ liệu như danh sách sản phẩm, điểm số, hoặc tên người dùng. TypeScript cung cấp hai cách khai báo kiểu cho mảng:</p>
+<h4>Cách 1: Sử dụng <code>[]</code></h4>
+<ul>
+<li>Thêm <code>[]</code> sau kiểu dữ liệu của phần tử.</li>
+<li>Ví dụ: <code>number[]</code> là mảng chỉ chứa số, <code>string[]</code> là mảng chỉ chứa chuỗi.</li>
+</ul>
+<pre><code class="language-typescript">let numbers: number[] = [1, 2, 3, 4, 5]; // Mảng số
+let names: string[] = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]; // Mảng chuỗi
+// numbers.push(&quot;six&quot;); // Lỗi: TypeScript phát hiện kiểu sai (chuỗi thay vì số)
+</code></pre>
+<h4>Cách 2: Sử dụng Generic <code>Array&lt;elementType&gt;</code></h4>
+<ul>
+<li>Tương đương với cách trên, nhưng cú pháp rõ ràng hơn trong các trường hợp phức tạp.</li>
+</ul>
+<pre><code class="language-typescript">let scores: Array&lt;number&gt; = [100, 90, 85]; // Mảng số
+let flags: Array&lt;boolean&gt; = [true, false, true]; // Mảng boolean
+</code></pre>
+<p><strong>Ưu điểm</strong>:</p>
+<ul>
+<li>Linh hoạt về kích thước (có thể thêm/xóa phần tử).</li>
+<li>Hỗ trợ các phương thức JavaScript như <code>push</code>, <code>pop</code>, <code>map</code>, <code>filter</code>, v.v.</li>
+<li>TypeScript kiểm tra kiểu để tránh lỗi khi thao tác.</li>
+</ul>
+<p><strong>Hạn chế</strong>:</p>
+<ul>
+<li>Chỉ nên chứa các phần tử cùng kiểu để đảm bảo tính nhất quán.</li>
+</ul>
+<p><strong>Ví dụ thực tế</strong>:
+Quản lý danh sách tên sản phẩm trong cửa hàng:</p>
+<pre><code class="language-typescript">let products: string[] = [&quot;Laptop&quot;, &quot;Phone&quot;, &quot;Tablet&quot;];
+products.push(&quot;Headphones&quot;); // Thêm sản phẩm mới
+console.log(products); // [&quot;Laptop&quot;, &quot;Phone&quot;, &quot;Tablet&quot;, &quot;Headphones&quot;]
+</code></pre>
+<h3>2. Tuples</h3>
+<p>Tuples là một dạng mảng đặc biệt, có số lượng phần tử cố định và kiểu dữ liệu của từng phần tử được xác định trước. Tuples rất hữu ích khi bạn muốn biểu diễn dữ liệu có cấu trúc rõ ràng, như tọa độ (<code>[x, y]</code>) hoặc thông tin người dùng (<code>[name, age]</code>).</p>
+<h4>Khai báo Tuple</h4>
+<ul>
+<li>Xác định kiểu cho từng phần tử theo thứ tự.</li>
+</ul>
+<pre><code class="language-typescript">let userProfile: [string, number, boolean]; // Tuple chứa tên (string), tuổi (number), trạng thái (boolean)
+userProfile = [&quot;John Doe&quot;, 30, true]; // OK
+// userProfile = [30, &quot;John Doe&quot;, true]; // Lỗi: Sai kiểu
+// userProfile = [&quot;Jane Doe&quot;, 25]; // Lỗi: Thiếu phần tử
+</code></pre>
+<h4>Truy cập phần tử</h4>
+<ul>
+<li>Sử dụng chỉ số (index) như mảng thông thường.</li>
+</ul>
+<pre><code class="language-typescript">console.log(userProfile[0]); // &quot;John Doe&quot; (tên)
+console.log(userProfile[1]); // 30 (tuổi)
+// userProfile[3] = &quot;test&quot;; // Lỗi: Vượt quá số phần tử
+</code></pre>
+<p><strong>Ưu điểm</strong>:</p>
+<ul>
+<li>Đảm bảo cấu trúc dữ liệu cố định (số lượng và kiểu).</li>
+<li>Hữu ích khi trả về nhiều giá trị từ hàm.</li>
+</ul>
+<p><strong>Hạn chế</strong>:</p>
+<ul>
+<li>Không linh hoạt như Arrays (không thể thêm/xóa phần tử).</li>
+<li>Phải nhớ thứ tự kiểu của từng phần tử.</li>
+</ul>
+<p><strong>Ví dụ thực tế</strong>:
+Biểu diễn tọa độ 2D:</p>
+<pre><code class="language-typescript">type Point2D = [number, number]; // Tuple cho tọa độ [x, y]
+let point: Point2D = [10, 20];
+console.log(`Tọa độ: x=${point[0]}, y=${point[1]}`); // Tọa độ: x=10, y=20
+</code></pre>
+<h3>3. Enums (Liệt kê)</h3>
+<p>Enums cho phép định nghĩa một nhóm hằng số có tên, giúp code dễ đọc và dễ bảo trì hơn. Thay vì sử dụng số hoặc chuỗi &quot;magic&quot; (ví dụ: <code>0</code> hoặc <code>&quot;ERROR&quot;</code>), bạn có thể dùng tên hằng số như <code>Direction.Up</code> hoặc <code>LogLevel.ERROR</code>.</p>
+<h4>Numeric Enums</h4>
+<ul>
+<li>Mặc định, giá trị bắt đầu từ <code>0</code> và tăng dần.</li>
+</ul>
+<pre><code class="language-typescript">enum Direction {
+    Up,    // 0
+    Down,  // 1
+    Left,  // 2
+    Right  // 3
+}
+let currentDirection: Direction = Direction.Up;
+console.log(currentDirection); // 0
+if (currentDirection === Direction.Up) {
+    console.log(&quot;Đang di chuyển lên!&quot;); // Đang di chuyển lên!
+}
+</code></pre>
+<ul>
+<li>Có thể gán giá trị cụ thể:</li>
+</ul>
+<pre><code class="language-typescript">enum HttpStatus {
+    OK = 200,
+    CREATED = 201,
+    BAD_REQUEST = 400,
+    NOT_FOUND = 404
+}
+console.log(HttpStatus.OK); // 200
+</code></pre>
+<h4>String Enums</h4>
+<ul>
+<li>Mỗi giá trị là một chuỗi hằng, dễ debug hơn.</li>
+</ul>
+<pre><code class="language-typescript">enum LogLevel {
+    INFO = &quot;INFO&quot;,
+    WARNING = &quot;WARNING&quot;,
+    ERROR = &quot;ERROR&quot;,
+    DEBUG = &quot;DEBUG&quot;
+}
+function logMessage(level: LogLevel, message: string): void {
+    console.log(`[${level}] - ${message}`);
+}
+logMessage(LogLevel.INFO, &quot;Người dùng đăng nhập.&quot;); // [INFO] - Người dùng đăng nhập.
+</code></pre>
+<h4>Const Enums (Bổ sung)</h4>
+<ul>
+<li>Sử dụng từ khóa <code>const</code> để tối ưu hóa mã biên dịch (TypeScript sẽ thay thế enum bằng giá trị thực tại thời điểm biên dịch).</li>
+</ul>
+<pre><code class="language-typescript">const enum Theme {
+    Light = &quot;LIGHT&quot;,
+    Dark = &quot;DARK&quot;
+}
+let currentTheme: Theme = Theme.Dark;
+console.log(currentTheme); // &quot;DARK&quot;
+// Mã JavaScript sau biên dịch sẽ không chứa định nghĩa enum, giảm kích thước file.
+</code></pre>
+<p><strong>Ưu điểm</strong>:</p>
+<ul>
+<li>Tăng tính dễ đọc và bảo trì.</li>
+<li>String enums dễ debug, numeric enums tự động tăng giá trị.</li>
+<li>Const enums tiết kiệm bộ nhớ và tối ưu hiệu suất.</li>
+</ul>
+<p><strong>Hạn chế</strong>:</p>
+<ul>
+<li>String enums yêu cầu gán giá trị rõ ràng.</li>
+<li>Const enums không thể truy cập ngược (reverse mapping) như numeric enums.</li>
+</ul>
+<p><strong>Ví dụ thực tế</strong>:
+Quản lý trạng thái giao diện:</p>
+<pre><code class="language-typescript">enum UIState {
+    LOADING = &quot;LOADING&quot;,
+    SUCCESS = &quot;SUCCESS&quot;,
+    ERROR = &quot;ERROR&quot;
+}
+let appState: UIState = UIState.LOADING;
+console.log(`Trạng thái ứng dụng: ${appState}`); // Trạng thái ứng dụng: LOADING
+</code></pre>
+<h3>4. Objects (Kiểu đối tượng ẩn danh)</h3>
+<p>TypeScript cho phép định nghĩa &quot;hình dạng&quot; của đối tượng bằng cách khai báo các thuộc tính và kiểu tương ứng. Điều này rất hữu ích khi làm việc với dữ liệu phức tạp như thông tin người dùng, sản phẩm, hoặc bài viết.</p>
+<h4>Khai báo kiểu đối tượng</h4>
+<pre><code class="language-typescript">let product: { name: string; price: number; inStock: boolean };
+product = { name: &quot;Laptop Pro&quot;, price: 30000000, inStock: true };
+// product = { name: &quot;Mouse&quot;, price: &quot;500000&quot; }; // Lỗi: price phải là số
+// product = { name: &quot;Keyboard&quot; }; // Lỗi: Thiếu price và inStock
+</code></pre>
+<h4>Thuộc tính tùy chọn (<code>?</code>)</h4>
+<ul>
+<li>Đánh dấu thuộc tính không bắt buộc bằng <code>?</code>.</li>
+</ul>
+<pre><code class="language-typescript">let employee: {
+    id: number;
+    name: string;
+    department?: string; // Tùy chọn
+};
+employee = { id: 1, name: &quot;Alice&quot; }; // OK
+employee = { id: 2, name: &quot;Bob&quot;, department: &quot;Kỹ thuật&quot; }; // OK
+console.log(employee.department?.toUpperCase()); // KỸ THUẬT (hoặc undefined)
+</code></pre>
+<h4>Thuộc tính chỉ đọc (<code>readonly</code>)</h4>
+<ul>
+<li>Ngăn thay đổi giá trị sau khi khởi tạo.</li>
+</ul>
+<pre><code class="language-typescript">let book: {
+    readonly isbn: string;
+    title: string;
+    author: string;
+};
+book = { isbn: &quot;978-3-16-148410-0&quot;, title: &quot;TypeScript Deep Dive&quot;, author: &quot;Basarat&quot; };
+// book.isbn = &quot;123&quot;; // Lỗi: isbn là readonly
+book.title = &quot;Học TypeScript&quot;; // OK
+</code></pre>
+<h4>Excess Property Checks (Bổ sung)</h4>
+<ul>
+<li>TypeScript kiểm tra các thuộc tính dư thừa khi gán đối tượng trực tiếp.</li>
+</ul>
+<pre><code class="language-typescript">let user: { name: string; age: number };
+user = { name: &quot;Alice&quot;, age: 25, email: &quot;alice@example.com&quot; }; // Lỗi: email không được định nghĩa
+// Cách khắc phục: Lưu đối tượng vào biến trước
+let temp = { name: &quot;Alice&quot;, age: 25, email: &quot;alice@example.com&quot; };
+user = temp; // OK
+</code></pre>
+<p><strong>Ưu điểm</strong>:</p>
+<ul>
+<li>Định nghĩa cấu trúc dữ liệu rõ ràng.</li>
+<li>Hỗ trợ thuộc tính tùy chọn và chỉ đọc.</li>
+<li>TypeScript kiểm tra kiểu để tránh lỗi.</li>
+</ul>
+<p><strong>Hạn chế</strong>:</p>
+<ul>
+<li>Cú pháp dài dòng khi định nghĩa nhiều đối tượng phức tạp (sẽ khắc phục bằng <code>interface</code> hoặc <code>type</code> sau).</li>
+</ul>
+<p><strong>Ví dụ thực tế</strong>:
+Mô tả thông tin người dùng:</p>
+<pre><code class="language-typescript">let user: {
+    readonly id: number;
+    name: string;
+    email?: string;
+    greet: () =&gt; void;
+};
+user = {
+    id: 1,
+    name: &quot;Alice&quot;,
+    greet: function() {
+        console.log(`Xin chào, tôi là ${this.name}!`);
+    }
+};
+user.greet(); // Xin chào, tôi là Alice!
+</code></pre>
+<p><strong>Code ví dụ tổng hợp</strong></p>
+<pre><code class="language-typescript">// Arrays: Quản lý danh sách sản phẩm
+let products: string[] = [&quot;Laptop&quot;, &quot;Phone&quot;, &quot;Tablet&quot;];
+products.push(&quot;Headphones&quot;);
+console.log(&quot;Danh sách sản phẩm:&quot;, products); // [&quot;Laptop&quot;, &quot;Phone&quot;, &quot;Tablet&quot;, &quot;Headphones&quot;]
+
+// Tuples: Biểu diễn màu RGB
+type RGBColor = [number, number, number];
+let primaryRed: RGBColor = [255, 0, 0];
+console.log(&quot;Màu đỏ (RGB):&quot;, primaryRed); // [255, 0, 0]
+
+// Numeric Enums: Quản lý trạng thái đơn hàng
+enum OrderStatus {
+    PENDING, // 0
+    PROCESSING, // 1
+    SHIPPED, // 2
+    DELIVERED // 3
+}
+let myOrder: OrderStatus = OrderStatus.PROCESSING;
+console.log(&quot;Trạng thái đơn hàng:&quot;, OrderStatus[myOrder]); // PROCESSING
+
+// String Enums: Quản lý quyền truy cập
+enum FileAccess {
+    Read = &quot;READ&quot;,
+    Write = &quot;WRITE&quot;,
+    Execute = &quot;EXECUTE&quot;
+}
+let userAccess: FileAccess = FileAccess.Read;
+console.log(&quot;Quyền truy cập:&quot;, userAccess); // READ
+
+// Objects: Mô tả thông tin xe hơi
+let car: {
+    readonly make: string;
+    model: string;
+    year: number;
+    color?: string;
+    startEngine: () =&gt; void;
+};
+car = {
+    make: &quot;Toyota&quot;,
+    model: &quot;Camry&quot;,
+    year: 2023,
+    startEngine: function() {
+        console.log(`${this.make} ${this.model} khởi động động cơ!`);
+    }
+};
+car.startEngine(); // Toyota Camry khởi động động cơ!
+car.color = &quot;Bạc&quot;;
+console.log(&quot;Xe:&quot;, car);
+</code></pre>
+<p><strong>Danh sách bài tập</strong></p>
+<h4>Bài 1: Trắc nghiệm - So sánh Array và Tuple</h4>
+<p><strong>Tiêu đề</strong>: So sánh Array và Tuple<br><strong>Mô tả</strong>: Kiểm tra hiểu biết về sự khác biệt giữa Array và Tuple.<br><strong>Câu hỏi</strong>: Phát biểu nào đúng nhất về sự khác biệt giữa Array và Tuple?<br>A. Array chứa các phần tử khác kiểu, Tuple chỉ chứa cùng kiểu.<br>B. Tuple có số lượng phần tử cố định và kiểu xác định trước, Array linh hoạt hơn.<br>C. Array không thể thay đổi kích thước, Tuple có thể.<br>D. Tuple là bí danh của Array.<br><strong>Đáp án</strong>: B<br><strong>Giải thích</strong>: Tuple yêu cầu số lượng phần tử cố định và kiểu cụ thể cho từng vị trí, trong khi Array có thể thay đổi kích thước và thường chứa cùng kiểu.</p>
+<h4>Bài 2: Code - Thao tác với Array</h4>
+<p><strong>Tiêu đề</strong>: Thực hành với Mảng<br><strong>Mô tả</strong>: Khai báo mảng tên sinh viên, thêm phần tử mới và in ra console.<br><strong>Yêu cầu</strong>:</p>
+<ul>
+<li>Khai báo mảng <code>studentNames: string[]</code> với ít nhất 2 tên.</li>
+<li>Thêm một tên mới bằng <code>push()</code>.</li>
+<li>In mảng ra console.</li>
+</ul>
+<pre><code class="language-typescript">let studentNames: string[] = [&quot;Lan Anh&quot;, &quot;Minh Khôi&quot;];
+console.log(&quot;Ban đầu:&quot;, studentNames);
+studentNames.push(&quot;Hoàng Nam&quot;);
+console.log(&quot;Sau khi thêm:&quot;, studentNames);
+</code></pre>
+<h4>Bài 3: Code - Tạo Enum cho trạng thái thanh toán</h4>
+<p><strong>Tiêu đề</strong>: Thực hành với Enums<br><strong>Mô tả</strong>: Định nghĩa enum <code>PaymentStatus</code> với các trạng thái <code>UNPAID</code>, <code>PAID</code>, <code>REFUNDED</code>, <code>FAILED</code>.<br><strong>Yêu cầu</strong>:</p>
+<ul>
+<li>Định nghĩa enum với giá trị số cụ thể.</li>
+<li>Khai báo biến <code>currentPaymentStatus</code> và in giá trị.</li>
+</ul>
+<pre><code class="language-typescript">enum PaymentStatus {
+    UNPAID = 10,
+    PAID = 20,
+    REFUNDED = 30,
+    FAILED = 40
+}
+let currentPaymentStatus: PaymentStatus = PaymentStatus.PAID;
+console.log(&quot;Trạng thái:&quot;, PaymentStatus[currentPaymentStatus]); // PAID
+</code></pre>
+<h4>Bài 4: Code - Tạo Tuple cho sách</h4>
+<p><strong>Tiêu đề</strong>: Thực hành với Tuples<br><strong>Mô tả</strong>: Khai báo tuple <code>bookInfo</code> chứa tiêu đề, tác giả, năm xuất bản.<br><strong>Yêu cầu</strong>:</p>
+<ul>
+<li>Khai báo tuple <code>[string, string, number]</code>.</li>
+<li>Tạo biến <code>myBook</code> và in từng phần tử.</li>
+</ul>
+<pre><code class="language-typescript">type BookInfoTuple = [string, string, number];
+let myBook: BookInfoTuple = [&quot;Lập Trình TypeScript&quot;, &quot;John Doe&quot;, 2024];
+console.log(&quot;Tiêu đề:&quot;, myBook[0]);
+console.log(&quot;Tác giả:&quot;, myBook[1]);
+console.log(&quot;Năm:&quot;, myBook[2]);
+</code></pre>
+<h4>Bài 5: Code - Định nghĩa kiểu đối tượng bài viết</h4>
+<p><strong>Tiêu đề</strong>: Thực hành với Objects<br><strong>Mô tả</strong>: Định nghĩa kiểu cho đối tượng <code>article</code> với <code>id</code> (readonly), <code>title</code>, <code>content</code>, <code>author</code>, và <code>tags</code> (tùy chọn).<br><strong>Yêu cầu</strong>:</p>
+<ul>
+<li>Tạo đối tượng <code>myArticle</code> và thử thay đổi <code>id</code>.</li>
+<li>Tạo đối tượng khác không có <code>tags</code>.</li>
+</ul>
+<pre><code class="language-typescript">let myArticle: {
+    readonly id: number;
+    title: string;
+    content: string;
+    author: string;
+    tags?: string[];
+};
+myArticle = {
+    id: 101,
+    title: &quot;TypeScript là gì?&quot;,
+    content: &quot;TypeScript là superset của JavaScript...&quot;,
+    author: &quot;Dev A&quot;,
+    tags: [&quot;typescript&quot;, &quot;javascript&quot;]
+};
+console.log(&quot;Bài viết:&quot;, myArticle);
+// myArticle.id = 102; // Lỗi: readonly
+let anotherArticle: typeof myArticle = {
+    id: 102,
+    title: &quot;Ưu điểm TypeScript&quot;,
+    content: &quot;Kiểm tra kiểu tĩnh...&quot;,
+    author: &quot;Dev B&quot;
+};
+console.log(&quot;Bài viết khác:&quot;, anotherArticle);
+</code></pre>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

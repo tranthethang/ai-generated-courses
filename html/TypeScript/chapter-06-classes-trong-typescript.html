@@ -1,0 +1,661 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 6: Classes trong TypeScript</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chapter này sẽ giới thiệu về lập trình hướng đối tượng (OOP) trong TypeScript, một cách tiếp cận giúp tổ chức code hiệu quả, dễ tái sử dụng và bảo trì. TypeScript mở rộng khái niệm <code>class</code> của JavaScript ES6 với các tính năng mạnh mẽ như <strong>access modifiers</strong> (<code>public</code>, <code>private</code>, <code>protected</code>), <strong>readonly properties</strong>, <strong>static members</strong>, <strong>inheritance</strong>, và <strong>abstract classes</strong>. Mục tiêu là giúp bạn hiểu và áp dụng các khái niệm này vào dự án thực tế.</p>
+<h2>Tiêu đề Chapter</h2>
+<p><strong>Lập Trình Hướng Đối Tượng với Classes</strong></p>
+<h2>Tóm tắt lý thuyết chính</h2>
+<h3>1. Khai báo Class, Properties, Methods và Constructors</h3>
+<ul>
+<li><strong>Class</strong>: Là bản thiết kế để tạo ra các đối tượng (instances). Mỗi đối tượng được tạo từ class sẽ có các thuộc tính (properties) và hành vi (methods) được định nghĩa trong class.</li>
+<li><strong>Properties</strong>: Là các biến thuộc về class, lưu trữ trạng thái của đối tượng.</li>
+<li><strong>Methods</strong>: Là các hàm thuộc về class, định nghĩa hành vi của đối tượng.</li>
+<li><strong>Constructor</strong>: Phương thức đặc biệt, được gọi tự động khi tạo đối tượng bằng từ khóa <code>new</code>. Thường dùng để khởi tạo các thuộc tính.</li>
+</ul>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">class Greeter {
+    greeting: string; // Property
+
+    constructor(message: string) { // Constructor
+        this.greeting = message;
+        console.log(&quot;Greeter object created!&quot;);
+    }
+
+    greet(): string { // Method
+        return `Hello, ${this.greeting}`;
+    }
+}
+
+const greeter = new Greeter(&quot;world&quot;); // In: &quot;Greeter object created!&quot;
+console.log(greeter.greet()); // In: &quot;Hello, world&quot;
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>greeting</code> là thuộc tính lưu trữ chuỗi chào hỏi.</li>
+<li><code>constructor</code> nhận tham số <code>message</code> và gán nó cho <code>greeting</code>.</li>
+<li><code>greet()</code> là phương thức trả về chuỗi chào hỏi.</li>
+</ul>
+<h3>2. Access Modifiers (Bộ điều chỉnh truy cập)</h3>
+<p>TypeScript cung cấp 3 access modifier để kiểm soát quyền truy cập vào thuộc tính và phương thức:</p>
+<ul>
+<li><strong><code>public</code></strong>: (Mặc định) Có thể truy cập từ bất kỳ đâu.</li>
+<li><strong><code>private</code></strong>: Chỉ truy cập được trong class khai báo nó. Không thể truy cập từ instance hoặc class con.</li>
+<li><strong><code>protected</code></strong>: Có thể truy cập trong class khai báo và các class con, nhưng không thể từ instance bên ngoài.</li>
+</ul>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">class Animal {
+    public name: string;        // Truy cập từ bất kỳ đâu
+    private age: number;        // Chỉ trong class Animal
+    protected sound: string;    // Trong Animal và class con
+
+    constructor(name: string, age: number, sound: string) {
+        this.name = name;
+        this.age = age;
+        this.sound = sound;
+    }
+
+    public makeSound(): void {
+        console.log(`${this.name} makes a ${this.sound} sound.`);
+    }
+
+    private getAge(): number {
+        return this.age;
+    }
+
+    public displayAge(): void {
+        console.log(`${this.name} is ${this.getAge()} years old.`);
+    }
+}
+
+class Cat extends Animal {
+    constructor(name: string, age: number) {
+        super(name, age, &quot;Meow&quot;);
+    }
+
+    public purr(): void {
+        console.log(`${this.name} is purring. It says ${this.sound}.`); // OK, sound là protected
+        // console.log(this.age); // Lỗi: age là private
+    }
+}
+
+const pet = new Animal(&quot;Doggy&quot;, 5, &quot;Woof&quot;);
+console.log(pet.name); // OK: &quot;Doggy&quot;
+pet.makeSound();       // OK: &quot;Doggy makes a Woof sound.&quot;
+// console.log(pet.age); // Lỗi: age là private
+pet.displayAge();      // OK: &quot;Doggy is 5 years old.&quot;
+
+const cat = new Cat(&quot;Whiskers&quot;, 3);
+cat.purr(); // OK: &quot;Whiskers is purring. It says Meow.&quot;
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>name</code> (<code>public</code>) có thể truy cập từ bất kỳ đâu, kể cả từ instance (<code>pet.name</code>).</li>
+<li><code>age</code> (<code>private</code>) chỉ có thể truy cập trong class <code>Animal</code>, thông qua phương thức <code>getAge()</code> hoặc <code>displayAge()</code>.</li>
+<li><code>sound</code> (<code>protected</code>) có thể truy cập trong class <code>Animal</code> và class con <code>Cat</code> (qua <code>this.sound</code>).</li>
+</ul>
+<p><strong>Lưu ý thực tiễn:</strong></p>
+<ul>
+<li>Sử dụng <code>private</code> khi bạn muốn ẩn chi tiết triển khai (encapsulation).</li>
+<li>Sử dụng <code>protected</code> khi cần chia sẻ dữ liệu giữa class cha và class con, nhưng không muốn public.</li>
+</ul>
+<h3>3. Readonly Properties (Thuộc tính chỉ đọc)</h3>
+<p>Thuộc tính <code>readonly</code> chỉ có thể được gán giá trị khi khai báo hoặc trong constructor. Sau đó, giá trị không thể thay đổi.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">class Configuration {
+    readonly apiKey: string;
+    readonly apiVersion: string = &quot;v1&quot;;
+
+    constructor(key: string) {
+        this.apiKey = key;
+    }
+
+    updateKey(newKey: string) {
+        // this.apiKey = newKey; // Lỗi: apiKey là readonly
+    }
+}
+
+const config = new Configuration(&quot;XYZ123&quot;);
+console.log(config.apiKey); // &quot;XYZ123&quot;
+// config.apiVersion = &quot;v2&quot;; // Lỗi: apiVersion là readonly
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>apiKey</code> được gán trong constructor, sau đó không thể thay đổi.</li>
+<li><code>apiVersion</code> được gán giá trị mặc định ngay khi khai báo.</li>
+</ul>
+<p><strong>Lưu ý thực tiễn:</strong></p>
+<ul>
+<li>Sử dụng <code>readonly</code> để đảm bảo dữ liệu bất biến (immutable), ví dụ: khóa API hoặc cấu hình cố định.</li>
+</ul>
+<h3>4. Getters và Setters (Phương thức truy cập)</h3>
+<p>Getters và setters cho phép kiểm soát việc đọc và ghi giá trị của thuộc tính, thường dùng với thuộc tính <code>private</code>.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">class Employee {
+    private _fullName: string = &quot;&quot;;
+
+    get fullName(): string {
+        console.log(&quot;Getter called.&quot;);
+        return this._fullName;
+    }
+
+    set fullName(newName: string) {
+        console.log(&quot;Setter called.&quot;);
+        if (newName &amp;&amp; newName.length &gt; 0) {
+            this._fullName = newName;
+        } else {
+            console.error(&quot;Full name cannot be empty.&quot;);
+        }
+    }
+}
+
+const emp = new Employee();
+emp.fullName = &quot;John Smith&quot;; // Gọi setter
+console.log(emp.fullName);   // Gọi getter: &quot;John Smith&quot;
+emp.fullName = &quot;&quot;;           // Gọi setter, in lỗi
+console.log(emp.fullName);   // Vẫn là &quot;John Smith&quot;
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>_fullName</code> là thuộc tính private, được quản lý bởi getter (<code>get fullName</code>) và setter (<code>set fullName</code>).</li>
+<li>Setter kiểm tra <code>newName</code> để đảm bảo không rỗng trước khi gán.</li>
+</ul>
+<p><strong>Lưu ý thực tiễn:</strong></p>
+<ul>
+<li>Đặt tên thuộc tính private với tiền tố <code>_</code> (ví dụ: <code>_fullName</code>) là quy ước phổ biến.</li>
+<li>Sử dụng getter/setter khi cần thêm logic kiểm tra hoặc xử lý trước khi đọc/ghi.</li>
+</ul>
+<h3>5. Static Members (Thành viên tĩnh)</h3>
+<p>Thành viên <code>static</code> thuộc về class, không thuộc về instance. Truy cập trực tiếp qua tên class.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">class MathHelper {
+    static readonly PI: number = 3.1415926535;
+    static E: number = 2.71828;
+
+    static add(x: number, y: number): number {
+        return x + y;
+    }
+}
+
+console.log(MathHelper.PI);        // 3.1415926535
+MathHelper.E = 2.718;
+console.log(MathHelper.add(5, 7)); // 12
+// const helper = new MathHelper();
+// console.log(helper.PI); // Lỗi: PI là static
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>PI</code> là hằng số tĩnh (<code>static readonly</code>), không thể thay đổi.</li>
+<li><code>E</code> là biến tĩnh, có thể thay đổi.</li>
+<li><code>add</code> là phương thức tĩnh, gọi trực tiếp qua <code>MathHelper</code>.</li>
+</ul>
+<p><strong>Lưu ý thực tiễn:</strong></p>
+<ul>
+<li>Sử dụng <code>static</code> cho các tiện ích chung (utilities) hoặc dữ liệu toàn cục (global constants).</li>
+</ul>
+<h3>6. Inheritance (Kế thừa)</h3>
+<p>Kế thừa cho phép class con (<code>extends</code>) tái sử dụng thuộc tính và phương thức của class cha. Class con có thể ghi đè (override) phương thức cha.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">class Shape {
+    constructor(public color: string) {}
+
+    draw(): void {
+        console.log(`Drawing a shape with color ${this.color}`);
+    }
+}
+
+class Circle extends Shape {
+    constructor(color: string, public radius: number) {
+        super(color); // Gọi constructor cha
+    }
+
+    draw(): void { // Override
+        super.draw(); // Gọi phương thức cha
+        console.log(`Drawing a circle with radius ${this.radius}`);
+    }
+
+    calculateArea(): number {
+        return Math.PI * this.radius * this.radius;
+    }
+}
+
+const circle = new Circle(&quot;red&quot;, 5);
+circle.draw();
+// In:
+// Drawing a shape with color red
+// Drawing a circle with radius 5
+console.log(&quot;Area:&quot;, circle.calculateArea());
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>Circle</code> kế thừa <code>Shape</code>, tái sử dụng <code>color</code> và phương thức <code>draw</code>.</li>
+<li><code>super(color)</code> gọi constructor của <code>Shape</code>.</li>
+<li><code>draw</code> được ghi đè để thêm thông tin về <code>radius</code>.</li>
+</ul>
+<p><strong>Lưu ý thực tiễn:</strong></p>
+<ul>
+<li>Sử dụng <code>super</code> để truy cập phương thức hoặc constructor của class cha.</li>
+<li>Kế thừa giúp giảm trùng lặp code, nhưng tránh lạm dụng (ưu tiên composition khi phù hợp).</li>
+</ul>
+<h3>7. Abstract Classes và Abstract Methods</h3>
+<ul>
+<li><strong>Abstract Class</strong>: Không thể tạo instance trực tiếp, dùng làm class cha để các class con kế thừa.</li>
+<li><strong>Abstract Method</strong>: Chỉ khai báo, không có triển khai. Class con phải triển khai.</li>
+</ul>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">abstract class Logger {
+    abstract log(message: string): void;
+
+    printDate(): void {
+        console.log(new Date().toLocaleTimeString());
+    }
+}
+
+class ConsoleLogger extends Logger {
+    log(message: string): void {
+        console.log(`[CONSOLE] ${message}`);
+    }
+}
+
+const logger = new ConsoleLogger();
+logger.printDate();
+logger.log(&quot;User action performed.&quot;);
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>Logger</code> là abstract class, không thể tạo instance (<code>new Logger()</code>).</li>
+<li><code>ConsoleLogger</code> triển khai <code>log</code> để in ra console.</li>
+<li><code>printDate</code> là phương thức chung, được kế thừa.</li>
+</ul>
+<p><strong>Lưu ý thực tiễn:</strong></p>
+<ul>
+<li>Sử dụng abstract class khi muốn định nghĩa một giao diện chung (interface) nhưng vẫn cung cấp một số triển khai.</li>
+</ul>
+<h3>8. Shorthand Constructor Initialization</h3>
+<p>TypeScript cho phép khai báo và khởi tạo thuộc tính ngay trong constructor bằng access modifier.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">class Person {
+    constructor(
+        public readonly id: number,
+        public name: string,
+        private age: number
+    ) {}
+
+    displayInfo(): void {
+        console.log(`ID: ${this.id}, Name: ${this.name}, Age: ${this.age}`);
+    }
+}
+
+const person = new Person(1, &quot;Alice&quot;, 30);
+person.displayInfo(); // In: ID: 1, Name: Alice, Age: 30
+console.log(person.name); // OK: Alice
+// console.log(person.age); // Lỗi: age là private
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>id</code>, <code>name</code>, <code>age</code> được khai báo trực tiếp trong constructor, TypeScript tự động gán chúng vào instance.</li>
+<li><code>Person</code> không cần viết <code>this.id = id</code>.</li>
+</ul>
+<p><strong>Lưu ý thực tiễn:</strong></p>
+<ul>
+<li>Sử dụng shorthand để giảm code, nhưng tránh lạm dụng khi constructor có logic phức tạp.</li>
+</ul>
+<h2>Ví dụ tổng hợp</h2>
+<pre><code class="language-typescript">abstract class MediaItem {
+    constructor(
+        public readonly title: string,
+        protected duration: number
+    ) {}
+
+    abstract play(): void;
+
+    getDetails(): string {
+        return `Title: ${this.title}, Duration: ${this.duration}s`;
+    }
+
+    static getLibraryName(): string {
+        return &quot;My Awesome Media Library&quot;;
+    }
+}
+
+class Song extends MediaItem {
+    constructor(
+        title: string,
+        duration: number,
+        public artist: string,
+        private album?: string
+    ) {
+        super(title, duration);
+    }
+
+    play(): void {
+        console.log(`Playing song: ${this.title} by ${this.artist} (${this.duration}s)`);
+        if (this.album) console.log(`Album: ${this.album}`);
+    }
+}
+
+class Movie extends MediaItem {
+    private _rating: number = 0;
+
+    constructor(
+        title: string,
+        duration: number,
+        public director: string
+    ) {
+        super(title, duration);
+    }
+
+    play(): void {
+        console.log(`Playing movie: ${this.title}, Director: ${this.director} (${this.duration / 60 / 60)m mins)`);
+    }
+
+    get rating(): number {
+        return this._rating;    }
+
+    set rating(newRating: number) {
+        if (newRating &gt;= 0 &amp;&amp; newRating &lt;= 10) {
+            this._rating = newRating;
+        } else {
+            console.warn(&quot;Rating must be between 0 and 10&quot;);
+        }
+    }
+}
+
+console.log(&quot;Library Name:&quot;, MediaItem.getDetails());getLibraryName());
+
+const song = new Song(&quot;Bohemian Rhapsody&quot;, 354, &quot;Queen&quot;, &quot;A Night at the Opera&quot;);
+const movie = new Movie(&quot;Inception&quot;, &quot;8880, &quot;Christopher Nolan&quot;);
+
+song.play();
+console.log(song.getDetails());
+movie.play();
+movie.rating = 9.5;
+console.log(&quot;Movie Rating:&quot;, movie.rating);
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>MediaItem</code> là abstract class với thuộc tính <code>title</code> (<code>readonly</code>) và <code>duration</code> (`protected).</li>
+<li><code>Song</code> và <code>Movie</code> kế thừa, triển khai <code>play()</code> theo cách riêng.</li>
+<li><code>static getLibraryName()</code> cung cấp tên thư viện chung.</li>
+<li><strong>Ứng dụng thực tế:</strong><ul>
+<li>Trong React, bạn có thể sử dụng <code>class</code> để định nghĩa các service (như <code>MediaService</code> để quản lý media) hoặc các model dữ liệu.</li>
+<li>Trong Node.js, <code>class</code> thường dùng để tạo các controller hoặc repository.</li>
+</ul>
+</li>
+</ul>
+<h2>Danh sách bài tập</h2>
+<h3>1. Trắc nghiệm: Access Modifiers</h3>
+<p><strong>Mô tả:</strong> Chọn access modifier phù hợp.</p>
+<p><strong>Câu hỏi:</strong>
+Trong TypeScript, access modifier nào cho phép truy cập từ trong class và class con, nhưng không từ instance?</p>
+<ul>
+<li>A. public</li>
+<li>B. private</li>
+<li>C. protected</li>
+<li>D. readonly</li>
+</ul>
+<p><strong>Đáp án:</strong> C</p>
+<h3>2. Code: Tạo class <code>Vehicle</code></h3>
+<p><strong>Mô tả:</strong>
+Tạo class <code>Vehicle</code> với:</p>
+<ul>
+<li><code>make</code> (<code>string</code>, <code>public</code>)</li>
+<li><code>model</code> (<code>string</code>, <code>public</code>)</li>
+<li><code>year</code> (<code>number</code>, <code>public</code>)</li>
+<li><code>_vin</code> (<code>string</code>, <code>private</code>)</li>
+<li>Phương thức <code>displayInfo()</code> để in thông tin.</li>
+<li>Constructor kiểm tra <code>_vin</code> (17 ký tự).</li>
+</ul>
+<p><strong>Giải pháp:</strong></p>
+<pre><code class="language-typescript">class Vehicle {
+    private _vin: string;
+
+    constructor(
+        public make: string,
+        public model: string,
+        public year: number,
+        vin: string
+    ) {
+        if (vin.length !== 17) {
+            throw new Error(&quot;VIN phải dài 17 ký tự.&quot;);
+        }
+        this._vin = vin;
+    }
+
+    displayInfo(): void {
+        console.log(`Vehicle: ${this.year} ${this.make} ${this.make} ${model}`);
+    }
+
+    getVIN(): string {
+        return this._vin;
+    }
+}
+
+try {
+    const car = new Vehicle(&quot;Honda&quot;, &quot;CRV&quot;, 2021, &quot;1234567890ABCDEFGH&quot;);
+    car.displayInfo(); // In: Vehicle: 2021 CRV
+    console.log(&quot;VIN:&quot;, car.getVIN()); // In: VIN:1234567890ABCDEFGH
+} catch (error: any) {
+    console.error(&quot;Error:&quot;, error.message);
+}
+</code></pre>
+<h3>3. Code: Kế thừa class <code>Vehicle</code></h3>
+<p><strong>Mô tả:</strong>
+Tạo class <code>Car</code> kế thừa <code>Vehicle</code>, thêm:</p>
+<ul>
+<li><code>numberOfDoors</code> (<code>number</code>, <code>public</code>)</li>
+<li>Override <code>displayInfo()</code> để bao gồm <code>numberOfDoors</code>.</li>
+</ul>
+<p><strong>Giải pháp:</strong></p>
+<pre><code class="language-typescript">class Car extends Vehicle {
+    constructor(
+        make: string,
+        model: string,
+        year: number,
+        vin: string,
+        public numberOfDoors: number
+    ) {
+        super(make, model, year, vin);
+    }
+
+    override displayInfo(): void
+ {
+        super.displayInfo();
+        console.log(&quot;Number of Doors:&quot;, numberOfDoors);
+        console.log(`Number of doors: ${this.numberOfDoors}`);
+    }
+}
+
+try {
+    const sedan = new Car(&quot;Toyota&quot;, &quot;Camry&quot;, 2023, &quot;ABC123DEF456GHI789&quot;, 4);
+    sedan.displayInfo();
+    // In:
+    // Vehicle: 2023
+    // Number of Doors: 4
+    console.log(&quot;VIN:&quot;, sedan.getVIN());
+} catch (error: any) {
+    console.error(&quot;Error:&quot;, error.message);
+}
+</code></pre>
+<h3>4. Code: Getters và Setters cho <code>_vin</code></h3>
+<p><strong>Mô tả:</strong>
+Thay <code>getVIN()</code> bằng getter/setter cho <code>vin</code>, kiểm tra độ dài 17 ký tự.</p>
+<p><strong>Giải pháp:</strong></p>
+<pre><code class="language-typescript">class Vehicle {
+    private _vin: string;
+
+    constructor(
+        public make: string,
+        public model: string,
+        public year: number,
+        initialVin: string
+    ) {
+        this.vin = initialVin; // Dùng setter
+    }
+
+    displayInfo(): void {
+        console.log(`Vehicle:${this.year} ${this.year} ${this.make} ${this.make}`);
+    }
+
+    get vin(): string
+ {
+        console.log(&quot;Accessing VIN getter&quot;);
+        return this._vin;
+    }
+
+    set vin(newVin: string
+    ) {
+        console.log(&quot;Setting VIN to:&quot;, newVin);
+        if (newVin.length === 17) {
+            this._vin = newVin;
+        } else {
+            console.error(&quot;Invalid VIN: Must be 17 characters.&quot;);
+        }
+    }
+}
+
+try {
+    const truck = new Vehicle(&quot;Ford&quot;, &quot;F-150&quot;, 2022, &quot;TRUCK456789123000&quot;);
+    console.log(&quot;VIN:&quot;, truck.vin); // Gọi getter
+    truck.vin = &quot;NEWVIN12345678900&quot;; // Gọi setter
+    console.log(&quot;New VIN:&quot;, truck.vin);
+    truck.vin = &quot;SHORT&quot;; // In lỗi
+    console.log(&quot;VIN after invalid:&quot;, truck.vin); // Vẫn là giá trị cũ
+}
+catch (error: any) {
+    console.error(&quot;Error:&quot;, error.message);
+}
+</code></pre>
+<h3>5. Code: Abstract Class <code>DataProcessor</code></h3>
+<p><strong>Mô tả:</strong></p>
+<ul>
+<li>Tạo <code>abstract class DataProcessor&lt;TInput, TOutput&gt;</code> với phương thức abstract <code>process</code>.</li>
+<li>Thêm <code>logStart()</code> và <code>logEnd()</code>.</li>
+<li>Tạo 2 class con:<ul>
+<li><code>StringToNumberProcessor</code>: Chuyển chuỗi sang số.</li>
+<li><code>ArraySumProcessor</code>: Tính tổng mảng số.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Giải pháp:</strong></p>
+<pre><code class="language-typescript">abstract class DataProcessor&lt;TInput, TOutput&gt; {
+    abstract process(data: TInput): TOutput;
+
+    logStart(): void {
+        console.log(&quot;Data processing started.&quot;);
+    }
+
+    logEnd(): void {
+        console.log(&quot;Data processing finished.&quot;);
+    }
+
+    execute(data: TInput): TOutput {
+        this.logStart();
+        const result = this.process(data);
+        this.logEnd();
+        return result;
+    }
+}
+
+class StringToNumberProcessor extends DataProcessor&lt;string, number&gt; {
+    process(data: string): number {
+        const num = parseInt(data, 10);
+        if (isNaN(num)) {
+            throw new Error(`&quot;${data}&quot; is not a valid number.`);
+        }
+        return num;
+    }
+}
+
+class ArraySumProcessor extends DataProcessor&lt;number[], number&gt; {
+    process(data: number[]): number {
+        return data.reduce((sum, num) =&gt; sum + num, 0);
+    }
+}
+
+try {
+    const parser = new StringToNumberProcessor();
+    console.log(&quot;Result:&quot;, parser.execute(&quot;123&quot;)); // In: Data processing started, Result: 123, Data processing finished
+    // parser.execute(&quot;abc&quot;); // Throw error
+
+    const summer = new ArraySumProcessor();
+    console.log(&quot;Sum:&quot;, summer.execute([1, 2, 3])); // In: Sum: 6
+} catch (error: any) {
+    console.error(&quot;Error:&quot;, error.message);
+}
+</code></pre>
+<h2>Ứng dụng thực tế</h2>
+<ul>
+<li><strong>Trong React</strong>: Sử dụng <code>class</code> để tạo các <strong>service classes</strong> (ví dụ: <code>AuthService</code> để quản lý đăng nhập/đăng xuất).</li>
+<li><strong>Node.js</strong>: Dùng <code>class</code> để tạo các <strong>controller</strong> hoặc <strong>repository</strong> trong mô hình MVC.</li>
+<li><strong>Best Practices</strong>:<ul>
+<li>Luôn khai báo kiểu dữ liệu cho thuộc tính và phương thức.</li>
+<li>Sử dụng <code>private</code> và <code>protected</code> để bảo vệ dữ liệu.</li>
+<li>Ưu tiên <code>readonly</code> cho các thuộc tính không đổi.</li>
+<li>Tránh lạm dụng kế thừa, sử dụng <strong>composition</strong> khi cần thiết.</li>
+</ul>
+</li>
+</ul>
+<h2>Kết luận</h2>
+<p>Chapter này đã trang bị cho bạn kiến thức về OOP trong TypeScript. Hãy thực hành các bài tập và áp dụng vào dự án thực tế để nắm vững các khái niệm!</p>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

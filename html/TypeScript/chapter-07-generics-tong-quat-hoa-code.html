@@ -1,0 +1,556 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Markdown Preview</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/base16/gruvbox-dark-hard.min.css">
+      <style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #fbf1c7;
+    color: #3c3836;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #282828;
+    border-bottom: 1px solid #d5c4a1;
+    padding-bottom: 0.3em;
+  }
+  a {
+    color: #458588;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    border-left: 4px solid #d79921;
+    padding-left: 16px;
+    color: #665c54;
+    margin: 1em 0;
+  }
+  ul, ol {
+    padding-left: 2em;
+    margin: 1em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d5c4a1;
+    padding: 8px;
+  }
+  th {
+    background-color: #ebdbb2;
+  }
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">      
+    </head>
+    <body>
+      <h4>Chapter 7: Generics - Tổng Quát Hóa Code</h4>
+<p><strong>Mô tả tổng quát</strong></p>
+<p>Chapter này giới thiệu về <strong>Generics</strong>, một tính năng mạnh mẽ của TypeScript, giúp viết code linh hoạt, tái sử dụng và vẫn đảm bảo an toàn kiểu (type safety). Generics cho phép bạn định nghĩa các thành phần như hàm, interface, hoặc class có thể làm việc với nhiều kiểu dữ liệu khác nhau mà không cần sử dụng kiểu <code>any</code> thiếu an toàn. Chúng ta sẽ tìm hiểu cách tạo generic functions, generic interfaces, generic classes, áp dụng ràng buộc (constraints) và sử dụng một số generic utility types cơ bản.</p>
+<p><strong>Tiêu đề Chapter học</strong>: Generics: Viết Code Linh Hoạt và Tái Sử Dụng.</p>
+<hr>
+<h2>Tóm tắt lý thuyết chính</h2>
+<h3>1. Vấn đề với kiểu <code>any</code> và tại sao cần Generics</h3>
+<p>Khi viết hàm hoặc thành phần cần xử lý nhiều kiểu dữ liệu, một cách đơn giản là sử dụng kiểu <code>any</code>. Tuy nhiên, <code>any</code> làm mất đi lợi ích của TypeScript là kiểm tra kiểu tĩnh (static type checking), dẫn đến lỗi runtime khó phát hiện.</p>
+<p><strong>Ví dụ minh họa:</strong></p>
+<pre><code class="language-typescript">function identityAny(arg: any): any {
+    return arg;
+}
+
+let outputAny = identityAny(&quot;myString&quot;); // outputAny là any
+console.log(outputAny.length); // Không báo lỗi khi biên dịch, nhưng nếu arg là number thì lỗi runtime
+
+let outputNumAny = identityAny(100);
+console.log(outputNumAny.toFixed()); // Không báo lỗi khi biên dịch, nhưng nếu arg là string thì lỗi runtime
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li>Kiểu <code>any</code> cho phép bạn truyền bất kỳ giá trị nào, nhưng TypeScript không thể kiểm tra tính hợp lệ của các thuộc tính hoặc phương thức (như <code>length</code> hoặc <code>toFixed</code>).</li>
+<li>Điều này dẫn đến việc code có thể chạy đúng trong một số trường hợp, nhưng dễ gây lỗi khi dữ liệu không như kỳ vọng.</li>
+<li><strong>Generics</strong> khắc phục vấn đề này bằng cách sử dụng <strong>biến kiểu (type variable)</strong>, cho phép định nghĩa kiểu linh hoạt nhưng vẫn đảm bảo an toàn.</li>
+</ul>
+<p><strong>Lợi ích của Generics:</strong></p>
+<ul>
+<li><strong>An toàn kiểu</strong>: TypeScript kiểm tra kiểu tại thời điểm biên dịch.</li>
+<li><strong>Tái sử dụng</strong>: Một hàm/class/interface có thể làm việc với nhiều kiểu dữ liệu.</li>
+<li><strong>Dễ bảo trì</strong>: Code rõ ràng hơn, dễ đọc và dễ mở rộng.</li>
+</ul>
+<hr>
+<h3>2. Generic Functions (Hàm Generic)</h3>
+<p>Hàm generic sử dụng biến kiểu (type variable), thường được khai báo trong dấu <code>&lt;T&gt;</code> ngay sau tên hàm. Biến kiểu <code>T</code> đại diện cho một kiểu dữ liệu bất kỳ, nhưng vẫn đảm bảo tính nhất quán trong tham số và giá trị trả về.</p>
+<p><strong>Cú pháp cơ bản:</strong></p>
+<pre><code class="language-typescript">function identity&lt;T&gt;(arg: T): T {
+    return arg;
+}
+</code></pre>
+<p><strong>Cách sử dụng:</strong></p>
+<ol>
+<li><strong>Tường minh chỉ định kiểu</strong>:</li>
+</ol>
+<pre><code class="language-typescript">let outputString = identity&lt;string&gt;(&quot;myString&quot;); // T là string
+let outputNumber = identity&lt;number&gt;(100);        // T là number
+
+console.log(outputString.toUpperCase()); // &quot;MYSTRING&quot;
+console.log(outputNumber.toFixed(2));    // &quot;100.00&quot;
+</code></pre>
+<ol start="2">
+<li><strong>TypeScript tự suy luận kiểu (type inference)</strong>:</li>
+</ol>
+<pre><code class="language-typescript">let inferredString = identity(&quot;anotherString&quot;); // T tự động là string
+let inferredNumber = identity(200);             // T tự động là number
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li>Biến kiểu <code>T</code> được thay thế bằng kiểu cụ thể khi hàm được gọi.</li>
+<li>Type inference giúp giảm việc phải chỉ định kiểu tường minh, làm code ngắn gọn hơn.</li>
+<li>TypeScript đảm bảo rằng kiểu của tham số đầu vào và giá trị trả về luôn khớp nhau.</li>
+</ul>
+<p><strong>Ví dụ thực tiễn:</strong></p>
+<p>Hàm lấy phần tử đầu tiên của mảng:</p>
+<pre><code class="language-typescript">function getFirstElement&lt;T&gt;(arr: T[]): T | undefined {
+    return arr.length &gt; 0 ? arr[0] : undefined;
+}
+
+let numbers = [1, 2, 3];
+let firstNum = getFirstElement(numbers); // firstNum: number | undefined
+console.log(firstNum); // 1
+
+let strings = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;];
+let firstStr = getFirstElement(strings); // firstStr: string | undefined
+console.log(firstStr); // &quot;a&quot;
+</code></pre>
+<p><strong>Lưu ý:</strong></p>
+<ul>
+<li>Hàm generic không giới hạn số lượng biến kiểu. Ví dụ: <code>&lt;T, U&gt;</code> cho hai kiểu khác nhau.</li>
+<li>Type inference hoạt động tốt khi TypeScript có đủ thông tin từ tham số.</li>
+</ul>
+<hr>
+<h3>3. Generic Interfaces (Interface Generic)</h3>
+<p>Interface generic cho phép định nghĩa cấu trúc dữ liệu linh hoạt, với các kiểu có thể thay đổi.</p>
+<p><strong>Ví dụ cơ bản:</strong></p>
+<pre><code class="language-typescript">interface KeyValuePair&lt;K, V&gt; {
+    key: K;
+    value: V;
+}
+
+let entry1: KeyValuePair&lt;string, number&gt; = { key: &quot;age&quot;, value: 30 };
+let entry2: KeyValuePair&lt;number, boolean&gt; = { key: 101, value: true };
+console.log(entry1.value.toFixed(0)); // &quot;30&quot;
+// let entry3: KeyValuePair&lt;string, number&gt; = { key: &quot;name&quot;, value: &quot;Alice&quot; }; // Lỗi: value phải là number
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li><code>K</code> và <code>V</code> là các biến kiểu, có thể được thay thế bằng bất kỳ kiểu nào khi sử dụng interface.</li>
+<li>Interface generic giúp định nghĩa cấu trúc dữ liệu chung, ví dụ như cặp key-value trong các API hoặc cấu trúc dữ liệu phức tạp.</li>
+</ul>
+<p><strong>Ứng dụng thực tiễn: Mô tả kiểu hàm generic</strong></p>
+<pre><code class="language-typescript">interface GenericIdentityFn&lt;T&gt; {
+    (arg: T): T;
+}
+
+function identityFn&lt;T&gt;(arg: T): T {
+    return arg;
+}
+
+let myIdentity: GenericIdentityFn&lt;number&gt; = identityFn;
+console.log(myIdentity(123)); // 123
+// console.log(myIdentity(&quot;hello&quot;)); // Lỗi: Argument phải là number
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li>Interface <code>GenericIdentityFn</code> định nghĩa một hàm nhận và trả về cùng một kiểu <code>T</code>.</li>
+<li>Khi gán <code>identityFn</code> cho <code>myIdentity</code>, TypeScript khóa kiểu <code>T</code> thành <code>number</code>, đảm bảo tính an toàn.</li>
+</ul>
+<hr>
+<h3>4. Generic Classes (Lớp Generic)</h3>
+<p>Class generic cho phép định nghĩa các lớp làm việc với nhiều kiểu dữ liệu khác nhau.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">class DataStorage&lt;T&gt; {
+    private data: T[] = [];
+
+    addItem(item: T): void {
+        this.data.push(item);
+    }
+
+    getItem(index: number): T | undefined {
+        return index &gt;= 0 &amp;&amp; index &lt; this.data.length ? this.data[index] : undefined;
+    }
+
+    getAllItems(): T[] {
+        return [...this.data];
+    }
+}
+
+let stringStorage = new DataStorage&lt;string&gt;();
+stringStorage.addItem(&quot;Hello&quot;);
+stringStorage.addItem(&quot;TypeScript&quot;);
+// stringStorage.addItem(123); // Lỗi: Argument phải là string
+console.log(stringStorage.getItem(0)?.toUpperCase()); // &quot;HELLO&quot;
+
+let numberStorage = new DataStorage&lt;number&gt;();
+numberStorage.addItem(10);
+numberStorage.addItem(20);
+console.log(numberStorage.getAllItems().reduce((sum, val) =&gt; sum + val, 0)); // 30
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li>Biến kiểu <code>T</code> được khai báo sau tên class, áp dụng cho tất cả các thuộc tính và phương thức.</li>
+<li>Class generic đảm bảo rằng tất cả phần tử trong <code>data</code> đều có cùng kiểu <code>T</code>.</li>
+<li>Các phương thức như <code>addItem</code> và <code>getItem</code> sử dụng <code>T</code> để duy trì tính nhất quán.</li>
+</ul>
+<p><strong>Ứng dụng thực tiễn:</strong></p>
+<ul>
+<li>Generic classes thường được sử dụng trong các cấu trúc dữ liệu như danh sách, ngăn xếp, hàng đợi, hoặc để quản lý dữ liệu từ API.</li>
+</ul>
+<hr>
+<h3>5. Generic Constraints (Ràng buộc Generic)</h3>
+<p>Ràng buộc generic giúp giới hạn các kiểu mà biến kiểu có thể nhận, sử dụng từ khóa <code>extends</code>.</p>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">interface Lengthwise {
+    length: number;
+}
+
+function logLength&lt;T extends Lengthwise&gt;(arg: T): void {
+    console.log(`Length: ${arg.length}`);
+}
+
+logLength(&quot;Hello world&quot;); // Length: 11
+logLength([1, 2, 3, 4]); // Length: 4
+logLength({ length: 10, value: 3 }); // Length: 10
+// logLength(10); // Lỗi: number không có thuộc tính length
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li><code>T extends Lengthwise</code> yêu cầu <code>T</code> phải có ít nhất thuộc tính <code>length</code> kiểu <code>number</code>.</li>
+<li>Ràng buộc giúp TypeScript đảm bảo rằng các thuộc tính/phương thức được truy cập là hợp lệ.</li>
+<li>Ràng buộc có thể áp dụng cho interface, class hoặc kiểu cụ thể (như <code>string</code>).</li>
+</ul>
+<p><strong>Ví dụ nâng cao: Ràng buộc với <code>keyof</code></strong></p>
+<pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}
+
+let obj = { a: 1, b: &quot;hello&quot;, c: true };
+let valA = getProperty(obj, &quot;a&quot;); // valA: number
+let valB = getProperty(obj, &quot;b&quot;); // valB: string
+// let valD = getProperty(obj, &quot;d&quot;); // Lỗi: &quot;d&quot; không tồn tại trong obj
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li><code>keyof T</code> tạo ra một union type chứa các key của <code>T</code> (ví dụ: <code>&quot;a&quot; | &quot;b&quot; | &quot;c&quot;</code>).</li>
+<li><code>K extends keyof T</code> đảm bảo <code>key</code> là một key hợp lệ của <code>obj</code>.</li>
+<li><code>T[K]</code> trả về kiểu của thuộc tính tương ứng.</li>
+</ul>
+<hr>
+<h3>6. Generic Utility Types cơ bản</h3>
+<p>TypeScript cung cấp các <strong>utility types</strong> generic để thao tác với kiểu dữ liệu. Một số ví dụ phổ biến:</p>
+<ul>
+<li><strong><code>Partial&lt;T&gt;</code></strong>: Biến tất cả thuộc tính của <code>T</code> thành tùy chọn.</li>
+<li><strong><code>Readonly&lt;T&gt;</code></strong>: Biến tất cả thuộc tính của <code>T</code> thành chỉ đọc.</li>
+<li><strong><code>Pick&lt;T, K&gt;</code></strong>: Chọn một tập hợp thuộc tính <code>K</code> từ <code>T</code>.</li>
+<li><strong><code>Omit&lt;T, K&gt;</code></strong>: Loại bỏ một tập hợp thuộc tính <code>K</code> từ <code>T</code>.</li>
+</ul>
+<p><strong>Ví dụ:</strong></p>
+<pre><code class="language-typescript">interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+type PartialTodo = Partial&lt;Todo&gt;;
+let todoToUpdate: PartialTodo = { description: &quot;New description&quot; }; // OK
+
+type ReadonlyTodo = Readonly&lt;Todo&gt;;
+let completedTodo: ReadonlyTodo = { title: &quot;Finish report&quot;, description: &quot;...&quot;, completed: true };
+// completedTodo.title = &quot;New title&quot;; // Lỗi: Thuộc tính chỉ đọc
+
+type PickedTodo = Pick&lt;Todo, &quot;title&quot; | &quot;completed&quot;&gt;;
+let smallTodo: PickedTodo = { title: &quot;Task 1&quot;, completed: false }; // OK
+
+type NoDescriptionTodo = Omit&lt;Todo, &quot;description&quot;&gt;;
+let noDescTodo: NoDescriptionTodo = { title: &quot;Task 2&quot;, completed: true }; // OK
+</code></pre>
+<p><strong>Giải thích chi tiết:</strong></p>
+<ul>
+<li>Utility types giúp giảm việc phải viết lại các kiểu phức tạp.</li>
+<li>Chúng thường được sử dụng trong các ứng dụng thực tế, như xử lý dữ liệu từ API hoặc định nghĩa state trong React.</li>
+</ul>
+<hr>
+<h2>Code ví dụ chính (Tổng hợp và mở rộng)</h2>
+<h3>1. Generic Function với nhiều biến kiểu và ràng buộc</h3>
+<pre><code class="language-typescript">interface Nameable { name: string; }
+interface Ageable { age: number; }
+
+function combineObjects&lt;T extends Nameable, U extends Ageable&gt;(obj1: T, obj2: U): T &amp; U {
+    return { ...obj1, ...obj2 };
+}
+
+const personWithName = { name: &quot;Alice&quot; };
+const personWithAge = { age: 30, city: &quot;Wonderland&quot; };
+const combinedPerson = combineObjects(personWithName, personWithAge);
+
+console.log(combinedPerson.name); // &quot;Alice&quot;
+console.log(combinedPerson.age);  // 30
+// console.log(combinedPerson.city); // Lỗi: city không được đảm bảo trong T &amp; U
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li>Hàm <code>combineObjects</code> kết hợp hai đối tượng, với <code>T</code> phải có <code>name</code> và <code>U</code> phải có <code>age</code>.</li>
+<li>Kiểu trả về <code>T &amp; U</code> là giao của hai kiểu, chỉ chứa các thuộc tính được đảm bảo.</li>
+</ul>
+<h3>2. Generic Class với phương thức generic</h3>
+<pre><code class="language-typescript">class Collection&lt;T&gt; {
+    private items: T[] = [];
+
+    add(item: T): void {
+        this.items.push(item);
+    }
+
+    findFirst&lt;U extends T&gt;(predicate: (item: T) =&gt; item is U): U | undefined;
+    findFirst(predicate: (item: T) =&gt; boolean): T | undefined;
+    findFirst(predicate: (item: T) =&gt; boolean): T | undefined {
+        return this.items.find(item =&gt; predicate(item));
+    }
+
+    getAll(): T[] {
+        return this.items;
+    }
+}
+
+interface Product { id: number; name: string; price: number; }
+interface Book extends Product { author: string; }
+
+let productCollection = new Collection&lt;Product&gt;();
+productCollection.add({ id: 1, name: &quot;Laptop&quot;, price: 1200 });
+productCollection.add({ id: 2, name: &quot;TypeScript Programming&quot;, price: 45, author: &quot;Some Author&quot; } as Book);
+productCollection.add({ id: 3, name: &quot;Mouse&quot;, price: 25 });
+
+let expensiveProduct = productCollection.findFirst(p =&gt; p.price &gt; 100);
+console.log(&quot;Expensive product:&quot;, expensiveProduct); // { id: 1, name: &quot;Laptop&quot;, price: 1200 }
+
+function isBook(product: Product): product is Book {
+    return (product as Book).author !== undefined;
+}
+let firstBook = productCollection.findFirst(isBook);
+console.log(`First book: ${firstBook?.name} by ${firstBook?.author}`); // &quot;TypeScript Programming by Some Author&quot;
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li>Phương thức <code>findFirst</code> hỗ trợ type guard để thu hẹp kiểu trả về (ví dụ: từ <code>Product</code> thành <code>Book</code>).</li>
+<li>Overloading cho phép định nghĩa hai kiểu trả về khác nhau tùy thuộc vào predicate.</li>
+</ul>
+<h3>3. Generic Interface cho Factory Function</h3>
+<pre><code class="language-typescript">interface Factory&lt;T&gt; {
+    create(...args: any[]): T;
+}
+
+class User {
+    constructor(public id: number, public username: string) {}
+}
+
+class Item {
+    constructor(public sku: string, public name: string) {}
+}
+
+const userFactory: Factory&lt;User&gt; = {
+    create: (id: number, username: string) =&gt; new User(id, username)
+};
+
+const itemFactory: Factory&lt;Item&gt; = {
+    create: (sku: string, name: string) =&gt; new Item(sku, name)
+};
+
+let user = userFactory.create(1, &quot;admin&quot;);
+let item = itemFactory.create(&quot;TS-001&quot;, &quot;TypeScript Handbook&quot;);
+
+console.log(user); // User { id: 1, username: &quot;admin&quot; }
+console.log(item); // Item { sku: &quot;TS-001&quot;, name: &quot;TypeScript Handbook&quot; }
+</code></pre>
+<p><strong>Giải thích:</strong></p>
+<ul>
+<li>Interface <code>Factory</code> định nghĩa một hàm tạo chung cho bất kỳ lớp nào.</li>
+<li><code>...args: any[]</code> cho phép truyền nhiều tham số linh hoạt, nhưng cần cẩn thận để đảm bảo đúng kiểu trong triển khai.</li>
+</ul>
+<hr>
+<h2>Danh sách bài tập</h2>
+<h3>1. Trắc nghiệm: Mục đích chính của Generics</h3>
+<p><strong>Tiêu đề</strong>: Hiểu về mục đích của Generics.</p>
+<p><strong>Câu hỏi</strong>: Mục đích chính của Generics trong TypeScript là gì?</p>
+<ul>
+<li>A. Tăng tốc độ biên dịch của code.</li>
+<li>B. Tạo các thành phần tái sử dụng với nhiều kiểu dữ liệu, đảm bảo an toàn kiểu.</li>
+<li>C. Giảm kích thước file JavaScript.</li>
+<li>D. Cho phép sử dụng kiểu <code>any</code> an toàn hơn.</li>
+</ul>
+<p><strong>Đáp án</strong>: B</p>
+<p><strong>Giải thích</strong>: Generics giúp viết code linh hoạt, tái sử dụng và duy trì an toàn kiểu, khắc phục hạn chế của <code>any</code>.</p>
+<hr>
+<h3>2. Code: Viết generic function <code>reverseArray</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành Generic Function.</p>
+<p><strong>Mô tả</strong>: Viết hàm <code>reverseArray&lt;T&gt;(arr: T[]): T[]</code> trả về mảng đảo ngược mà không thay đổi mảng gốc.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function reverseArray&lt;T&gt;(arr: T[]): T[] {
+    return [...arr].reverse();
+}
+
+let numbers = [1, 2, 3, 4, 5];
+let reversedNumbers = reverseArray(numbers);
+console.log(&quot;Original:&quot;, numbers); // [1, 2, 3, 4, 5]
+console.log(&quot;Reversed:&quot;, reversedNumbers); // [5, 4, 3, 2, 1]
+
+let strings = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;];
+let reversedStrings = reverseArray(strings);
+console.log(&quot;Original:&quot;, strings); // [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+console.log(&quot;Reversed:&quot;, reversedStrings); // [&quot;c&quot;, &quot;b&quot;, &quot;a&quot;]
+</code></pre>
+<p><strong>Giải thích</strong>: </p>
+<ul>
+<li><code>[...arr]</code> tạo bản sao mảng để tránh thay đổi mảng gốc.</li>
+<li><code>reverse()</code> đảo ngược thứ tự phần tử trong bản sao.</li>
+</ul>
+<hr>
+<h3>3. Code: Tạo generic interface <code>ResponseData</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành Generic Interface.</p>
+<p><strong>Mô tả</strong>: Tạo interface <code>ResponseData&lt;T&gt;</code> với các thuộc tính <code>success</code>, <code>data</code> (kiểu <code>T</code>), và <code>timestamp</code>.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">interface ResponseData&lt;T&gt; {
+    success: boolean;
+    data: T;
+    timestamp: Date;
+}
+
+type UserProfile = { id: string; name: string; email: string };
+
+let userResponse: ResponseData&lt;UserProfile&gt; = {
+    success: true,
+    data: { id: &quot;user001&quot;, name: &quot;Alice&quot;, email: &quot;alice@example.com&quot; },
+    timestamp: new Date()
+};
+
+let productListResponse: ResponseData&lt;string[]&gt; = {
+    success: true,
+    data: [&quot;Laptop&quot;, &quot;Mouse&quot;, &quot;Keyboard&quot;],
+    timestamp: new Date()
+};
+
+let errorResponse: ResponseData&lt;null&gt; = {
+    success: false,
+    data: null,
+    timestamp: new Date()
+};
+
+console.log(&quot;User:&quot;, userResponse.data.name); // &quot;Alice&quot;
+console.log(&quot;Products:&quot;, productListResponse.data.join(&quot;, &quot;)); // &quot;Laptop, Mouse, Keyboard&quot;
+console.log(&quot;Error:&quot;, errorResponse.success); // false
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>ResponseData&lt;T&gt;</code> mô tả cấu trúc phản hồi API chung.</li>
+<li><code>T</code> có thể là bất kỳ kiểu nào, từ object phức tạp đến <code>null</code>.</li>
+</ul>
+<hr>
+<h3>4. Code: Viết generic class <code>Stack&lt;T&gt;</code></h3>
+<p><strong>Tiêu đề</strong>: Thực hành Generic Class.</p>
+<p><strong>Mô tả</strong>: Viết class <code>Stack&lt;T&gt;</code> với các phương thức <code>push</code>, <code>pop</code>, <code>peek</code>, <code>isEmpty</code>, và <code>size</code>.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">class Stack&lt;T&gt; {
+    private items: T[] = [];
+
+    push(item: T): void {
+        this.items.push(item);
+    }
+
+    pop(): T | undefined {
+        return this.items.pop();
+    }
+
+    peek(): T | undefined {
+        return this.items.length &gt; 0 ? this.items[this.items.length - 1] : undefined;
+    }
+
+    isEmpty(): boolean {
+        return this.items.length === 0;
+    }
+
+    size(): number {
+        return this.items.length;
+    }
+}
+
+let numberStack = new Stack&lt;number&gt;();
+numberStack.push(10);
+numberStack.push(20);
+numberStack.push(30);
+console.log(&quot;Top:&quot;, numberStack.peek()); // 30
+console.log(&quot;Size:&quot;, numberStack.size()); // 3
+console.log(&quot;Popped:&quot;, numberStack.pop()); // 30
+console.log(&quot;Empty?&quot;, numberStack.isEmpty()); // false
+
+let stringStack = new Stack&lt;string&gt;();
+stringStack.push(&quot;Hello&quot;);
+stringStack.push(&quot;TypeScript&quot;);
+console.log(&quot;Popped:&quot;, stringStack.pop()); // &quot;TypeScript&quot;
+console.log(&quot;Top:&quot;, stringStack.peek()); // &quot;Hello&quot;
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li>Class <code>Stack</code> sử dụng mảng để lưu trữ phần tử.</li>
+<li>Các phương thức đảm bảo tính an toàn kiểu nhờ <code>T</code>.</li>
+</ul>
+<hr>
+<h3>5. Code: Viết generic function <code>getProperty</code> với ràng buộc</h3>
+<p><strong>Tiêu đề</strong>: Thực hành Generic Constraints.</p>
+<p><strong>Mô tả</strong>: Viết hàm <code>getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K]</code> lấy giá trị thuộc tính từ đối tượng.</p>
+<p><strong>Giải pháp mẫu</strong>:</p>
+<pre><code class="language-typescript">function getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K] {
+    return obj[key];
+}
+
+let sampleObject = {
+    id: 1,
+    name: &quot;Sample Item&quot;,
+    price: 99.99,
+    isActive: true
+};
+
+let itemName = getProperty(sampleObject, &quot;name&quot;); // string
+console.log(&quot;Name:&quot;, itemName); // &quot;Sample Item&quot;
+
+let itemPrice = getProperty(sampleObject, &quot;price&quot;); // number
+console.log(&quot;Price:&quot;, itemPrice); // 99.99
+
+let itemIsActive = getProperty(sampleObject, &quot;isActive&quot;); // boolean
+console.log(&quot;Active:&quot;, itemIsActive); // true
+// getProperty(sampleObject, &quot;description&quot;); // Lỗi: &quot;description&quot; không tồn tại
+</code></pre>
+<p><strong>Giải thích</strong>:</p>
+<ul>
+<li><code>K extends keyof T</code> giới hạn <code>key</code> trong các thuộc tính của <code>obj</code>.</li>
+<li><code>T[K]</code> trả về kiểu chính xác của thuộc tính.</li>
+</ul>
+<hr>
+<h2>Kết luận</h2>
+<p>Generics là công cụ mạnh mẽ trong TypeScript, giúp viết code linh hoạt, tái sử dụng và an toàn kiểu. Bằng cách sử dụng generic functions, interfaces, classes, ràng buộc, và utility types, bạn có thể xây dựng các thành phần phù hợp với nhiều tình huống thực tiễn, từ quản lý dữ liệu API đến xây dựng cấu trúc dữ liệu phức tạp.</p>
+<p><strong>Khuyến nghị học viên</strong>:</p>
+<ul>
+<li>Thực hành các bài tập để làm quen với cách khai báo và sử dụng generics.</li>
+<li>Áp dụng generics trong dự án thực tế, ví dụ: xử lý dữ liệu API hoặc quản lý state trong React.</li>
+<li>Tìm hiểu thêm về các utility types nâng cao trong TypeScript để mở rộng khả năng.</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  
