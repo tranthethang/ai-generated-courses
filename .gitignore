@@ -1,0 +1,4 @@
+.obsidian/
+*.log
+*~
+.DS_Store
