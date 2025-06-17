@@ -1,4 +1,4 @@
-#### Chapter 6: Classes trong TypeScript
+# Chapter 6: Classes trong TypeScript
 
 **Mô tả tổng quát**
 

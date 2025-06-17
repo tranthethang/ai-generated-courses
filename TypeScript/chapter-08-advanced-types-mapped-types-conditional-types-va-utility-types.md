@@ -1,4 +1,4 @@
-#### Chapter 8: Thao Tác Kiểu Nâng Cao - Mapped Types, Conditional Types và Utility Types
+# Chapter 8: Thao Tác Kiểu Nâng Cao - Mapped Types, Conditional Types và Utility Types
 
 **Mô tả tổng quát**
 

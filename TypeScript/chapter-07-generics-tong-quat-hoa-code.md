@@ -1,4 +1,4 @@
-#### Chapter 7: Generics - Tổng Quát Hóa Code
+# Chapter 7: Generics - Tổng Quát Hóa Code
 
 **Mô tả tổng quát**
 

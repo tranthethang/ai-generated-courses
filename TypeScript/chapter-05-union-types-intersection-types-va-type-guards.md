@@ -1,4 +1,4 @@
-#### Chapter 5: Kết Hợp Kiểu - Union Types, Intersection Types và Type Guards
+# Chapter 5: Kết Hợp Kiểu - Union Types, Intersection Types và Type Guards
 
 **Mô tả tổng quát**
 

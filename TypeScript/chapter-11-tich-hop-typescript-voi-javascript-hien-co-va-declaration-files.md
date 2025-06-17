@@ -1,4 +1,4 @@
-#### Chapter 11: Tích Hợp TypeScript với JavaScript Hiện Có và Declaration Files
+# Chapter 11: Tích Hợp TypeScript với JavaScript Hiện Có và Declaration Files
 
 **Mô tả tổng quát**
 

@@ -1,4 +1,4 @@
-#### Chapter 3: Functions trong TypeScript
+# Chapter 3: Functions trong TypeScript
 
 **Mô tả tổng quát**
 

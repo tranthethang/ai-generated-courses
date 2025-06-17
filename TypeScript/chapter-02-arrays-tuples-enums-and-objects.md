@@ -1,4 +1,4 @@
-#### Chapter 2: Arrays, Tuples, Enums và Objects
+# Chapter 2: Arrays, Tuples, Enums và Objects
 
 **Mô tả tổng quát**
 

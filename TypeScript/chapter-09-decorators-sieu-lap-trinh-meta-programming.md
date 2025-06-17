@@ -1,4 +1,4 @@
-#### Chapter 9: Decorators - Siêu Lập Trình (Meta-programming)
+# Chapter 9: Decorators - Siêu Lập Trình (Meta-programming)
 
 **Mô tả tổng quát**
 

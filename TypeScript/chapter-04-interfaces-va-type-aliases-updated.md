@@ -1,4 +1,4 @@
-#### Chapter 4: Định Hình Dữ Liệu: Interfaces và Type Aliases
+# Chapter 4: Định Hình Dữ Liệu: Interfaces và Type Aliases
 
 **Mô tả tổng quát**
 Chapter này giới thiệu hai công cụ cốt lõi trong TypeScript để định nghĩa **hình dạng** (shape) của dữ liệu: `Interface` và `Type Alias`. Cả hai giúp bạn tạo ra các **hợp đồng** (contracts) để đảm bảo dữ liệu tuân theo cấu trúc cụ thể, áp dụng cho đối tượng, hàm, và cả class. Bạn sẽ học cách sử dụng chúng, so sánh sự khác biệt, và chọn công cụ phù hợp cho từng tình huống.

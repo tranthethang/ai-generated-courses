@@ -1,4 +1,4 @@
-#### Chapter 1: Giới thiệu TypeScript và Các Kiểu Dữ Liệu Cơ Bản
+# Chapter 1: Giới thiệu TypeScript và Các Kiểu Dữ Liệu Cơ Bản
 
 **Mô tả tổng quát**
 

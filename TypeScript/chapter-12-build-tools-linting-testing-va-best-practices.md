@@ -1,4 +1,4 @@
-#### Chapter 12: Hoàn Thiện Dự Án - Build Tools, Linting, Testing và Best Practices
+# Chapter 12: Hoàn Thiện Dự Án - Build Tools, Linting, Testing và Best Practices
 
 **Mô tả tổng quát**
 
