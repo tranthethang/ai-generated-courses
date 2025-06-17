@@ -42,8 +42,11 @@ program
         // Đọc nội dung file
         const markdownContent = await fs.readFile(inputFilePath, 'utf-8');
         
-        // Chuyển đổi sang HTML với ngôn ngữ mặc định
-        const htmlContent = processMarkdownFile(markdownContent, options.code);
+        // Lấy tên file để sử dụng làm title
+        const fileName = path.basename(file, '.md');
+        
+        // Chuyển đổi sang HTML với ngôn ngữ mặc định và tên file làm title
+        const htmlContent = processMarkdownFile(markdownContent, options.code, fileName);
         
         // Ghi file HTML
         await fs.writeFile(outputFilePath, htmlContent);
