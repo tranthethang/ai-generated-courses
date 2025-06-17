@@ -1,4 +1,4 @@
-## Chapter 1: Giới thiệu NestJS & Cài đặt Môi trường
+# Chapter 1: Giới thiệu NestJS & Cài đặt Môi trường
 
 **Tên Chapter học:** Giới thiệu NestJS & Cài đặt Môi trường
 

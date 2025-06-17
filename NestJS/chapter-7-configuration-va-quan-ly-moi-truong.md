@@ -1,4 +1,4 @@
-## Chapter 7: Configuration và Quản lý Môi trường
+# Chapter 7: Configuration và Quản lý Môi trường
 
 **Tên Chapter học:** Configuration và Quản lý Môi trường
 

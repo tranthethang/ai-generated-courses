@@ -1,0 +1,662 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-8-error-handling-logging-nang-cao</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 8: Error Handling &amp; Logging Nâng Cao</h1>
+<p><strong>Tên Chapter học:</strong> Error Handling &amp; Logging Nâng Cao</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu cơ chế Exception Filters:</strong> Nắm vững cách NestJS xử lý lỗi thông qua Exception Filters. Hiểu về built-in global exception filter.</li>
+<li><strong>Sử dụng Built-in HTTP Exceptions:</strong> Thành thạo việc sử dụng các exceptions có sẵn như <code>HttpException</code>, <code>BadRequestException</code>, <code>NotFoundException</code>, <code>UnauthorizedException</code>, <code>ForbiddenException</code>, etc.</li>
+<li><strong>Tạo Custom Exception Filters:</strong><ul>
+<li>Học cách tạo các exception filter tùy chỉnh bằng cách implement interface <code>ExceptionFilter</code>.</li>
+<li>Biết cách bắt các loại exception cụ thể hoặc tất cả các exception.</li>
+<li>Tùy chỉnh cấu trúc response lỗi trả về cho client (ví dụ: chuẩn hóa JSON error response).</li>
+</ul>
+</li>
+<li><strong>Binding Filters:</strong> Áp dụng exception filters ở các cấp độ khác nhau (global, controller, method).</li>
+<li><strong>Logging với NestJS <code>Logger</code>:</strong><ul>
+<li>Sử dụng <code>Logger</code> service tích hợp sẵn của NestJS để ghi log ở các mức độ khác nhau (<code>log</code>, <code>error</code>, <code>warn</code>, <code>debug</code>, <code>verbose</code>).</li>
+<li>Biết cách tạo instance <code>Logger</code> với context (tên class) để dễ dàng theo dõi nguồn gốc log.</li>
+</ul>
+</li>
+<li><strong>Custom Logger và Tích hợp Thư viện Logging:</strong><ul>
+<li>Hiểu cách tạo một custom logger service bằng cách implement <code>LoggerService</code> interface.</li>
+<li>Giới thiệu và thực hành tích hợp các thư viện logging bên thứ ba mạnh mẽ như Winston hoặc Pino (ví dụ với <code>nest-winston</code>).</li>
+<li>Cấu hình logging transports (console, file), formatting, và log levels.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Exceptions Layer trong NestJS:</strong></p>
+<ul>
+<li>NestJS có một lớp xử lý exception tích hợp sẵn, chịu trách nhiệm xử lý tất cả các unhandled exceptions trong ứng dụng.</li>
+<li>Khi một exception không được bắt ở đâu đó trong code của bạn, nó sẽ được lớp này bắt giữ.</li>
+<li><strong>Global Exception Filter (Built-in):</strong> Mặc định, NestJS cung cấp một global exception filter.<ul>
+<li>Nếu exception là một instance của <code>HttpException</code> (hoặc kế thừa từ nó), filter sẽ trích xuất status code và message từ exception đó để tạo response JSON.</li>
+<li>Nếu exception không phải là <code>HttpException</code> (ví dụ, một Error thông thường), filter sẽ trả về một response JSON mặc định với status code 500 (Internal Server Error).<pre><code class="language-json">{
+  &quot;statusCode&quot;: 500,
+  &quot;message&quot;: &quot;Internal server error&quot;
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Built-in HTTP Exceptions (<code>@nestjs/common</code>):</strong></p>
+<ul>
+<li>NestJS cung cấp một tập hợp các standard exceptions kế thừa từ <code>HttpException</code>.</li>
+<li><code>HttpException(response: string | object, status: number, options?: HttpExceptionOptions)</code>: Base class.<ul>
+<li><code>response</code>: Nội dung message lỗi (string) hoặc một object JSON.</li>
+<li><code>status</code>: HTTP status code.</li>
+</ul>
+</li>
+<li>Các exceptions phổ biến:<ul>
+<li><code>BadRequestException(message?, error?)</code> (400)</li>
+<li><code>UnauthorizedException(message?, error?)</code> (401)</li>
+<li><code>NotFoundException(message?, error?)</code> (404)</li>
+<li><code>ForbiddenException(message?, error?)</code> (403)</li>
+<li><code>NotAcceptableException(message?, error?)</code> (406)</li>
+<li><code>RequestTimeoutException(message?, error?)</code> (408)</li>
+<li><code>ConflictException(message?, error?)</code> (409)</li>
+<li><code>GoneException(message?, error?)</code> (410)</li>
+<li><code>PayloadTooLargeException(message?, error?)</code> (413)</li>
+<li><code>UnsupportedMediaTypeException(message?, error?)</code> (415)</li>
+<li><code>UnprocessableEntityException(message?, error?)</code> (422)</li>
+<li><code>InternalServerErrorException(message?, error?)</code> (500)</li>
+<li><code>NotImplementedException(message?, error?)</code> (501)</li>
+<li><code>BadGatewayException(message?, error?)</code> (502)</li>
+<li><code>ServiceUnavailableException(message?, error?)</code> (503)</li>
+<li><code>GatewayTimeoutException(message?, error?)</code> (504)</li>
+</ul>
+</li>
+<li>Ví dụ: <code>throw new NotFoundException(&#39;User with ID 123 not found&#39;);</code></li>
+</ul>
+</li>
+<li><p><strong>Custom Exception Filters:</strong></p>
+<ul>
+<li>Cho phép bạn kiểm soát hoàn toàn flow xử lý lỗi và nội dung response trả về.</li>
+<li>Implement interface <code>ExceptionFilter</code>.</li>
+<li>Decorator <code>@Catch(exceptionType1, exceptionType2, ...)</code>: Chỉ định các loại exception mà filter này sẽ bắt. Nếu không có argument, nó sẽ bắt tất cả các exception (<code>@Catch()</code>).</li>
+<li>Method <code>catch(exception: T, host: ArgumentsHost)</code>:<ul>
+<li><code>exception</code>: Đối tượng exception đã được ném.</li>
+<li><code>host</code>: Một <code>ArgumentsHost</code> object, cung cấp các method để lấy thông tin request, response (tương tự <code>ExecutionContext</code>).</li>
+</ul>
+</li>
+<li><strong>Ví dụ: <code>HttpExceptionFilter</code> để chuẩn hóa response lỗi HTTP:</strong><pre><code class="language-typescript">// src/common/filters/http-exception.filter.ts
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from &#39;@nestjs/common&#39;;
+import { Request, Response } from &#39;express&#39;;
+
+@Catch(HttpException) // Chỉ bắt các HttpException và các class kế thừa từ nó
+export class HttpExceptionFilter implements ExceptionFilter {
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse&lt;Response&gt;();
+    const request = ctx.getRequest&lt;Request&gt;();
+    const status = exception.getStatus();
+    const exceptionResponse = exception.getResponse(); // Có thể là string hoặc object
+
+    // Chuẩn hóa response lỗi
+    const errorResponse = {
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      method: request.method,
+      message: typeof exceptionResponse === &#39;string&#39;
+        ? exceptionResponse
+        : (exceptionResponse as any).message || exception.message || &#39;Unhandled HTTP exception&#39;,
+      // Nếu exceptionResponse là object, có thể có các trường error, details, etc.
+      ...(typeof exceptionResponse === &#39;object&#39; &amp;&amp; exceptionResponse !== null &amp;&amp; { errorDetails: exceptionResponse }),
+    };
+
+    response.status(status).json(errorResponse);
+  }
+}
+</code></pre>
+</li>
+<li><strong>Ví dụ: <code>AllExceptionsFilter</code> để bắt tất cả lỗi (cả HTTP và non-HTTP):</strong><pre><code class="language-typescript">// src/common/filters/all-exceptions.filter.ts
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from &#39;@nestjs/common&#39;;
+import { Request, Response } from &#39;express&#39;;
+
+@Catch() // Bắt tất cả các loại exception
+export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AllExceptionsFilter.name);
+
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse&lt;Response&gt;();
+    const request = ctx.getRequest&lt;Request&gt;();
+
+    const status = exception instanceof HttpException
+      ? exception.getStatus()
+      : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    const message = exception instanceof HttpException
+      ? exception.message
+      : (exception instanceof Error ? exception.message : &#39;Internal server error&#39;);
+
+    // Log lỗi (đặc biệt là lỗi không phải HTTP)
+    if (!(exception instanceof HttpException)) {
+      this.logger.error(`Unhandled Exception: ${message}`, (exception as Error).stack, `${request.method} ${request.url}`);
+    } else {
+        this.logger.warn(`HTTP Exception: ${status} ${message}`, (exception as Error).stack, `${request.method} ${request.url}`);
+    }
+
+    response.status(status).json({
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      message: message,
+    });
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Binding Filters:</strong></p>
+<ul>
+<li><strong>Global-scoped:</strong> Áp dụng cho toàn bộ ứng dụng.<pre><code class="language-typescript">// src/main.ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  // app.useGlobalFilters(new HttpExceptionFilter()); // Áp dụng sau global pipes
+  app.useGlobalFilters(new AllExceptionsFilter()); // Nên có một filter bắt tất cả
+  // ...
+  await app.listen(3000);
+}
+</code></pre>
+</li>
+<li><strong>Controller-scoped:</strong><pre><code class="language-typescript">@Controller(&#39;cats&#39;)
+@UseFilters(new HttpExceptionFilter())
+export class CatsController { /* ... */ }
+</code></pre>
+</li>
+<li><strong>Method-scoped:</strong><pre><code class="language-typescript">@Post()
+@UseFilters(new SpecialExceptionFilter())
+async create(@Body() createCatDto: CreateCatDto) { /* ... */ }
+</code></pre>
+</li>
+<li><strong>Kế thừa <code>BaseExceptionFilter</code>:</strong> Nếu bạn muốn xử lý một số exception tùy chỉnh và để các exception khác được xử lý bởi global filter mặc định, bạn có thể <code>extend BaseExceptionFilter</code> (cần inject <code>HttpAdapterHost</code>).</li>
+</ul>
+</li>
+<li><p><strong>Logging với NestJS <code>Logger</code>:</strong></p>
+<ul>
+<li>NestJS cung cấp một <code>Logger</code> class (<code>@nestjs/common</code>) có thể sử dụng để log message.</li>
+<li><strong>Sử dụng:</strong><pre><code class="language-typescript">import { Injectable, Logger } from &#39;@nestjs/common&#39;;
+
+@Injectable()
+export class AppService {
+  private readonly logger = new Logger(AppService.name); // Context là tên class
+
+  getHello(): string {
+    this.logger.log(&#39;getHello method called&#39;);
+    this.logger.warn(&#39;This is a warning message.&#39;);
+    try {
+      throw new Error(&#39;Something went wrong!&#39;);
+    } catch (error) {
+      this.logger.error(&#39;An error occurred&#39;, error.stack);
+    }
+    this.logger.debug(&#39;Debugging information...&#39;, { data: { id: 1 }}); // Có thể truyền context object
+    this.logger.verbose(&#39;Verbose details...&#39;);
+    return &#39;Hello World!&#39;;
+  }
+}
+</code></pre>
+</li>
+<li><strong>Log Levels:</strong> <code>log</code>, <code>error</code>, <code>warn</code>, <code>debug</code>, <code>verbose</code>.</li>
+<li><strong>Cấu hình Log Levels:</strong><ul>
+<li>Trong <code>NestFactory.create()</code>:<pre><code class="language-typescript">// src/main.ts
+const app = await NestFactory.create(AppModule, {
+  // logger: false, // Tắt logger mặc định
+  logger: [&#39;error&#39;, &#39;warn&#39;, &#39;log&#39;], // Chỉ log các level này
+});
+</code></pre>
+</li>
+<li>Hoặc set tĩnh: <code>Logger.overrideLogger([&#39;error&#39;, &#39;warn&#39;]);</code></li>
+</ul>
+</li>
+<li><strong>Custom Logger:</strong><ul>
+<li>Implement interface <code>LoggerService</code>.</li>
+<li>Pass instance của custom logger vào <code>NestFactory.create(AppModule, { logger: new MyCustomLogger() })</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Tích hợp Thư viện Logging Bên Thứ Ba (Ví dụ: <code>nest-winston</code>):</strong></p>
+<ul>
+<li><strong>Tại sao?</strong> Các thư viện như Winston, Pino cung cấp nhiều tính năng mạnh mẽ hơn: multiple transports (console, file, HTTP, database), formatting, log rotation, filtering, etc.</li>
+<li><strong><code>nest-winston</code>:</strong><ul>
+<li><strong>Cài đặt:</strong> <code>npm install --save nest-winston winston</code></li>
+<li><strong>Sử dụng:</strong><pre><code class="language-typescript">// app.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { WinstonModule } from &#39;nest-winston&#39;;
+import * as winston from &#39;winston&#39;;
+// ...
+
+@Module({
+  imports: [
+    WinstonModule.forRoot({
+      // options (same as Winston LoggerOptions)
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.timestamp({ format: &#39;YYYY-MM-DD HH:mm:ss&#39; }),
+            winston.format.ms(), // Thời gian xử lý
+            winston.format.colorize({ all: true }), // Màu sắc
+            winston.format.printf(
+              (info) =&gt; `${info.timestamp} ${info.level} [${info.context || &#39;Application&#39;}]: ${info.message} ${info.ms || &#39;&#39;}`,
+            ),
+          ),
+        }),
+        new winston.transports.File({
+          filename: &#39;logs/error.log&#39;,
+          level: &#39;error&#39;,
+          format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+        }),
+        new winston.transports.File({
+          filename: &#39;logs/combined.log&#39;,
+          format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+        }),
+      ],
+      // defaultMeta: { service: &#39;user-service&#39; }, // Meta mặc định
+    }),
+    // ...
+  ],
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><strong>Inject logger:</strong><pre><code class="language-typescript">import { Injectable, Inject } from &#39;@nestjs/common&#39;;
+import { WINSTON_MODULE_PROVIDER } from &#39;nest-winston&#39;; // Hoặc WINSTON_MODULE_NEST_PROVIDER cho NestLoggerService interface
+import { Logger } from &#39;winston&#39;; // Hoặc LoggerService từ @nestjs/common
+
+@Injectable()
+export class MyService {
+  constructor(@Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger) {}
+
+  doSomething() {
+    this.logger.info(&#39;Doing something...&#39;, { context: MyService.name });
+  }
+}
+</code></pre>
+</li>
+<li><strong>Sử dụng làm logger mặc định của NestJS:</strong><pre><code class="language-typescript">// main.ts
+import { WINSTON_MODULE_NEST_PROVIDER } from &#39;nest-winston&#39;;
+// ...
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER)); // Set Winston làm logger mặc định
+  // ...
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example:</strong></p>
+<ol>
+<li><strong>Tạo <code>AllExceptionsFilter</code> (nếu chưa có):</strong><ul>
+<li><code>src/common/filters/all-exceptions.filter.ts</code> (như ví dụ ở trên).</li>
+</ul>
+</li>
+<li><strong>Áp dụng global filter trong <code>main.ts</code>:</strong><pre><code class="language-typescript">// src/main.ts
+import { AllExceptionsFilter } from &#39;./common/filters/all-exceptions.filter&#39;;
+// ...
+app.useGlobalFilters(new AllExceptionsFilter());
+// ...
+</code></pre>
+</li>
+<li><strong>Sử dụng <code>Logger</code> trong một service:</strong><pre><code class="language-typescript">// src/products/products.service.ts
+import { Injectable, Logger, NotFoundException } from &#39;@nestjs/common&#39;;
+// ...
+
+@Injectable()
+export class ProductsService {
+  private readonly logger = new Logger(ProductsService.name);
+  // ...
+  async findOne(id: number): Promise&lt;Product&gt; {
+    this.logger.log(`Attempting to find product with id: ${id}`);
+    const product = await this.productsRepository.findOneBy({ id });
+    if (!product) {
+      this.logger.warn(`Product with id ${id} not found.`);
+      throw new NotFoundException(`Product with id #${id} not found`);
+    }
+    this.logger.log(`Found product: ${product.name}`);
+    return product;
+  }
+  // ...
+}
+</code></pre>
+</li>
+<li><strong>Tích hợp <code>nest-winston</code> (ví dụ):</strong><ul>
+<li>Cài đặt: <code>npm install nest-winston winston</code></li>
+<li>Cấu hình <code>WinstonModule.forRoot()</code> trong <code>AppModule</code> (như ví dụ trên).</li>
+<li>Set Winston làm logger mặc định trong <code>main.ts</code>.</li>
+<li>Các <code>Logger</code> instance của NestJS sẽ tự động sử dụng Winston.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Tạo <code>HttpExceptionFilter</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Tạo một custom filter tên là <code>CustomHttpExceptionFilter</code> trong thư mục <code>src/common/filters/</code>.</li>
+<li>Filter này chỉ bắt các <code>HttpException</code>.</li>
+<li>Response lỗi trả về phải có cấu trúc JSON: <code>{ statusCode: number, timestamp: string, path: string, method: string, errorName: string, message: any }</code>. <code>errorName</code> là tên của exception (ví dụ: &#39;NotFoundException&#39;).</li>
+<li>Áp dụng filter này ở cấp global trong <code>main.ts</code>.</li>
+</ul>
+</li>
+<li><strong>Ném các Built-in Exceptions:</strong><ul>
+<li><strong>Yêu cầu:</strong> Trong <code>ProductsService</code>:<ul>
+<li>Khi <code>findOne</code> không tìm thấy sản phẩm, ném <code>NotFoundException</code>.</li>
+<li>Khi <code>create</code> nhận DTO không hợp lệ (ví dụ sau khi <code>ValidationPipe</code> đã chạy nhưng bạn muốn thêm logic kiểm tra nghiệp vụ), ném <code>BadRequestException</code> hoặc <code>UnprocessableEntityException</code> với message cụ thể.</li>
+<li>(Giả lập) Trong method <code>update</code>, nếu user không có quyền cập nhật sản phẩm đó, ném <code>ForbiddenException</code>.</li>
+</ul>
+</li>
+<li>Kiểm tra response lỗi trên Postman, đảm bảo nó theo format của <code>CustomHttpExceptionFilter</code>.</li>
+</ul>
+</li>
+<li><strong>Sử dụng NestJS <code>Logger</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Trong <code>ProductsService</code>, tạo một instance <code>Logger</code> với context là <code>ProductsService.name</code>.</li>
+<li>Thêm các log ở các mức độ khác nhau:<ul>
+<li><code>log()</code>: Khi một method public được gọi (ví dụ: &quot;findAll products requested&quot;).</li>
+<li><code>warn()</code>: Khi có một tình huống không mong muốn nhưng không phải lỗi nghiêm trọng (ví dụ: &quot;Attempting to update non-existing product ID: X&quot;).</li>
+<li><code>error()</code>: Khi bắt được một lỗi trong <code>try...catch</code> (ví dụ: lỗi kết nối CSDL giả lập).</li>
+<li><code>debug()</code>: Log các thông tin chi tiết hơn cho việc debug (ví dụ: payload của request tạo sản phẩm).</li>
+</ul>
+</li>
+<li>Cấu hình trong <code>main.ts</code> để chỉ hiển thị log từ <code>log</code>, <code>warn</code>, <code>error</code> level.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Tích hợp <code>nest-winston</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Cài đặt <code>nest-winston</code> và <code>winston</code>.</li>
+<li>Cấu hình <code>WinstonModule.forRoot()</code> trong <code>AppModule</code> với ít nhất hai transport:<ul>
+<li>Console transport: Format log đẹp, có màu sắc, timestamp, context, message.</li>
+<li>File transport: Ghi tất cả log (hoặc từ level <code>info</code>) vào file <code>logs/app.log</code> dưới dạng JSON.</li>
+</ul>
+</li>
+<li>Set Winston làm logger mặc định cho ứng dụng NestJS trong <code>main.ts</code>.</li>
+<li>Chạy ứng dụng và thực hiện vài request để xem log trên console và trong file.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>(Nâng cao) Filter bắt lỗi CSDL (ví dụ TypeORM):</strong><ul>
+<li><strong>Yêu cầu:</strong> Tạo một filter mới (ví dụ <code>TypeOrmExceptionFilter</code>) bắt các lỗi cụ thể từ TypeORM (ví dụ: <code>EntityNotFoundError</code>, <code>QueryFailedError</code>).</li>
+<li>Chuyển đổi các lỗi này thành các <code>HttpException</code> phù hợp (ví dụ: <code>EntityNotFoundError</code> -&gt; <code>NotFoundException</code>).</li>
+<li>Áp dụng filter này (có thể global hoặc cho các controller tương tác CSDL). Mục đích là để che giấu chi tiết lỗi CSDL khỏi client và trả về lỗi HTTP thân thiện hơn.</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

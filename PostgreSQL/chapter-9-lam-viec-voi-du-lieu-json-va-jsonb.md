@@ -1,4 +1,4 @@
-### Chapter 9: Làm việc với Dữ liệu JSON và JSONB
+# Chapter 9: Làm việc với Dữ liệu JSON và JSONB
 
 * **Tên bài học:** Khai thác sức mạnh và tính linh hoạt của kiểu dữ liệu JSON/JSONB trong PostgreSQL.
 * **Tóm tắt lý thuyết:**

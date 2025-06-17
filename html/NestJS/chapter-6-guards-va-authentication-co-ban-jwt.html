@@ -1,0 +1,770 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-6-guards-va-authentication-co-ban-jwt</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 6: Guards và Authentication Cơ bản (JWT)</h1>
+<p><strong>Tên Chapter học:</strong> Guards và Authentication Cơ bản (JWT)</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu rõ về Guards:</strong> Nắm vững vai trò của Guards trong NestJS như một cơ chế để quyết định xem một request có được phép tiếp tục xử lý bởi route handler hay không, dựa trên các điều kiện nhất định (ví dụ: quyền truy cập, authentication).</li>
+<li><strong>Triển khai Authentication cơ bản:</strong><ul>
+<li>Hiểu khái niệm Authentication (xác thực danh tính người dùng).</li>
+<li>Biết cách tạo một Guard đơn giản để thực hiện authentication dựa trên API Key.</li>
+</ul>
+</li>
+<li><strong>JSON Web Tokens (JWT):</strong><ul>
+<li>Hiểu JWT là gì, cấu trúc của nó (Header, Payload, Signature).</li>
+<li>Nắm được quy trình hoạt động của JWT trong authentication: server tạo token sau khi login thành công, client gửi token trong mỗi request tiếp theo, server xác thực token.</li>
+</ul>
+</li>
+<li><strong>Tích hợp <code>@nestjs/jwt</code> và <code>@nestjs/passport</code>:</strong><ul>
+<li>Sử dụng module <code>@nestjs/jwt</code> để tạo và xác thực JWTs.</li>
+<li>Giới thiệu <code>@nestjs/passport</code> và thư viện <code>passport-jwt</code> để triển khai một &quot;strategy&quot; (chiến lược) xác thực dựa trên JWT.</li>
+<li>Tạo <code>AuthModule</code>, <code>AuthService</code> (để xử lý logic login và validate user), và <code>JwtStrategy</code>.</li>
+</ul>
+</li>
+<li><strong>Bảo vệ Routes với JWT Guard:</strong> Tạo một Guard tùy chỉnh (ví dụ: <code>JwtAuthGuard</code>) sử dụng <code>AuthGuard(&#39;jwt&#39;)</code> từ <code>@nestjs/passport</code> để bảo vệ các API endpoint, yêu cầu client phải cung cấp JWT hợp lệ.</li>
+<li><strong>Lấy thông tin User từ JWT:</strong> Biết cách truy cập thông tin user (được giải mã từ payload của JWT) trong route handler sau khi đã qua <code>JwtAuthGuard</code>.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Guards là gì?</strong></p>
+<ul>
+<li>Guards là các class được đánh dấu bằng <code>@Injectable()</code> decorator và phải implement interface <code>CanActivate</code>.</li>
+<li>Chúng có một method duy nhất là <code>canActivate(context: ExecutionContext): boolean | Promise&lt;boolean&gt; | Observable&lt;boolean&gt;</code>.</li>
+<li><code>ExecutionContext</code> cung cấp thông tin về request hiện tại (tương tự <code>ArgumentMetadata</code> trong Pipes, nhưng rộng hơn, cho phép truy cập controller class, handler method, request object).</li>
+<li>Nếu <code>canActivate</code> trả về <code>true</code> (hoặc một Promise/Observable resolve thành <code>true</code>), request sẽ được xử lý bởi route handler.</li>
+<li>Nếu trả về <code>false</code> (hoặc một Promise/Observable resolve thành <code>false</code>), NestJS sẽ từ chối request (thường ném một <code>ForbiddenException</code>).</li>
+<li>Guards được thực thi <strong>sau tất cả middleware</strong> nhưng <strong>trước bất kỳ interceptor hoặc pipe nào</strong>.</li>
+<li><strong>Use cases:</strong> Authentication (xác thực), Authorization (phân quyền - ví dụ: role-based access control).</li>
+</ul>
+</li>
+<li><p><strong>Authentication vs. Authorization:</strong></p>
+<ul>
+<li><strong>Authentication (Xác thực):</strong> Quá trình xác định &quot;bạn là ai?&quot;. Ví dụ: kiểm tra username/password, xác thực token.</li>
+<li><strong>Authorization (Phân quyền):</strong> Quá trình xác định &quot;bạn được phép làm gì?&quot; sau khi đã xác thực. Ví dụ: user A có quyền xem dữ liệu, user B có quyền sửa dữ liệu.</li>
+</ul>
+</li>
+<li><p><strong>Guard đơn giản (Ví dụ: API Key Guard):</strong></p>
+<pre><code class="language-typescript">// src/auth/guards/api-key.guard.ts
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from &#39;@nestjs/common&#39;;
+import { Observable } from &#39;rxjs&#39;;
+// Giả sử bạn dùng ConfigService để lấy API Key
+// import { ConfigService } from &#39;@nestjs/config&#39;;
+
+@Injectable()
+export class ApiKeyGuard implements CanActivate {
+  // constructor(private configService: ConfigService) {}
+
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise&lt;boolean&gt; | Observable&lt;boolean&gt; {
+    const request = context.switchToHttp().getRequest();
+    const apiKeyHeader = request.headers[&#39;x-api-key&#39;];
+
+    // const validApiKey = this.configService.get&lt;string&gt;(&#39;API_KEY&#39;);
+    const validApiKey = &#39;YOUR_STATIC_API_KEY&#39;; // Thay thế bằng cách lấy từ config
+
+    if (apiKeyHeader === validApiKey) {
+      return true;
+    }
+    throw new UnauthorizedException(&#39;Invalid API Key&#39;);
+  }
+}
+</code></pre>
+<p>Sử dụng: <code>@UseGuards(ApiKeyGuard)</code> trên controller hoặc handler.</p>
+</li>
+<li><p><strong>JSON Web Tokens (JWT):</strong></p>
+<ul>
+<li>Là một chuẩn mở (RFC 7519) định nghĩa một cách nhỏ gọn và khép kín để truyền thông tin giữa các bên dưới dạng một đối tượng JSON.</li>
+<li>Thông tin này có thể được xác minh và tin cậy vì nó được ký điện tử (digitally signed).</li>
+<li><strong>Cấu trúc (3 phần, ngăn cách bởi dấu chấm <code>.</code>):</strong><ul>
+<li><strong>Header:</strong> Chứa thông tin về thuật toán ký (<code>alg</code>) và loại token (<code>typ</code>, thường là &quot;JWT&quot;). Được Base64Url encode.
+  <code>{&quot;alg&quot;: &quot;HS256&quot;, &quot;typ&quot;: &quot;JWT&quot;}</code></li>
+<li><strong>Payload:</strong> Chứa các &quot;claims&quot; (thông tin về thực thể, ví dụ user ID, username, roles, và các metadata khác). Được Base64Url encode.<ul>
+<li>Registered claims: <code>iss</code> (issuer), <code>exp</code> (expiration time), <code>sub</code> (subject), <code>aud</code> (audience).</li>
+<li>Public claims: Tự định nghĩa, nên tránh trùng lặp.</li>
+<li>Private claims: Tự định nghĩa, dùng riêng giữa các bên đã thống nhất.
+  <code>{&quot;sub&quot;: &quot;1234567890&quot;, &quot;name&quot;: &quot;John Doe&quot;, &quot;admin&quot;: true, &quot;iat&quot;: 1516239022, &quot;exp&quot;: 1516242622}</code></li>
+</ul>
+</li>
+<li><strong>Signature:</strong> Để xác minh rằng người gửi token là chính họ và đảm bảo message không bị thay đổi. Được tạo bằng cách ký encoded header, encoded payload, một secret (bí mật), sử dụng thuật toán đã chỉ định trong header.
+  <code>HMACSHA256(base64UrlEncode(header) + &quot;.&quot; + base64UrlEncode(payload), secret)</code></li>
+</ul>
+</li>
+<li><strong>Luồng hoạt động:</strong><ol>
+<li>User đăng nhập bằng credentials (username/password).</li>
+<li>Server xác thực credentials. Nếu thành công, server tạo một JWT (chứa user ID, có thể cả roles, và thời gian hết hạn <code>exp</code>) và ký nó bằng một <code>JWT_SECRET</code>.</li>
+<li>Server gửi JWT về cho client.</li>
+<li>Client lưu trữ JWT (thường trong localStorage, sessionStorage, hoặc HTTP-only cookie).</li>
+<li>Với mỗi request tiếp theo đến các protected route, client gửi JWT trong <code>Authorization</code> header (thường là <code>Bearer &lt;token&gt;</code>).</li>
+<li>Server nhận request, trích xuất token.</li>
+<li>Server xác thực token:<ul>
+<li>Kiểm tra chữ ký (dùng cùng <code>JWT_SECRET</code>).</li>
+<li>Kiểm tra thời gian hết hạn (<code>exp</code>).</li>
+<li>Kiểm tra các claims khác nếu cần.</li>
+</ul>
+</li>
+<li>Nếu token hợp lệ, server xử lý request và có thể sử dụng thông tin từ payload (ví dụ <code>userId</code>) để thực hiện logic nghiệp vụ.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p><strong>Tích hợp <code>@nestjs/jwt</code> và <code>@nestjs/passport</code>:</strong></p>
+<ul>
+<li><strong>Cài đặt:</strong><pre><code class="language-bash">npm install --save @nestjs/jwt @nestjs/passport passport passport-jwt
+npm install --save-dev @types/passport-jwt # Types
+</code></pre>
+</li>
+<li><strong><code>@nestjs/jwt</code> (<code>JwtModule</code>):</strong><ul>
+<li>Cung cấp <code>JwtService</code> để tạo (<code>sign()</code>, <code>signAsync()</code>) và xác thực (<code>verify()</code>, <code>verifyAsync()</code>) JWTs.</li>
+<li>Cấu hình trong <code>AuthModule</code>:<pre><code class="language-typescript">// src/auth/auth.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { JwtModule } from &#39;@nestjs/jwt&#39;;
+import { PassportModule } from &#39;@nestjs/passport&#39;;
+// ... imports khác ...
+
+@Module({
+  imports: [
+    PassportModule.register({ defaultStrategy: &#39;jwt&#39; }), // Optional: set default strategy
+    JwtModule.register({ // Hoặc registerAsync để lấy từ ConfigService
+      secret: &#39;YOUR_VERY_SECRET_KEY&#39;, // RẤT QUAN TRỌNG: Giữ bí mật và phức tạp, nên lấy từ biến môi trường
+      signOptions: { expiresIn: &#39;1h&#39; }, // Ví dụ: token hết hạn sau 1 giờ
+    }),
+    // UsersModule, // Nếu AuthService cần UsersService để tìm user
+  ],
+  // ... providers, controllers ...
+})
+export class AuthModule {}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong><code>@nestjs/passport</code> và <code>passport-jwt</code>:</strong><ul>
+<li><code>PassportModule</code> là wrapper của thư viện Passport.js.</li>
+<li><code>passport-jwt</code> cung cấp một &quot;strategy&quot; (chiến lược) để xác thực JWT.</li>
+<li><strong>Tạo <code>JwtStrategy</code>:</strong><ul>
+<li>Extend <code>PassportStrategy(Strategy)</code> (Strategy từ <code>passport-jwt</code>).</li>
+<li>Trong constructor, gọi <code>super()</code> với các options:<ul>
+<li><code>jwtFromRequest</code>: Cách trích xuất JWT từ request (ví dụ: <code>ExtractJwt.fromAuthHeaderAsBearerToken()</code>).</li>
+<li><code>ignoreExpiration</code>: <code>false</code> (mặc định) để kiểm tra <code>exp</code> claim.</li>
+<li><code>secretOrKey</code>: Cùng một secret đã dùng để ký token.</li>
+</ul>
+</li>
+<li>Implement method <code>validate(payload: any)</code>:<ul>
+<li><code>payload</code> là đối tượng JSON đã được giải mã từ JWT.</li>
+<li>Method này phải trả về thông tin user (hoặc <code>null</code>/<code>false</code> nếu user không hợp lệ). Giá trị trả về sẽ được Passport gắn vào <code>request.user</code>.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-typescript">// src/auth/strategies/jwt.strategy.ts
+import { Injectable, UnauthorizedException } from &#39;@nestjs/common&#39;;
+import { PassportStrategy } from &#39;@nestjs/passport&#39;;
+import { Strategy, ExtractJwt } from &#39;passport-jwt&#39;;
+// import { ConfigService } from &#39;@nestjs/config&#39;; // Để lấy JWT_SECRET
+import { AuthService } from &#39;../auth.service&#39;; // Hoặc UsersService
+
+export interface JwtPayload {
+  sub: number; // Hoặc string, tùy vào ID của user
+  username: string;
+  // ... các claim khác bạn thêm vào khi tạo token
+}
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) { // Mặc định tên strategy là &#39;jwt&#39;
+  constructor(
+    // private configService: ConfigService,
+    private authService: AuthService, // Để validate user từ payload
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      // secretOrKey: configService.get&lt;string&gt;(&#39;JWT_SECRET&#39;),
+      secretOrKey: &#39;YOUR_VERY_SECRET_KEY&#39;, // PHẢI GIỐNG VỚI KHI SIGN TOKEN
+    });
+  }
+
+  // Method này được Passport gọi sau khi xác thực token thành công (chữ ký, exp)
+  async validate(payload: JwtPayload): Promise&lt;any&gt; {
+    // payload chứa các thông tin đã được sign trong token
+    // Ví dụ: { sub: userId, username: &#39;john&#39;, iat: ..., exp: ... }
+    // Ở đây, bạn có thể thực hiện thêm logic kiểm tra user trong DB nếu cần
+    // Ví dụ: kiểm tra user có tồn tại, có bị ban không, etc.
+    const user = await this.authService.validateUserFromJwt(payload);
+    if (!user) {
+      throw new UnauthorizedException(&#39;User not found or invalid token.&#39;);
+    }
+    return user; // Giá trị này sẽ được gắn vào request.user
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong><code>AuthModule</code>, <code>AuthService</code>, <code>AuthController</code>:</strong></p>
+<ul>
+<li><strong><code>AuthService</code>:</strong><ul>
+<li>Chứa logic <code>login(userCredentials)</code>:<ul>
+<li>Xác thực credentials (ví dụ: so sánh password với hash trong DB - thường gọi <code>UsersService</code>).</li>
+<li>Nếu thành công, tạo payload cho JWT (ví dụ: <code>{ sub: user.id, username: user.username }</code>).</li>
+<li>Sử dụng <code>JwtService.sign(payload)</code> (hoặc <code>signAsync</code>) để tạo token.</li>
+<li>Trả về <code>{ accessToken: token }</code>.</li>
+</ul>
+</li>
+<li>Chứa logic <code>validateUserFromJwt(payload: JwtPayload)</code> (được gọi bởi <code>JwtStrategy</code>):<ul>
+<li>Dựa vào <code>payload.sub</code> (user ID) để tìm user trong DB.</li>
+<li>Trả về user object nếu hợp lệ, <code>null</code> nếu không.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><code>AuthController</code>:</strong><ul>
+<li>Cung cấp endpoint <code>/auth/login</code> (thường là POST) nhận credentials, gọi <code>AuthService.login()</code>, trả về token.</li>
+<li>Có thể có endpoint <code>/auth/profile</code> (được bảo vệ bằng <code>JwtAuthGuard</code>) để lấy thông tin user hiện tại từ <code>request.user</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Bảo vệ Routes với <code>JwtAuthGuard</code>:</strong></p>
+<ul>
+<li>NestJS cung cấp <code>AuthGuard</code> từ <code>@nestjs/passport</code>. <code>AuthGuard(&#39;jwt&#39;)</code> sẽ tự động sử dụng <code>JwtStrategy</code> bạn đã đăng ký.</li>
+<li>Tạo một class <code>JwtAuthGuard</code> kế thừa <code>AuthGuard(&#39;jwt&#39;)</code> để dễ sử dụng và có thể override nếu cần.<pre><code class="language-typescript">// src/auth/guards/jwt-auth.guard.ts
+import { Injectable, ExecutionContext, UnauthorizedException } from &#39;@nestjs/common&#39;;
+import { AuthGuard } from &#39;@nestjs/passport&#39;;
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard(&#39;jwt&#39;) { // Sử dụng &#39;jwt&#39; strategy
+  // Có thể override handleRequest để tùy chỉnh lỗi hoặc hành vi
+  handleRequest(err, user, info, context: ExecutionContext) {
+    if (err || !user) {
+      // info có thể là JsonWebTokenError, TokenExpiredError
+      console.error(&#39;JWT Auth Error:&#39;, info?.message || err?.message);
+      throw err || new UnauthorizedException(info?.message || &#39;User is not authenticated&#39;);
+    }
+    return user; // user này sẽ được gắn vào request.user
+  }
+}
+</code></pre>
+</li>
+<li>Áp dụng <code>@UseGuards(JwtAuthGuard)</code> cho controller hoặc handler cần bảo vệ.</li>
+</ul>
+</li>
+<li><p><strong>Truy cập User trong Handler:</strong></p>
+<ul>
+<li>Sau khi một route được bảo vệ bởi <code>JwtAuthGuard</code> và token hợp lệ, <code>request.user</code> sẽ chứa thông tin user trả về từ method <code>validate()</code> của <code>JwtStrategy</code>.</li>
+<li>Tạo một custom decorator <code>@GetUser()</code> để tiện lấy thông tin user.<pre><code class="language-typescript">// src/auth/decorators/get-user.decorator.ts
+import { createParamDecorator, ExecutionContext } from &#39;@nestjs/common&#39;;
+
+export const GetUser = createParamDecorator(
+  (data: string | undefined, ctx: ExecutionContext) =&gt; {
+    const request = ctx.switchToHttp().getRequest();
+    if (!request.user) {
+      return null; // Hoặc ném lỗi nếu user luôn phải có
+    }
+    if (data) {
+      return request.user[data]; // Lấy một thuộc tính cụ thể của user
+    }
+    return request.user; // Lấy toàn bộ object user
+  },
+);
+</code></pre>
+  Sử dụng: <code>@Get(&#39;profile&#39;) @UseGuards(JwtAuthGuard) getProfile(@GetUser() user: UserEntity) { ... }</code>
+  Hoặc: <code>@GetUser(&#39;username&#39;) username: string</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example (Triển khai JWT Authentication):</strong></p>
+<ol>
+<li><p><strong>Cài đặt packages:</strong> (Đã làm ở trên)</p>
+</li>
+<li><p><strong>Cấu hình <code>AuthModule</code>:</strong></p>
+<ul>
+<li>Tạo <code>src/auth/auth.module.ts</code>, <code>src/auth/auth.service.ts</code>, <code>src/auth/auth.controller.ts</code>.</li>
+<li>Tạo <code>src/auth/strategies/jwt.strategy.ts</code>.</li>
+<li>Tạo <code>src/auth/guards/jwt-auth.guard.ts</code>.</li>
+<li>Tạo <code>src/auth/decorators/get-user.decorator.ts</code>.</li>
+<li>Giả sử bạn có <code>UsersModule</code> và <code>UsersService</code> để quản lý user (bao gồm cả việc hash và so sánh password). Nếu không, bạn có thể hardcode user trong <code>AuthService</code> để demo.</li>
+</ul>
+<pre><code class="language-typescript">// src/auth/auth.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { AuthService } from &#39;./auth.service&#39;;
+import { AuthController } from &#39;./auth.controller&#39;;
+import { JwtModule } from &#39;@nestjs/jwt&#39;;
+import { PassportModule } from &#39;@nestjs/passport&#39;;
+import { JwtStrategy } from &#39;./strategies/jwt.strategy&#39;;
+// import { UsersModule } from &#39;../users/users.module&#39;; // Nếu cần UsersService
+import { ConfigModule, ConfigService } from &#39;@nestjs/config&#39;; // Để dùng ConfigService
+
+@Module({
+  imports: [
+    // UsersModule, // Import UsersModule nếu AuthService cần UsersService
+    ConfigModule, // Đảm bảo ConfigModule đã được import ở AppModule
+    PassportModule.register({ defaultStrategy: &#39;jwt&#39; }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule], // Import ConfigModule vào đây
+      inject: [ConfigService],  // Inject ConfigService
+      useFactory: async (configService: ConfigService) =&gt; ({
+        secret: configService.get&lt;string&gt;(&#39;JWT_SECRET&#39;), // Lấy secret từ .env
+        signOptions: {
+          expiresIn: configService.get&lt;string | number&gt;(&#39;JWT_EXPIRES_IN&#39;, &#39;3600s&#39;), // Lấy expiration từ .env
+        },
+      }),
+    }),
+  ],
+  providers: [AuthService, JwtStrategy /*, UsersService nếu chỉ dùng ở đây */],
+  controllers: [AuthController],
+  exports: [JwtStrategy, PassportModule, JwtModule, AuthService], // Export để các module khác có thể dùng JwtAuthGuard
+})
+export class AuthModule {}
+</code></pre>
+<p><strong>Lưu ý:</strong> Thêm <code>JWT_SECRET</code> và <code>JWT_EXPIRES_IN</code> vào file <code>.env</code> của bạn.</p>
+</li>
+<li><p><strong><code>src/auth/auth.service.ts</code>:</strong></p>
+<pre><code class="language-typescript">import { Injectable, UnauthorizedException } from &#39;@nestjs/common&#39;;
+import { JwtService } from &#39;@nestjs/jwt&#39;;
+// import { UsersService } from &#39;../users/users.service&#39;; // Nếu dùng UsersService
+import * as bcrypt from &#39;bcrypt&#39;; // npm install bcrypt @types/bcrypt
+import { JwtPayload } from &#39;./strategies/jwt.strategy&#39;;
+import { LoginDto } from &#39;./dto/login.dto&#39;; // Tạo DTO này
+
+// Giả lập User entity/interface
+export interface User {
+  id: number;
+  username: string;
+  passwordHash: string; // Lưu hash của password
+  // ... other fields
+}
+
+// Giả lập UsersService hoặc DB access
+const users: User[] = [
+  { id: 1, username: &#39;john&#39;, passwordHash: &#39;$2b$10$yourbcryptgeneratedhashforpassword123&#39; }, // Thay bằng hash thật
+  { id: 2, username: &#39;maria&#39;, passwordHash: &#39;$2b$10$anotherbcryptgeneratedhashforpass456&#39; },
+];
+
+
+@Injectable()
+export class AuthService {
+  constructor(
+    // private usersService: UsersService, // Nếu dùng UsersService thật
+    private jwtService: JwtService,
+  ) {
+    // Hash password khi khởi tạo (chỉ để demo, thực tế nên hash khi tạo user)
+    if (users[0].passwordHash.startsWith(&#39;$2b$&#39;)) console.log(&quot;Passwords already hashed.&quot;);
+    else {
+        bcrypt.hash(&#39;password123&#39;, 10).then(hash =&gt; users[0].passwordHash = hash);
+        bcrypt.hash(&#39;pass456&#39;, 10).then(hash =&gt; users[1].passwordHash = hash);
+    }
+  }
+
+  async validateUserCredentials(loginDto: LoginDto): Promise&lt;Omit&lt;User, &#39;passwordHash&#39;&gt; | null&gt; {
+    const { username, password } = loginDto;
+    // const user = await this.usersService.findOneByUsername(username); // Cách làm đúng
+    const user = users.find(u =&gt; u.username === username); // Cách làm giả lập
+
+    if (user &amp;&amp; (await bcrypt.compare(password, user.passwordHash))) {
+      const { passwordHash, ...result } = user; // Loại bỏ passwordHash
+      return result;
+    }
+    return null;
+  }
+
+  async login(user: Omit&lt;User, &#39;passwordHash&#39;&gt;): Promise&lt;{ accessToken: string }&gt; {
+    const payload: JwtPayload = { username: user.username, sub: user.id };
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
+  }
+
+  // Được gọi bởi JwtStrategy.validate
+  async validateUserFromJwt(payload: JwtPayload): Promise&lt;Omit&lt;User, &#39;passwordHash&#39;&gt; | null&gt; {
+    // const user = await this.usersService.findOneById(payload.sub); // Cách làm đúng
+    const user = users.find(u =&gt; u.id === payload.sub); // Cách làm giả lập
+    if (user) {
+      const { passwordHash, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+}
+</code></pre>
+<ul>
+<li>Tạo <code>src/auth/dto/login.dto.ts</code>:<pre><code class="language-typescript">import { IsString, IsNotEmpty, MinLength } from &#39;class-validator&#39;;
+export class LoginDto {
+  @IsString() @IsNotEmpty() username: string;
+  @IsString() @IsNotEmpty() @MinLength(6) password: string;
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong><code>src/auth/strategies/jwt.strategy.ts</code>:</strong> (Đã có ở phần lý thuyết)</p>
+</li>
+<li><p><strong><code>src/auth/auth.controller.ts</code>:</strong></p>
+<pre><code class="language-typescript">import { Controller, Post, Body, UseGuards, Get, HttpCode, HttpStatus } from &#39;@nestjs/common&#39;;
+import { AuthService } from &#39;./auth.service&#39;;
+import { LoginDto } from &#39;./dto/login.dto&#39;;
+import { JwtAuthGuard } from &#39;./guards/jwt-auth.guard&#39;;
+import { GetUser } from &#39;./decorators/get-user.decorator&#39;;
+import { User } from &#39;./auth.service&#39;; // Hoặc User entity/interface của bạn
+
+@Controller(&#39;auth&#39;)
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @Post(&#39;login&#39;)
+  @HttpCode(HttpStatus.OK) // Trả về 200 OK thay vì 201 Created
+  async login(@Body() loginDto: LoginDto): Promise&lt;{ accessToken: string }&gt; {
+    const user = await this.authService.validateUserCredentials(loginDto);
+    if (!user) {
+      throw new UnauthorizedException(&#39;Invalid credentials&#39;);
+    }
+    return this.authService.login(user);
+  }
+
+  // Endpoint này được bảo vệ, cần JWT hợp lệ
+  @UseGuards(JwtAuthGuard)
+  @Get(&#39;profile&#39;)
+  getProfile(@GetUser() user: Omit&lt;User, &#39;passwordHash&#39;&gt;) {
+    // user ở đây là object được trả về từ JwtStrategy.validate()
+    // và đã được gắn vào request.user bởi JwtAuthGuard
+    return user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(&#39;user-id&#39;)
+  getUserId(@GetUser(&#39;sub&#39;) userId: number) { // Lấy thuộc tính &#39;sub&#39; (id) từ user
+      return { userId };
+  }
+}
+</code></pre>
+</li>
+<li><p><strong>Bảo vệ một route trong <code>CatsController</code> (ví dụ):</strong></p>
+<pre><code class="language-typescript">// src/cats/cats.controller.ts
+import { Controller, Post, Body, UseGuards, /* ... */ } from &#39;@nestjs/common&#39;;
+import { JwtAuthGuard } from &#39;../auth/guards/jwt-auth.guard&#39;; // Import guard
+import { CreateCatDto } from &#39;./dto/create-cat.dto&#39;;
+// ...
+
+@Controller(&#39;cats&#39;)
+export class CatsController {
+  // ... constructor và các method khác ...
+
+  @Post() // Endpoint này giờ cần authentication
+  @UseGuards(JwtAuthGuard) // Áp dụng JWT Auth Guard
+  create(@Body() createCatDto: CreateCatDto): Promise&lt;Cat&gt; {
+    // @GetUser() user: UserEntity có thể được thêm vào đây nếu cần biết ai tạo
+    return this.catsService.create(createCatDto);
+  }
+}
+</code></pre>
+</li>
+</ol>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Cài đặt các package cần thiết:</strong><ul>
+<li><strong>Yêu cầu:</strong> Chạy <code>npm install --save @nestjs/jwt @nestjs/passport passport passport-jwt bcrypt</code> và <code>npm install --save-dev @types/passport-jwt @types/bcrypt</code>.</li>
+</ul>
+</li>
+<li><strong>Tạo <code>AuthModule</code>, <code>AuthService</code>, <code>AuthController</code>, <code>JwtStrategy</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Triển khai các file này như trong code example.</li>
+<li>Trong <code>AuthModule</code>, cấu hình <code>JwtModule.registerAsync</code> để đọc <code>JWT_SECRET</code> và <code>JWT_EXPIRES_IN</code> từ <code>ConfigService</code> (đảm bảo đã có trong file <code>.env</code>).</li>
+<li>Trong <code>AuthService</code>, hardcode một vài user với username và password đã được hash bằng <code>bcrypt</code> (hoặc tạo một <code>UsersModule</code> và <code>UsersService</code> cơ bản để quản lý user trong mảng nếu muốn).</li>
+</ul>
+</li>
+<li><strong>Triển khai endpoint Login:</strong><ul>
+<li><strong>Yêu cầu:</strong> Trong <code>AuthController</code>, tạo endpoint <code>POST /auth/login</code> nhận <code>LoginDto</code> (username, password).</li>
+<li>Gọi <code>AuthService.validateUserCredentials()</code> để kiểm tra thông tin đăng nhập.</li>
+<li>Nếu hợp lệ, gọi <code>AuthService.login()</code> để tạo và trả về <code>accessToken</code>.</li>
+<li>Nếu không hợp lệ, ném <code>UnauthorizedException</code>.</li>
+</ul>
+</li>
+<li><strong>Tạo <code>JwtAuthGuard</code> và bảo vệ Routes:</strong><ul>
+<li><strong>Yêu cầu:</strong> Tạo <code>JwtAuthGuard</code> như trong ví dụ.</li>
+<li>Áp dụng <code>JwtAuthGuard</code> cho endpoint <code>POST /products</code> và <code>PUT /products/:productId</code> trong <code>ProductsController</code> để yêu cầu authentication khi tạo hoặc cập nhật sản phẩm.</li>
+</ul>
+</li>
+<li><strong>Kiểm tra với Postman/Insomnia:</strong><ul>
+<li><strong>Bước 1 (Login):</strong> Gửi request POST đến <code>/auth/login</code> với username và password hợp lệ. Nhận <code>accessToken</code> từ response.</li>
+<li><strong>Bước 2 (Truy cập Protected Route):</strong><ul>
+<li>Thử gửi request POST đến <code>/products</code> (để tạo sản phẩm) <strong>mà không có</strong> <code>Authorization</code> header. Bạn sẽ nhận được lỗi 401 Unauthorized.</li>
+<li>Gửi lại request POST đến <code>/products</code>, lần này thêm <code>Authorization</code> header với giá trị <code>Bearer &lt;your_access_token&gt;</code> (thay <code>&lt;your_access_token&gt;</code> bằng token nhận được ở Bước 1). Request này sẽ thành công.</li>
+</ul>
+</li>
+<li><strong>Bước 3 (Test Profile):</strong> Tạo endpoint <code>GET /auth/profile</code> được bảo vệ bởi <code>JwtAuthGuard</code> trong <code>AuthController</code>. Sử dụng <code>GetUser</code> decorator để trả về thông tin user. Gọi endpoint này với token hợp lệ.</li>
+</ul>
+</li>
+<li><strong>(Nâng cao) Tạo <code>RolesGuard</code> và <code>Roles</code> Decorator:</strong><ul>
+<li><strong>Yêu cầu:</strong> Giả sử user object trong JWT payload có một mảng <code>roles</code> (ví dụ: <code>[&#39;admin&#39;, &#39;user&#39;]</code>).</li>
+<li>Tạo một decorator <code>@Roles(...roles: string[])</code> để gán metadata về roles cho route handler.</li>
+<li>Tạo một <code>RolesGuard</code> đọc metadata này và kiểm tra xem user (từ <code>request.user.roles</code>) có role phù hợp không.</li>
+<li>Áp dụng <code>RolesGuard</code> (sau <code>JwtAuthGuard</code>) cho một endpoint, ví dụ chỉ <code>admin</code> mới được xóa sản phẩm.</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

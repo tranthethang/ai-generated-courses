@@ -1,4 +1,4 @@
-### Chapter 8: Window Functions
+# Chapter 8: Window Functions
 
 * **Tên bài học:** Phân tích dữ liệu chuyên sâu và hiệu quả với Window Functions.
 * **Tóm tắt lý thuyết:**

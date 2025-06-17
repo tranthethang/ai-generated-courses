@@ -1,4 +1,4 @@
-### Chapter 1: Giới thiệu PostgreSQL và Chuyển đổi từ MySQL
+# Chapter 1: Giới thiệu PostgreSQL và Chuyển đổi từ MySQL
 
 * **Tên bài học:** Khởi đầu với PostgreSQL: Những điểm khác biệt chính, cài đặt và cấu hình cơ bản.
 * **Tóm tắt lý thuyết:**

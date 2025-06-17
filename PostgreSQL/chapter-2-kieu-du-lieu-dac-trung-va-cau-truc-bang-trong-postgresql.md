@@ -1,4 +1,4 @@
-### Chapter 2: Kiểu Dữ Liệu Đặc Trưng và Cấu Trúc Bảng trong PostgreSQL
+# Chapter 2: Kiểu Dữ Liệu Đặc Trưng và Cấu Trúc Bảng trong PostgreSQL
 
 * **Tên bài học:** Khám phá hệ thống kiểu dữ liệu phong phú và thiết kế cấu trúc bảng hiệu quả trong PostgreSQL.
 * **Tóm tắt lý thuyết:**

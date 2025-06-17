@@ -1,4 +1,4 @@
-## Chapter 10: Tích hợp GraphQL
+# Chapter 10: Tích hợp GraphQL
 
 **Tên Chapter học:** Tích hợp GraphQL
 

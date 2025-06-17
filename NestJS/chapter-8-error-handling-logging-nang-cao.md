@@ -1,4 +1,4 @@
-## Chapter 8: Error Handling & Logging Nâng Cao
+# Chapter 8: Error Handling & Logging Nâng Cao
 
 **Tên Chapter học:** Error Handling & Logging Nâng Cao
 

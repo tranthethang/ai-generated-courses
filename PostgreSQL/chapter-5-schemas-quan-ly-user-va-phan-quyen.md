@@ -1,4 +1,4 @@
-### Chapter 5: Schemas, Quản Lý User và Phân Quyền
+# Chapter 5: Schemas, Quản Lý User và Phân Quyền
 
 * **Tên bài học:** Tổ chức và bảo mật cơ sở dữ liệu hiệu quả với Schemas, Roles và cơ chế phân quyền chi tiết.
 * **Tóm tắt lý thuyết:**

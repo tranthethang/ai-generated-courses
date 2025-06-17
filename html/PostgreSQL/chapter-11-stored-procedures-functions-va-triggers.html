@@ -1,0 +1,502 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-11-stored-procedures-functions-va-triggers</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 11: Stored Procedures, Functions và Triggers</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Đóng gói logic nghiệp vụ, tự động hóa tác vụ với Stored Procedures, Functions và Triggers sử dụng PL/pgSQL.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Functions (Hàm) trong PostgreSQL:</strong><ul>
+<li>Một khối code được đặt tên, có thể nhận các tham số đầu vào, thực thi logic và trả về một giá trị đơn lẻ hoặc một tập các dòng (table functions).</li>
+<li><strong>Ngôn ngữ:</strong> PostgreSQL hỗ trợ nhiều ngôn ngữ để viết function:<ul>
+<li><code>SQL</code>: Viết function bằng các câu lệnh SQL chuẩn. Thích hợp cho các function đơn giản.</li>
+<li><code>PL/pgSQL</code> (Procedural Language/PostgreSQL SQL): Ngôn ngữ thủ tục mạnh mẽ, được tích hợp sẵn, có biến, cấu trúc điều khiển (IF, CASE), vòng lặp (LOOP, WHILE, FOR), xử lý ngoại lệ. Phổ biến nhất.</li>
+<li>Các ngôn ngữ khác: <code>PL/Python</code>, <code>PL/Perl</code>, <code>PL/Tcl</code>, <code>PL/Java</code> (cần cài đặt extension).</li>
+</ul>
+</li>
+<li><strong>Cú pháp <code>CREATE FUNCTION</code>:</strong><pre><code class="language-sql">CREATE [OR REPLACE] FUNCTION function_name (param_name1 param_type1, ...)
+RETURNS return_type -- Hoặc RETURNS TABLE (col1 type1, ...) hoặc RETURNS SETOF type
+AS $$ -- Hoặc AS &#39;...&#39;
+BEGIN -- Chỉ cho PL/pgSQL và các ngôn ngữ thủ tục khác
+    -- Logic của function
+    RETURN expression; -- Hoặc RETURN QUERY SELECT ... cho SETOF
+END; -- Chỉ cho PL/pgSQL
+$$ LANGUAGE language_name
+[IMMUTABLE | STABLE | VOLATILE] -- Tính chất của function
+[SECURITY DEFINER | SECURITY INVOKER] -- Ngữ cảnh bảo mật
+[COST execution_cost]
+[ROWS result_rows] -- Cho SETOF
+[SET configuration_parameter = value];
+</code></pre>
+</li>
+<li><strong>Tính chất của function (Volatility):</strong><ul>
+<li><code>VOLATILE</code> (Mặc định): Function có thể thay đổi CSDL và/hoặc trả về kết quả khác nhau ngay cả với cùng tham số đầu vào (ví dụ: <code>NOW()</code>, <code>random()</code>). Bộ tối ưu hóa không thể giả định gì về nó.</li>
+<li><code>STABLE</code>: Function không thay đổi CSDL và đảm bảo trả về cùng kết quả cho cùng tham số đầu vào <em>trong phạm vi một lần scan bảng</em>. Có thể phụ thuộc vào các tham số CSDL, dữ liệu hiện tại.</li>
+<li><code>IMMUTABLE</code>: Function không thay đổi CSDL và <em>luôn luôn</em> trả về cùng kết quả cho cùng tham số đầu vào, không phụ thuộc vào bất cứ điều gì khác. Hữu ích cho việc sử dụng trong index.</li>
+</ul>
+</li>
+<li><strong>Ngữ cảnh bảo mật:</strong><ul>
+<li><code>SECURITY INVOKER</code> (Mặc định): Function thực thi với quyền của user gọi nó.</li>
+<li><code>SECURITY DEFINER</code>: Function thực thi với quyền của user tạo (owner) ra nó. Cần cẩn thận khi dùng để tránh leo thang đặc quyền.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Stored Procedures (Thủ tục lưu trữ - PostgreSQL 11+):</strong><ul>
+<li>Tương tự functions nhưng được thiết kế để thực hiện các hành động và không bắt buộc trả về giá trị.</li>
+<li>Quan trọng nhất: Stored Procedures có thể quản lý transaction bên trong nó (<code>COMMIT</code>, <code>ROLLBACK</code>). Functions không thể.</li>
+<li>Cú pháp <code>CREATE PROCEDURE</code>:<pre><code class="language-sql">CREATE [OR REPLACE] PROCEDURE procedure_name (param_name1 param_type1, ...)
+AS $$
+BEGIN
+    -- Logic của procedure
+    -- Có thể chứa COMMIT, ROLLBACK
+END;
+$$ LANGUAGE plpgsql; -- Hoặc ngôn ngữ khác
+</code></pre>
+</li>
+<li>Gọi bằng <code>CALL procedure_name(...);</code>.</li>
+</ul>
+</li>
+<li><strong>Giới thiệu PL/pgSQL:</strong><ul>
+<li>Ngôn ngữ khối lệnh (block-structured). Mỗi khối có <code>DECLARE</code> (khai báo biến), <code>BEGIN</code> (thân khối lệnh), <code>EXCEPTION</code> (xử lý lỗi), <code>END</code>.</li>
+<li><strong>Khai báo biến:</strong> <code>variable_name [CONSTANT] type [NOT NULL] [DEFAULT | := | = expression];</code></li>
+<li><strong>Gán giá trị:</strong> <code>variable := expression;</code> hoặc <code>variable = expression;</code>.</li>
+<li><strong>Lệnh <code>SELECT INTO variable ...</code></strong>: Gán kết quả của câu <code>SELECT</code> vào biến.</li>
+<li><strong>Cấu trúc điều khiển:</strong><ul>
+<li><code>IF condition THEN ... ELSIF condition THEN ... ELSE ... END IF;</code></li>
+<li><code>CASE ... WHEN ... THEN ... ELSE ... END CASE;</code></li>
+</ul>
+</li>
+<li><strong>Vòng lặp:</strong><ul>
+<li><code>LOOP ... EXIT [WHEN condition]; ... END LOOP;</code></li>
+<li><code>WHILE condition LOOP ... END LOOP;</code></li>
+<li><code>FOR target IN query LOOP ... END LOOP;</code> (target có thể là record hoặc rowtype)</li>
+<li><code>FOR target IN [REVERSE] expression .. expression LOOP ... END LOOP;</code> (vòng lặp số)</li>
+</ul>
+</li>
+<li><strong><code>RETURN</code></strong>: Trong function, dùng để trả về giá trị.</li>
+<li><strong><code>RAISE [level] &#39;format&#39; [, expression ...];</code></strong>: Đưa ra thông báo hoặc lỗi (ví dụ: <code>RAISE NOTICE ...</code>, <code>RAISE EXCEPTION ...</code>).</li>
+<li><strong>Xử lý ngoại lệ:</strong><pre><code class="language-sql">BEGIN
+    -- statements
+EXCEPTION
+    WHEN condition [OR condition ...] THEN
+        -- handler_statements
+    WHEN OTHERS THEN -- Bắt tất cả các lỗi khác
+        -- handler_statements
+END;
+```SQLSTATE` và `SQLERRM` là các biến đặc biệt chứa mã lỗi và thông điệp lỗi.
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Triggers:</strong><ul>
+<li>Một trigger là một function đặc biệt được PostgreSQL tự động thực thi khi có một sự kiện DML (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>) hoặc <code>TRUNCATE</code> xảy ra trên một bảng hoặc view cụ thể.</li>
+<li><strong>Trigger Function:</strong> Là một function PL/pgSQL (hoặc ngôn ngữ khác) không nhận tham số và phải trả về kiểu <code>TRIGGER</code>.</li>
+<li><strong>Cú pháp <code>CREATE TRIGGER</code>:</strong><pre><code class="language-sql">CREATE [CONSTRAINT] TRIGGER trigger_name
+{BEFORE | AFTER | INSTEAD OF} {event [OR ...]}
+ON table_name
+[FROM referenced_table_name]
+[NOT DEFERRABLE | [DEFERRABLE] [INITIALLY IMMEDIATE | INITIALLY DEFERRED]]
+[REFERENCING {OLD TABLE AS old_table_name | NEW TABLE AS new_table_name} [...]]
+[FOR [EACH] {ROW | STATEMENT}]
+[WHEN (condition)]
+EXECUTE {FUNCTION | PROCEDURE} function_name (arguments);
+</code></pre>
+</li>
+<li><code>BEFORE | AFTER | INSTEAD OF</code>: Thời điểm trigger kích hoạt. <code>INSTEAD OF</code> chỉ dùng cho view.</li>
+<li><code>event</code>: <code>INSERT</code>, <code>UPDATE [OF column_name [, ...]]</code>, <code>DELETE</code>, <code>TRUNCATE</code>.</li>
+<li><code>FOR EACH ROW</code>: Trigger thực thi một lần cho mỗi dòng bị ảnh hưởng.</li>
+<li><code>FOR EACH STATEMENT</code>: Trigger thực thi một lần cho mỗi câu lệnh, bất kể bao nhiêu dòng bị ảnh hưởng.</li>
+<li><strong>Biến đặc biệt trong Trigger Function (cho <code>FOR EACH ROW</code>):</strong><ul>
+<li><code>NEW</code>: Một biến kiểu <code>RECORD</code> chứa dòng mới (cho <code>INSERT</code> và <code>UPDATE</code>).</li>
+<li><code>OLD</code>: Một biến kiểu <code>RECORD</code> chứa dòng cũ (cho <code>UPDATE</code> và <code>DELETE</code>).</li>
+<li><code>TG_OP</code>: TEXT, thao tác gây ra trigger (<code>&#39;INSERT&#39;</code>, <code>&#39;UPDATE&#39;</code>, <code>&#39;DELETE&#39;</code>, <code>&#39;TRUNCATE&#39;</code>).</li>
+<li><code>TG_TABLE_NAME</code>, <code>TG_TABLE_SCHEMA</code>: Tên bảng và schema.</li>
+<li><code>TG_WHEN</code>: <code>&#39;BEFORE&#39;</code>, <code>&#39;AFTER&#39;</code>, <code>&#39;INSTEAD OF&#39;</code>.</li>
+<li><code>TG_LEVEL</code>: <code>&#39;ROW&#39;</code>, <code>&#39;STATEMENT&#39;</code>.</li>
+</ul>
+</li>
+<li>Trong trigger <code>BEFORE FOR EACH ROW</code>, function có thể trả về <code>NULL</code> để bỏ qua thao tác trên dòng đó, hoặc trả về <code>NEW</code> (có thể đã được sửa đổi) để tiếp tục.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Function PL/pgSQL: Tính tổng doanh thu cho một khách hàng
+-- CREATE TABLE Invoices (invoice_id SERIAL, customer_id INT, total_amount NUMERIC);
+CREATE OR REPLACE FUNCTION get_customer_total_revenue(p_customer_id INT)
+RETURNS NUMERIC AS $$
+DECLARE
+    v_total_revenue NUMERIC := 0;
+BEGIN
+    SELECT SUM(total_amount) INTO v_total_revenue
+    FROM Invoices
+    WHERE customer_id = p_customer_id;
+
+    RETURN COALESCE(v_total_revenue, 0);
+END;
+$$ LANGUAGE plpgsql STABLE;
+-- SELECT get_customer_total_revenue(1);
+
+-- Stored Procedure PL/pgSQL: Chuyển tiền giữa hai tài khoản (đã có ở Chapter 4, đây là ví dụ khác)
+-- CREATE TABLE BankAccounts (acc_no TEXT PRIMARY KEY, balance NUMERIC);
+CREATE OR REPLACE PROCEDURE transfer_money(
+    from_account TEXT,
+    to_account TEXT,
+    amount NUMERIC
+) AS $$
+BEGIN
+    -- Giảm số dư tài khoản gửi
+    UPDATE BankAccounts SET balance = balance - amount WHERE acc_no = from_account;
+    -- Tăng số dư tài khoản nhận
+    UPDATE BankAccounts SET balance = balance + amount WHERE acc_no = to_account;
+
+    -- Kiểm tra nếu số dư tài khoản gửi bị âm (ví dụ đơn giản, thực tế cần check trước)
+    IF (SELECT balance FROM BankAccounts WHERE acc_no = from_account) &lt; 0 THEN
+        RAISE EXCEPTION &#39;Insufficient funds in account %&#39;, from_account;
+        -- Lưu ý: RAISE EXCEPTION sẽ tự động rollback transaction nếu procedure không tự quản lý
+    END IF;
+    -- COMMIT; -- Có thể COMMIT trong procedure nếu không chạy trong transaction lớn hơn
+    RAISE NOTICE &#39;Transferred % from % to % successfully.&#39;, amount, from_account, to_account;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE WARNING &#39;Transfer failed: % - %&#39;, SQLSTATE, SQLERRM;
+        -- ROLLBACK; -- Có thể ROLLBACK trong procedure
+        RAISE; -- Ném lại lỗi
+END;
+$$ LANGUAGE plpgsql;
+-- CALL transfer_money(&#39;ACC001&#39;, &#39;ACC002&#39;, 100.00);
+
+-- Trigger function và Trigger: Tự động cập nhật last_modified_timestamp
+-- ALTER TABLE Products ADD COLUMN last_modified TIMESTAMPTZ;
+CREATE OR REPLACE FUNCTION update_last_modified_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.last_modified = NOW(); -- Gán giá trị cho cột trong dòng SẮP được INSERT/UPDATE
+    RETURN NEW; -- Trả về dòng (có thể đã sửa đổi) để thao tác tiếp tục
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_products_last_modified
+BEFORE INSERT OR UPDATE ON Products
+FOR EACH ROW
+EXECUTE FUNCTION update_last_modified_column();
+
+-- Thử INSERT hoặc UPDATE vào Products, cột last_modified sẽ tự cập nhật.
+-- INSERT INTO Products (product_name, product_attributes) VALUES (&#39;New Gadget&#39;, &#39;{&quot;color&quot;:&quot;blue&quot;}&#39;);
+-- UPDATE Products SET product_name = &#39;New Gadget Pro&#39; WHERE product_name = &#39;New Gadget&#39;;
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong><ol>
+<li><strong>Function kiểm tra tồn kho:</strong><ul>
+<li>Viết một function PL/pgSQL tên <code>check_product_availability</code> nhận vào <code>p_product_id INT</code> và <code>p_quantity_needed INT</code>.</li>
+<li>Function này truy vấn bảng <code>Products</code> (giả sử có cột <code>stock_on_hand INT</code>).</li>
+<li>Trả về <code>BOOLEAN</code>: <code>TRUE</code> nếu <code>stock_on_hand &gt;= p_quantity_needed</code>, ngược lại <code>FALSE</code>.</li>
+</ul>
+</li>
+<li><strong>Stored Procedure xử lý đơn hàng:</strong><ul>
+<li>Viết một Stored Procedure PL/pgSQL tên <code>process_new_order</code> nhận vào <code>p_customer_id INT</code>, <code>p_product_id INT</code>, <code>p_quantity_ordered INT</code>.</li>
+<li>Bên trong procedure:<ul>
+<li>Bắt đầu một transaction (nếu cần, hoặc giả định nó chạy trong transaction riêng).</li>
+<li>Gọi function <code>check_product_availability</code> từ bài 1.</li>
+<li>Nếu có đủ hàng:<ul>
+<li>Giảm <code>stock_on_hand</code> trong bảng <code>Products</code>.</li>
+<li>Thêm một dòng mới vào bảng <code>Orders</code> (giả sử có bảng này).</li>
+<li><code>COMMIT</code> (nếu procedure tự quản lý transaction).</li>
+<li><code>RAISE NOTICE</code> thông báo thành công.</li>
+</ul>
+</li>
+<li>Nếu không đủ hàng:<ul>
+<li><code>RAISE EXCEPTION</code> thông báo không đủ hàng.</li>
+<li><code>ROLLBACK</code> (nếu procedure tự quản lý transaction).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Trigger ghi log thay đổi giá sản phẩm:</strong><ul>
+<li>Tạo bảng <code>ProductPriceLog</code> (log_id SERIAL, product_id INT, old_price NUMERIC, new_price NUMERIC, changed_by TEXT DEFAULT CURRENT_USER, changed_at TIMESTAMPTZ DEFAULT NOW()).</li>
+<li>Viết một trigger function PL/pgSQL.</li>
+<li>Tạo một trigger <code>AFTER UPDATE OF unit_price ON Products</code> (giả sử <code>Products</code> có cột <code>unit_price</code>).</li>
+<li>Trigger này sẽ ghi một dòng vào <code>ProductPriceLog</code> mỗi khi <code>unit_price</code> của một sản phẩm thay đổi, lưu giá cũ và giá mới.</li>
+</ul>
+</li>
+<li><strong>Function tính tuổi nhân viên (sử dụng <code>AGE</code> và <code>EXTRACT</code>):</strong><ul>
+<li>Viết một function PL/pgSQL nhận vào <code>date_of_birth DATE</code> và trả về tuổi (INTEGER) của người đó.</li>
+</ul>
+</li>
+<li><strong>Trigger ngăn xóa phòng ban có nhân viên:</strong><ul>
+<li>Giả sử có bảng <code>Departments</code> (dept_id, dept_name) và <code>Employees</code> (emp_id, dept_id).</li>
+<li>Viết một trigger function.</li>
+<li>Tạo một trigger <code>BEFORE DELETE ON Departments FOR EACH ROW</code>.</li>
+<li>Trigger này kiểm tra xem có nhân viên nào còn thuộc phòng ban sắp bị xóa không. Nếu có, <code>RAISE EXCEPTION</code> và ngăn chặn việc xóa.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

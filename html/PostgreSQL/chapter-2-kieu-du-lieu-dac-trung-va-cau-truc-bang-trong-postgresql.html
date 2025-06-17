@@ -1,0 +1,457 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-2-kieu-du-lieu-dac-trung-va-cau-truc-bang-trong-postgresql</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 2: Kiểu Dữ Liệu Đặc Trưng và Cấu Trúc Bảng trong PostgreSQL</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Khám phá hệ thống kiểu dữ liệu phong phú và thiết kế cấu trúc bảng hiệu quả trong PostgreSQL.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>So sánh kiểu dữ liệu giữa MySQL và PostgreSQL (chi tiết hơn):</strong><ul>
+<li><strong>Số nguyên:</strong><ul>
+<li>PostgreSQL: <code>SMALLINT</code> (2 bytes), <code>INTEGER</code> (4 bytes), <code>BIGINT</code> (8 bytes). <code>SERIAL</code>, <code>SMALLSERIAL</code>, <code>BIGSERIAL</code> là các kiểu tự tăng, thực chất là <code>INTEGER</code> hoặc <code>BIGINT</code> với giá trị mặc định lấy từ một sequence.</li>
+<li>MySQL: <code>TINYINT</code>, <code>SMALLINT</code>, <code>MEDIUMINT</code>, <code>INT</code>, <code>BIGINT</code>. <code>AUTO_INCREMENT</code> là thuộc tính của cột.</li>
+<li>Khác biệt <code>SERIAL</code> vs <code>AUTO_INCREMENT</code>: <code>SERIAL</code> trong PostgreSQL tạo ra một đối tượng <code>SEQUENCE</code> riêng biệt, có thể được quản lý và sử dụng độc lập. <code>AUTO_INCREMENT</code> của MySQL gắn liền với bảng. Việc lấy giá trị cuối cùng được chèn cũng khác nhau (<code>LASTVAL()</code> hoặc <code>CURRVAL(&#39;sequence_name&#39;)</code> trong PostgreSQL so với <code>LAST_INSERT_ID()</code> trong MySQL).</li>
+</ul>
+</li>
+<li><strong>Số thực:</strong><ul>
+<li>PostgreSQL: <code>REAL</code> (4 bytes, độ chính xác động), <code>DOUBLE PRECISION</code> (8 bytes, độ chính xác động). <code>NUMERIC(precision, scale)</code> hoặc <code>DECIMAL(precision, scale)</code> (độ chính xác cố định, dùng cho tiền tệ).</li>
+<li>MySQL: <code>FLOAT</code>, <code>DOUBLE</code>, <code>DECIMAL</code>. Tương tự PostgreSQL.</li>
+</ul>
+</li>
+<li><strong>Chuỗi:</strong><ul>
+<li>PostgreSQL: <code>VARCHAR(n)</code> (giới hạn độ dài), <code>CHAR(n)</code> (cố định độ dài, đệm khoảng trắng), <code>TEXT</code> (không giới hạn độ dài thực tế, hiệu quả cho chuỗi dài).</li>
+<li>MySQL: <code>VARCHAR(n)</code>, <code>CHAR(n)</code>, <code>TINYTEXT</code>, <code>TEXT</code>, <code>MEDIUMTEXT</code>, <code>LONGTEXT</code>. MySQL <code>TEXT</code> có giới hạn cụ thể cho từng loại. PostgreSQL <code>TEXT</code> linh hoạt hơn.</li>
+</ul>
+</li>
+<li><strong>Ngày giờ:</strong><ul>
+<li>PostgreSQL: <code>DATE</code> (chỉ ngày), <code>TIME [WITHOUT TIME ZONE]</code> (chỉ giờ), <code>TIME WITH TIME ZONE</code> (<code>TIMETZ</code>), <code>TIMESTAMP [WITHOUT TIME ZONE]</code>, <code>TIMESTAMP WITH TIME ZONE</code> (<code>TIMESTAMPTZ</code>), <code>INTERVAL</code> (khoảng thời gian).</li>
+<li><code>TIMESTAMPTZ</code> là điểm cực kỳ quan trọng: PostgreSQL lưu trữ <code>TIMESTAMPTZ</code> dưới dạng UTC và tự động chuyển đổi sang múi giờ của client khi truy vấn (dựa trên thiết lập <code>timezone</code> của session). Điều này giúp quản lý dữ liệu thời gian toàn cầu dễ dàng hơn nhiều so với <code>TIMESTAMP</code> của MySQL (thường lưu UTC và client tự xử lý hoặc có hành vi phụ thuộc vào <code>@@session.time_zone</code>).</li>
+<li>MySQL: <code>DATE</code>, <code>TIME</code>, <code>DATETIME</code>, <code>TIMESTAMP</code>, <code>YEAR</code>. <code>TIMESTAMP</code> của MySQL có hành vi đặc biệt liên quan đến múi giờ và phiên bản.</li>
+</ul>
+</li>
+<li><strong>Boolean:</strong><ul>
+<li>PostgreSQL: <code>BOOLEAN</code> (true, false, null). Chấp nhận các giá trị như <code>TRUE</code>, <code>FALSE</code>, <code>&#39;t&#39;</code>, <code>&#39;f&#39;</code>, <code>&#39;true&#39;</code>, <code>&#39;false&#39;</code>, <code>&#39;y&#39;</code>, <code>&#39;n&#39;</code>, <code>&#39;yes&#39;</code>, <code>&#39;no&#39;</code>, <code>1</code>, <code>0</code>.</li>
+<li>MySQL: <code>BOOL</code> hoặc <code>BOOLEAN</code> là alias của <code>TINYINT(1)</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Kiểu dữ liệu đặc trưng của PostgreSQL:</strong><ul>
+<li><strong><code>ARRAY</code>:</strong><ul>
+<li>Cho phép một cột lưu trữ mảng các giá trị cùng kiểu. Ví dụ: <code>INTEGER[]</code>, <code>TEXT[]</code>.</li>
+<li>Mảng một chiều hoặc đa chiều.</li>
+<li>Cú pháp khai báo: <code>data_type[]</code> hoặc <code>ARRAY[data_type]</code>.</li>
+<li>Nhập liệu: <code>ARRAY[&#39;apple&#39;, &#39;banana&#39;]</code>, <code>&#39;{apple,banana}&#39;::TEXT[]</code>.</li>
+<li>Toán tử và hàm: <code>ANY()</code>, <code>ALL()</code>, toán tử chứa <code>@&gt;</code>, <code>&lt;@</code>, <code>&amp;&amp;</code> (giao nhau), <code>array_append()</code>, <code>array_prepend()</code>, <code>array_remove()</code>, <code>array_cat()</code>, <code>unnest()</code> (mở rộng mảng thành các dòng).</li>
+</ul>
+</li>
+<li><strong><code>JSON</code> / <code>JSONB</code>:</strong><ul>
+<li><code>JSON</code>: Lưu trữ bản sao chính xác của văn bản JSON đầu vào (bao gồm khoảng trắng, thứ tự key, key trùng lặp). Truy vấn chậm hơn.</li>
+<li><code>JSONB</code> (JSON Binary): Lưu trữ ở định dạng nhị phân đã được phân tích cú pháp, tối ưu hóa. Loại bỏ khoảng trắng không cần thiết, key trùng lặp cuối cùng được giữ, thứ tự key không được đảm bảo. Truy vấn và indexing hiệu quả hơn nhiều. <strong>Thường ưu tiên sử dụng <code>JSONB</code></strong>.</li>
+<li>Các toán tử và hàm sẽ được học kỹ ở Chapter sau.</li>
+</ul>
+</li>
+<li><strong><code>UUID</code>:</strong><ul>
+<li>Kiểu định danh duy nhất toàn cầu (Universally Unique Identifier). Dài 128-bit.</li>
+<li>Ưu điểm: Hữu ích trong các hệ thống phân tán, tránh xung đột ID khi merge dữ liệu từ nhiều nguồn.</li>
+<li>Tạo giá trị: Cần extension <code>uuid-ossp</code> (hàm <code>uuid_generate_v1()</code>, <code>uuid_generate_v4()</code>) hoặc <code>gen_random_uuid()</code> (từ PostgreSQL 13+).</li>
+</ul>
+</li>
+<li><strong><code>ENUM</code> (Enumerated Types):</strong><ul>
+<li>Kiểu dữ liệu tự định nghĩa bao gồm một danh sách tĩnh, có thứ tự các nhãn chuỗi.</li>
+<li>Cú pháp: <code>CREATE TYPE mood AS ENUM (&#39;sad&#39;, &#39;ok&#39;, &#39;happy&#39;);</code></li>
+<li>Ưu điểm: Đảm bảo tính nhất quán dữ liệu, tiết kiệm không gian so với <code>VARCHAR</code>.</li>
+<li>Thao tác: <code>ALTER TYPE mood ADD VALUE &#39;ecstatic&#39; AFTER &#39;happy&#39;;</code> (Thêm giá trị mới).</li>
+</ul>
+</li>
+<li><strong>Các kiểu khác:</strong> <code>CIDR</code>, <code>INET</code> (địa chỉ mạng), <code>MACADDR</code> (địa chỉ MAC), các kiểu hình học (<code>POINT</code>, <code>LINE</code>, <code>LSEG</code>, <code>BOX</code>, <code>PATH</code>, <code>POLYGON</code>, <code>CIRCLE</code>).</li>
+</ul>
+</li>
+<li><strong>Ràng buộc (Constraints):</strong><ul>
+<li><code>PRIMARY KEY</code>: Duy nhất, không NULL.</li>
+<li><code>FOREIGN KEY</code>: Tham chiếu đến <code>PRIMARY KEY</code> hoặc <code>UNIQUE</code> của bảng khác. Các hành động <code>ON DELETE</code> / <code>ON UPDATE</code> (<code>NO ACTION</code>, <code>RESTRICT</code>, <code>CASCADE</code>, <code>SET NULL</code>, <code>SET DEFAULT</code>).</li>
+<li><code>UNIQUE</code>: Đảm bảo tất cả giá trị trong cột (hoặc nhóm cột) là duy nhất (cho phép nhiều NULL).</li>
+<li><code>CHECK (condition)</code>: Đảm bảo giá trị thỏa mãn một điều kiện logic.</li>
+<li><code>NOT NULL</code>: Cột không được phép chứa giá trị NULL.</li>
+<li><strong><code>DEFERRABLE</code> Constraints:</strong> PostgreSQL cho phép trì hoãn việc kiểm tra ràng buộc đến cuối transaction.<ul>
+<li><code>INITIALLY IMMEDIATE</code> (mặc định): Kiểm tra ngay khi câu lệnh thực thi.</li>
+<li><code>INITIALLY DEFERRED</code>: Chỉ kiểm tra khi <code>COMMIT</code> transaction (hoặc khi <code>SET CONSTRAINTS ... IMMEDIATE</code>).</li>
+<li>Hữu ích cho các trường hợp cần chèn dữ liệu theo thứ tự cụ thể mà tạm thời vi phạm ràng buộc.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Sequence và cách hoạt động của <code>SERIAL</code>:</strong><ul>
+<li><code>SEQUENCE</code> là một đối tượng đặc biệt tạo ra các số nguyên theo thứ tự.</li>
+<li><code>CREATE SEQUENCE my_sequence START 101 INCREMENT 1;</code></li>
+<li>Hàm: <code>nextval(&#39;my_sequence&#39;)</code>, <code>currval(&#39;my_sequence&#39;)</code>, <code>lastval()</code>, <code>setval(&#39;my_sequence&#39;, new_value)</code>.</li>
+<li>Kiểu <code>SERIAL</code> tự động tạo một sequence và đặt giá trị mặc định của cột là <code>nextval()</code> từ sequence đó. Tên sequence thường là <code>&lt;table_name&gt;_&lt;column_name&gt;_seq</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Tạo bảng với các kiểu dữ liệu PostgreSQL đa dạng
+CREATE EXTENSION IF NOT EXISTS &quot;uuid-ossp&quot;; -- Cần cho uuid_generate_v4() nếu dùng PG &lt; 13
+
+CREATE TYPE task_status AS ENUM (&#39;pending&#39;, &#39;in_progress&#39;, &#39;completed&#39;, &#39;cancelled&#39;);
+
+CREATE TABLE Projects (
+    project_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    project_name VARCHAR(255) NOT NULL UNIQUE,
+    start_date DATE,
+    end_date DATE,
+    budget NUMERIC(12, 2) CHECK (budget &gt; 0),
+    CONSTRAINT check_dates CHECK (end_date IS NULL OR start_date &lt;= end_date)
+);
+
+CREATE TABLE Tasks (
+    task_id SERIAL PRIMARY KEY,
+    project_id UUID REFERENCES Projects(project_id) ON DELETE CASCADE,
+    task_name VARCHAR(200) NOT NULL,
+    assignees TEXT[], -- Mảng tên người thực hiện
+    details JSONB, -- Chi tiết công việc dạng JSON
+    status task_status DEFAULT &#39;pending&#39;,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    priority INTEGER DEFAULT 0
+);
+
+-- Thêm dữ liệu ví dụ
+INSERT INTO Projects (project_name, start_date, budget) VALUES
+(&#39;New Website Launch&#39;, &#39;2024-06-01&#39;, 50000.00);
+
+INSERT INTO Tasks (project_id, task_name, assignees, details, status)
+SELECT
+    p.project_id,
+    &#39;Design Homepage&#39;,
+    ARRAY[&#39;Alice&#39;, &#39;Bob&#39;],
+    &#39;{&quot;description&quot;: &quot;Create a modern homepage design&quot;, &quot;estimated_hours&quot;: 20}&#39;,
+    &#39;in_progress&#39;
+FROM Projects p WHERE p.project_name = &#39;New Website Launch&#39;;
+
+INSERT INTO Tasks (project_id, task_name, assignees, details)
+SELECT
+    p.project_id,
+    &#39;Develop API&#39;,
+    ARRAY[&#39;Charlie&#39;],
+    &#39;{&quot;endpoints&quot;: [&quot;/users&quot;, &quot;/products&quot;], &quot;auth_required&quot;: true}&#39;
+FROM Projects p WHERE p.project_name = &#39;New Website Launch&#39;;
+
+-- Truy vấn dữ liệu ARRAY
+SELECT task_name, assignees FROM Tasks WHERE &#39;Alice&#39; = ANY(assignees);
+
+-- Truy vấn dữ liệu JSONB (sẽ học kỹ hơn)
+SELECT task_name, details -&gt;&gt; &#39;description&#39; AS task_description
+FROM Tasks
+WHERE details -&gt;&gt; &#39;estimated_hours&#39; = &#39;20&#39;; -- Lưu ý: giá trị trong JSONB là text
+
+-- Sử dụng sequence trực tiếp
+CREATE SEQUENCE global_event_id_seq START 1000;
+CREATE TABLE GlobalEvents (
+    event_id INTEGER PRIMARY KEY DEFAULT nextval(&#39;global_event_id_seq&#39;),
+    event_name VARCHAR(100),
+    event_time TIMESTAMPTZ
+);
+INSERT INTO GlobalEvents (event_name, event_time) VALUES (&#39;System Maintenance&#39;, NOW());
+SELECT currval(&#39;global_event_id_seq&#39;);
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong><ol>
+<li><strong>Thiết kế bảng <code>Courses</code> và <code>Enrollments</code>:</strong><ul>
+<li>Bảng <code>Courses</code>:<ul>
+<li><code>course_id</code> (UUID, khóa chính, tự sinh).</li>
+<li><code>course_name</code> (VARCHAR(150), không null, duy nhất).</li>
+<li><code>description</code> (TEXT).</li>
+<li><code>credits</code> (SMALLINT, check &gt; 0).</li>
+<li><code>instructor_names</code> (Mảng TEXT, chứa tên các giảng viên).</li>
+<li><code>syllabus_details</code> (JSONB, chứa thông tin như <code>{&quot;topics&quot;: [&quot;topic1&quot;, &quot;topic2&quot;], &quot;textbook&quot;: &quot;Book Name&quot;}</code>).</li>
+<li><code>start_timestamp</code> (TIMESTAMPTZ).</li>
+</ul>
+</li>
+<li>Tạo kiểu <code>ENUM</code> tên <code>enrollment_grade</code> với các giá trị: <code>A</code>, <code>B</code>, <code>C</code>, <code>D</code>, <code>F</code>, <code>In Progress</code>.</li>
+<li>Bảng <code>Enrollments</code>:<ul>
+<li><code>enrollment_id</code> (SERIAL, khóa chính).</li>
+<li><code>course_id</code> (UUID, khóa ngoại tham chiếu đến <code>Courses</code>, xóa cascade).</li>
+<li><code>student_id</code> (INTEGER, giả sử có bảng Students).</li>
+<li><code>enrollment_date</code> (DATE, mặc định ngày hiện tại).</li>
+<li><code>grade</code> (sử dụng ENUM <code>enrollment_grade</code>, mặc định <code>In Progress</code>).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Thêm dữ liệu:</strong> Thêm ít nhất 2 khóa học vào bảng <code>Courses</code> và 3 lượt đăng ký vào bảng <code>Enrollments</code> với dữ liệu đa dạng cho các cột mảng và JSONB.</li>
+<li><strong>Truy vấn <code>ARRAY</code>:</strong> Viết câu lệnh tìm các khóa học được dạy bởi một giảng viên cụ thể (ví dụ: &#39;Prof. Smith&#39;).</li>
+<li><strong>Truy vấn <code>JSONB</code>:</strong> Viết câu lệnh tìm các khóa học có chủ đề (topic) là &#39;Database Systems&#39; trong <code>syllabus_details</code>.</li>
+<li><strong>Thao tác với <code>ENUM</code>:</strong><ul>
+<li>Thử thêm một giá trị mới vào <code>enrollment_grade</code> (ví dụ: <code>Withdrawn</code>).</li>
+<li>Cập nhật một lượt đăng ký để sử dụng giá trị <code>ENUM</code> mới này.</li>
+</ul>
+</li>
+<li><strong>Sequence:</strong> Tạo một sequence tên <code>student_registration_number_seq</code> bắt đầu từ 10000. Thiết kế một bảng <code>Students</code> đơn giản với cột <code>registration_number</code> sử dụng sequence này làm giá trị mặc định.</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,4 +1,4 @@
-### Chapter 6: Backup, Restore và Các Lệnh DML Đặc Biệt
+# Chapter 6: Backup, Restore và Các Lệnh DML Đặc Biệt
 
 * **Tên bài học:** Bảo vệ dữ liệu với Backup/Restore và làm chủ các kỹ thuật DML nâng cao (UPSERT, RETURNING, DELETE USING).
 * **Tóm tắt lý thuyết:**

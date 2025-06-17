@@ -1,0 +1,729 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-11-microservices-va-cqrs</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 11: Microservices và CQRS</h1>
+<p><strong>Tên Chapter học:</strong> Microservices và CQRS</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu kiến trúc Microservices:</strong><ul>
+<li>Nắm vững khái niệm, ưu điểm (tính độc lập, khả năng mở rộng riêng lẻ, đa dạng công nghệ) và nhược điểm (tính phức tạp, giao tiếp liên service, quản lý) của kiến trúc microservices.</li>
+</ul>
+</li>
+<li><strong>Xây dựng Microservices với NestJS:</strong><ul>
+<li>Làm quen với các transport layer mà NestJS hỗ trợ cho giao tiếp microservice (TCP, Redis, gRPC, Kafka, NATS, RabbitMQ).</li>
+<li>Học cách tạo một NestJS application hoạt động như một microservice (không có HTTP server).</li>
+<li>Sử dụng <code>ClientProxy</code> để gửi message (request-response) hoặc emit event (event-based) từ một service (ví dụ: API Gateway) đến một microservice khác.</li>
+<li>Sử dụng <code>@MessagePattern</code> (cho request-response) và <code>@EventPattern</code> (cho event-based) trong microservice để xử lý các message/event nhận được.</li>
+</ul>
+</li>
+<li><strong>Giới thiệu CQRS (Command Query Responsibility Segregation):</strong><ul>
+<li>Hiểu rõ pattern CQRS: tách biệt các thao tác ghi (Commands) và đọc (Queries) dữ liệu.</li>
+<li>Lợi ích: Tối ưu hóa riêng cho write model và read model, khả năng mở rộng tốt hơn, đơn giản hóa các model phức tạp.</li>
+</ul>
+</li>
+<li><strong>Triển khai CQRS cơ bản với <code>@nestjs/cqrs</code>:</strong><ul>
+<li>Sử dụng các thành phần của module <code>@nestjs/cqrs</code>:<ul>
+<li><code>CommandBus</code>, <code>QueryBus</code>, <code>EventBus</code>.</li>
+<li><code>ICommandHandler</code>, <code>IQueryHandler</code>, <code>IEventHandler</code>.</li>
+<li><code>Command</code>, <code>Query</code>, <code>Event</code>.</li>
+</ul>
+</li>
+<li>Thực hành tạo Command, Query, Handler và sử dụng Bus để dispatch chúng.</li>
+</ul>
+</li>
+<li><strong>Event Sourcing (Giới thiệu):</strong> Nắm bắt khái niệm Event Sourcing như một pattern thường đi kèm với CQRS, nơi trạng thái của ứng dụng được xác định bằng một chuỗi các event.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Kiến trúc Microservices:</strong></p>
+<ul>
+<li>Là một phương pháp phát triển phần mềm chia một ứng dụng lớn thành một tập hợp các service nhỏ, độc lập, mỗi service chạy trong tiến trình riêng và giao tiếp với nhau qua các cơ chế nhẹ (thường là HTTP API, message queues, gRPC).</li>
+<li><strong>Ưu điểm:</strong><ul>
+<li><strong>Independent Deployment:</strong> Mỗi service có thể được deploy độc lập.</li>
+<li><strong>Scalability:</strong> Scale riêng từng service theo nhu cầu.</li>
+<li><strong>Technology Diversity:</strong> Chọn công nghệ phù hợp cho từng service.</li>
+<li><strong>Fault Isolation:</strong> Lỗi ở một service ít ảnh hưởng đến các service khác.</li>
+<li><strong>Smaller Codebases:</strong> Dễ hiểu, dễ bảo trì hơn.</li>
+</ul>
+</li>
+<li><strong>Nhược điểm:</strong><ul>
+<li><strong>Complexity:</strong> Quản lý nhiều service, giao tiếp liên service, distributed transactions.</li>
+<li><strong>Testing:</strong> Khó khăn hơn trong việc test toàn bộ hệ thống.</li>
+<li><strong>Operational Overhead:</strong> Cần công cụ giám sát, logging, deployment phức tạp hơn.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Microservices trong NestJS:</strong></p>
+<ul>
+<li>NestJS cung cấp các module để dễ dàng xây dựng và giao tiếp giữa các microservices.</li>
+<li><strong>Transport Layers:</strong><ul>
+<li><strong>TCP:</strong> Giao tiếp qua socket TCP đơn giản.</li>
+<li><strong>Redis:</strong> Sử dụng Redis Pub/Sub.</li>
+<li><strong>gRPC:</strong> Framework RPC hiệu năng cao của Google, sử dụng Protocol Buffers.</li>
+<li><strong>Kafka, NATS, RabbitMQ:</strong> Các message broker mạnh mẽ cho event-driven architecture.</li>
+</ul>
+</li>
+<li><strong>Tạo một Microservice Application:</strong><ul>
+<li>Trong <code>main.ts</code>, sử dụng <code>NestFactory.createMicroservice()</code> thay vì <code>NestFactory.create()</code>.</li>
+</ul>
+<pre><code class="language-typescript">// main.ts của một microservice (ví dụ: math-service)
+import { NestFactory } from &#39;@nestjs/core&#39;;
+import { AppModule } from &#39;./app.module&#39;;
+import { Transport, MicroserviceOptions } from &#39;@nestjs/microservices&#39;;
+
+async function bootstrap() {
+  const app = await NestFactory.createMicroservice&lt;MicroserviceOptions&gt;(
+    AppModule,
+    {
+      transport: Transport.TCP, // Chọn transport layer
+      options: {
+        host: &#39;localhost&#39;,
+        port: 3002, // Port cho microservice này
+      },
+    },
+  );
+  await app.listen(); // Lắng nghe message, không phải HTTP request
+  console.log(&#39;Math microservice is running on TCP port 3002&#39;);
+}
+bootstrap();
+</code></pre>
+</li>
+<li><strong>Xử lý Message/Event trong Microservice:</strong><ul>
+<li><strong><code>@MessagePattern(pattern)</code> (Request-Response):</strong><ul>
+<li>Dùng để xử lý các message được gửi theo kiểu request-response (client gửi và đợi kết quả).</li>
+<li><code>pattern</code> có thể là string hoặc object.</li>
+</ul>
+<pre><code class="language-typescript">// math.controller.ts (trong math-service)
+import { Controller } from &#39;@nestjs/common&#39;;
+import { MessagePattern, Payload } from &#39;@nestjs/microservices&#39;;
+
+@Controller()
+export class MathController {
+  @MessagePattern({ cmd: &#39;add&#39; }) // Pattern để nhận diện message
+  add(@Payload() data: number[]): number {
+    return (data || []).reduce((a, b) =&gt; a + b, 0);
+  }
+
+  @MessagePattern(&#39;multiply&#39;) // Pattern đơn giản
+  multiply(@Payload() data: { a: number, b: number }): number {
+    return data.a * data.b;
+  }
+}
+</code></pre>
+</li>
+<li><strong><code>@EventPattern(pattern)</code> (Event-based):</strong><ul>
+<li>Dùng để xử lý các event được emit (client chỉ gửi, không đợi kết quả).</li>
+<li>Thường dùng với message brokers (Kafka, RabbitMQ, NATS) hoặc Redis Pub/Sub.</li>
+</ul>
+<pre><code class="language-typescript">// notifications.controller.ts (trong notification-service)
+import { Controller } from &#39;@nestjs/common&#39;;
+import { EventPattern, Payload } from &#39;@nestjs/microservices&#39;;
+
+@Controller()
+export class NotificationsController {
+  @EventPattern(&#39;order_created&#39;) // Lắng nghe event &#39;order_created&#39;
+  handleOrderCreated(@Payload() data: any) {
+    console.log(&#39;Notification Service: Received order_created event:&#39;, data);
+    // ... gửi email, sms, etc. ...
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Giao tiếp với Microservice từ Client (ví dụ: API Gateway):</strong><ul>
+<li>Sử dụng <code>ClientsModule</code> và <code>ClientProxy</code>.</li>
+<li><strong>Đăng ký client trong module của API Gateway:</strong><pre><code class="language-typescript">// app.module.ts (của API Gateway)
+import { Module } from &#39;@nestjs/common&#39;;
+import { ClientsModule, Transport } from &#39;@nestjs/microservices&#39;;
+// ...
+
+@Module({
+  imports: [
+    ClientsModule.register([
+      {
+        name: &#39;MATH_SERVICE&#39;, // Token để inject ClientProxy
+        transport: Transport.TCP,
+        options: { host: &#39;localhost&#39;, port: 3002 },
+      },
+      {
+        name: &#39;NOTIFICATION_SERVICE&#39;,
+        transport: Transport.REDIS, // Ví dụ dùng Redis
+        options: {
+          host: &#39;localhost&#39;,
+          port: 6379,
+        },
+      },
+    ]),
+    // ...
+  ],
+  // ...
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><strong>Inject <code>ClientProxy</code> và sử dụng:</strong><pre><code class="language-typescript">// app.controller.ts (của API Gateway)
+import { Controller, Get, Inject, Query, Post, Body } from &#39;@nestjs/common&#39;;
+import { ClientProxy } from &#39;@nestjs/microservices&#39;;
+import { Observable, firstValueFrom } from &#39;rxjs&#39;; // Cần firstValueFrom để chuyển Observable thành Promise
+
+@Controller()
+export class AppController {
+  constructor(
+    @Inject(&#39;MATH_SERVICE&#39;) private mathClient: ClientProxy,
+    @Inject(&#39;NOTIFICATION_SERVICE&#39;) private notificationClient: ClientProxy,
+  ) {}
+
+  @Get(&#39;sum&#39;)
+  async getSum(@Query(&#39;numbers&#39;) numbersStr: string): Promise&lt;number&gt; {
+    const numbers = numbersStr.split(&#39;,&#39;).map(Number);
+    // send() trả về Observable, cần chuyển sang Promise nếu dùng async/await
+    return firstValueFrom(this.mathClient.send&lt;number&gt;({ cmd: &#39;add&#39; }, numbers));
+  }
+
+  @Post(&#39;create-order&#39;)
+  async createOrder(@Body() orderData: any) {
+    // ... logic tạo order ...
+    console.log(&#39;API Gateway: Order created, emitting event...&#39;);
+    this.notificationClient.emit(&#39;order_created&#39;, { orderId: orderData.id, ...orderData }); // Emit event
+    return { message: &#39;Order created and notification event emitted.&#39; };
+  }
+}
+</code></pre>
+  <code>ClientProxy.send&lt;TResult = any, TInput = any&gt;(pattern: any, data: TInput)</code>: Gửi message và đợi response.
+  <code>ClientProxy.emit&lt;TResult = any, TInput = any&gt;(pattern: any, data: TInput)</code>: Gửi event, không đợi response.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>CQRS (Command Query Responsibility Segregation):</strong></p>
+<ul>
+<li>Một pattern kiến trúc tách biệt các thao tác thay đổi trạng thái (Commands) khỏi các thao tác truy vấn trạng thái (Queries).</li>
+<li><strong>Command Side (Write Model):</strong><ul>
+<li>Xử lý các command (yêu cầu thay đổi trạng thái).</li>
+<li>Thường tập trung vào validation, business logic, và tính nhất quán dữ liệu.</li>
+<li>Có thể không trả về dữ liệu, hoặc chỉ trả về ID của resource đã tạo/thay đổi.</li>
+</ul>
+</li>
+<li><strong>Query Side (Read Model):</strong><ul>
+<li>Xử lý các query (yêu cầu lấy dữ liệu).</li>
+<li>Thường được tối ưu cho việc đọc, có thể sử dụng các CSDL khác nhau hoặc các view đã được denormalize.</li>
+<li>Không bao giờ thay đổi trạng thái hệ thống.</li>
+</ul>
+</li>
+<li><strong>Benefits:</strong><ul>
+<li><strong>Scalability:</strong> Scale riêng write side và read side.</li>
+<li><strong>Performance:</strong> Tối ưu hóa riêng cho từng loại thao tác.</li>
+<li><strong>Simplicity:</strong> Các model đơn giản hơn, dễ hiểu hơn.</li>
+<li><strong>Flexibility:</strong> Có thể sử dụng các CSDL/công nghệ khác nhau cho write và read.</li>
+</ul>
+</li>
+<li><strong>Events:</strong> Thường được sử dụng để đồng bộ hóa trạng thái từ write model sang read model. Khi một command thành công, nó có thể publish một event. Read model lắng nghe event này để cập nhật dữ liệu của nó.</li>
+</ul>
+</li>
+<li><p><strong>CQRS với <code>@nestjs/cqrs</code>:</strong></p>
+<ul>
+<li><strong>Cài đặt:</strong> <code>npm install --save @nestjs/cqrs</code></li>
+<li><strong>Các thành phần chính:</strong><ul>
+<li><strong>Command:</strong> Một object đại diện cho ý định thay đổi trạng thái (ví dụ: <code>CreateProductCommand</code>).<pre><code class="language-typescript">// src/products/commands/impl/create-product.command.ts
+export class CreateProductCommand {
+  constructor(
+    public readonly name: string,
+    public readonly price: number,
+    public readonly description?: string,
+  ) {}
+}
+</code></pre>
+</li>
+<li><strong>Query:</strong> Một object đại diện cho ý định truy vấn dữ liệu (ví dụ: <code>GetProductByIdQuery</code>).<pre><code class="language-typescript">// src/products/queries/impl/get-product-by-id.query.ts
+export class GetProductByIdQuery {
+  constructor(public readonly productId: string) {}
+}
+</code></pre>
+</li>
+<li><strong>CommandHandler (<code>@CommandHandler(CommandType)</code>):</strong> Một class implement <code>ICommandHandler&lt;CommandType&gt;</code> để xử lý một command cụ thể.<pre><code class="language-typescript">// src/products/commands/handlers/create-product.handler.ts
+import { CommandHandler, ICommandHandler } from &#39;@nestjs/cqrs&#39;;
+import { CreateProductCommand } from &#39;../impl/create-product.command&#39;;
+import { ProductsRepository } from &#39;../../products.repository&#39;; // Giả sử có repository
+// ...
+
+@CommandHandler(CreateProductCommand)
+export class CreateProductHandler implements ICommandHandler&lt;CreateProductCommand&gt; {
+  constructor(private readonly repository: ProductsRepository /*, private readonly eventBus: EventBus */) {}
+
+  async execute(command: CreateProductCommand): Promise&lt;any&gt; { // Trả về ID hoặc entity
+    const { name, price, description } = command;
+    const product = await this.repository.createAndSave({ name, price, description });
+    // this.eventBus.publish(new ProductCreatedEvent(product.id, name)); // Publish event
+    return product;
+  }
+}
+</code></pre>
+</li>
+<li><strong>QueryHandler (<code>@QueryHandler(QueryType)</code>):</strong> Một class implement <code>IQueryHandler&lt;QueryType&gt;</code> để xử lý một query cụ thể.<pre><code class="language-typescript">// src/products/queries/handlers/get-product-by-id.handler.ts
+import { QueryHandler, IQueryHandler } from &#39;@nestjs/cqrs&#39;;
+import { GetProductByIdQuery } from &#39;../impl/get-product-by-id.query&#39;;
+import { ProductsRepository } from &#39;../../products.repository&#39;;
+// ...
+
+@QueryHandler(GetProductByIdQuery)
+export class GetProductByIdHandler implements IQueryHandler&lt;GetProductByIdQuery&gt; {
+  constructor(private readonly repository: ProductsRepository) {}
+
+  async execute(query: GetProductByIdQuery): Promise&lt;any&gt; { // Trả về DTO hoặc entity
+    return this.repository.findById(query.productId);
+  }
+}
+</code></pre>
+</li>
+<li><strong>Event:</strong> Một object đại diện cho một sự kiện đã xảy ra trong hệ thống (ví dụ: <code>ProductCreatedEvent</code>).</li>
+<li><strong>EventHandler (<code>@EventsHandler(EventType)</code>):</strong> Một class implement <code>IEventHandler&lt;EventType&gt;</code> để xử lý một event cụ thể.</li>
+<li><strong><code>CommandBus</code>:</strong> Dùng để dispatch commands đến các CommandHandlers tương ứng.</li>
+<li><strong><code>QueryBus</code>:</strong> Dùng để dispatch queries đến các QueryHandlers tương ứng.</li>
+<li><strong><code>EventBus</code>:</strong> Dùng để publish events đến các EventHandlers.</li>
+</ul>
+</li>
+<li><strong>Cấu hình <code>CqrsModule</code> và đăng ký Handlers:</strong><pre><code class="language-typescript">// src/products/products.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { CqrsModule } from &#39;@nestjs/cqrs&#39;;
+// ... import các CommandHandlers, QueryHandlers ...
+export const CommandHandlers = [CreateProductHandler, /* ... */];
+export const QueryHandlers = [GetProductByIdHandler, /* ... */];
+
+@Module({
+  imports: [CqrsModule, /* ... */],
+  providers: [ProductsService, ProductsResolver, ProductsRepository, ...CommandHandlers, ...QueryHandlers],
+  // ...
+})
+export class ProductsModule {}
+</code></pre>
+</li>
+<li><strong>Sử dụng <code>CommandBus</code> và <code>QueryBus</code> trong Service hoặc Controller/Resolver:</strong><pre><code class="language-typescript">// src/products/products.service.ts (hoặc controller/resolver)
+import { Injectable } from &#39;@nestjs/common&#39;;
+import { CommandBus, QueryBus } from &#39;@nestjs/cqrs&#39;;
+import { CreateProductCommand } from &#39;./commands/impl/create-product.command&#39;;
+import { GetProductByIdQuery } from &#39;./queries/impl/get-product-by-id.query&#39;;
+// ...
+
+@Injectable()
+export class ProductsService {
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
+
+  async createProduct(name: string, price: number, description?: string) {
+    return this.commandBus.execute(
+      new CreateProductCommand(name, price, description),
+    );
+  }
+
+  async getProduct(id: string) {
+    return this.queryBus.execute(new GetProductByIdQuery(id));
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Event Sourcing (Giới thiệu):</strong></p>
+<ul>
+<li>Một pattern kiến trúc trong đó tất cả các thay đổi đối với trạng thái ứng dụng được lưu trữ dưới dạng một chuỗi các event.</li>
+<li>Thay vì lưu trạng thái hiện tại của một entity, bạn lưu tất cả các event đã xảy ra với entity đó.</li>
+<li>Trạng thái hiện tại có thể được tái tạo bằng cách replay các event.</li>
+<li><strong>Lợi ích:</strong> Audit log đầy đủ, debug dễ dàng, khả năng phân tích lịch sử.</li>
+<li>Thường đi kèm với CQRS. Command handlers validate command và publish events. Event handlers cập nhật read models và/hoặc ghi events vào event store.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example:</strong></p>
+<ol>
+<li><strong>Tạo 2 Project NestJS: <code>api-gateway</code> (HTTP) và <code>notification-service</code> (Microservice TCP):</strong><ul>
+<li><code>nest new api-gateway</code></li>
+<li><code>nest new notification-service</code></li>
+</ul>
+</li>
+<li><strong>Trong <code>notification-service</code>:</strong><ul>
+<li><strong><code>src/main.ts</code>:</strong> Cấu hình <code>createMicroservice</code> với <code>Transport.TCP</code> (ví dụ port 3003).</li>
+<li><strong><code>src/app.controller.ts</code> (hoặc <code>notification.controller.ts</code>):</strong><pre><code class="language-typescript">import { Controller } from &#39;@nestjs/common&#39;;
+import { EventPattern, Payload } from &#39;@nestjs/microservices&#39;;
+
+@Controller()
+export class AppController {
+  @EventPattern(&#39;user_registered&#39;) // Lắng nghe event này
+  handleUserRegistered(@Payload() data: { email: string; username: string }) {
+    console.log(`[NotificationService] Received user_registered event for ${data.username} &lt;${data.email}&gt;. Sending welcome email...`);
+    // Logic gửi email ở đây
+  }
+}
+</code></pre>
+</li>
+<li><code>AppModule</code> sẽ import <code>AppController</code>.</li>
+</ul>
+</li>
+<li><strong>Trong <code>api-gateway</code>:</strong><ul>
+<li><strong><code>src/app.module.ts</code>:</strong> Cấu hình <code>ClientsModule.register</code> để kết nối đến <code>NOTIFICATION_SERVICE</code>.<pre><code class="language-typescript">// ...
+ClientsModule.register([
+  {
+    name: &#39;NOTIFICATION_SERVICE&#39;,
+    transport: Transport.TCP,
+    options: { host: &#39;localhost&#39;, port: 3003 },
+  },
+]),
+// ...
+</code></pre>
+</li>
+<li><strong><code>src/app.controller.ts</code> (hoặc <code>users.controller.ts</code>):</strong><pre><code class="language-typescript">import { Controller, Post, Body, Inject } from &#39;@nestjs/common&#39;;
+import { ClientProxy } from &#39;@nestjs/microservices&#39;;
+
+@Controller(&#39;users&#39;)
+export class AppController {
+  constructor(
+    @Inject(&#39;NOTIFICATION_SERVICE&#39;) private notificationClient: ClientProxy,
+  ) {}
+
+  @Post(&#39;register&#39;)
+  async registerUser(@Body() userData: { email: string; username: string; password_dont_send_this: string }) {
+    console.log(`[APIGateway] User ${userData.username} registering...`);
+    // ... logic tạo user trong DB của API Gateway ...
+    // Sau khi user được tạo thành công:
+    this.notificationClient.emit(&#39;user_registered&#39;, {
+      email: userData.email,
+      username: userData.username,
+    });
+    return { message: `User ${userData.username} registered. Notification event emitted.` };
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Triển khai CQRS cho <code>Products</code> trong <code>api-gateway</code> (ví dụ):</strong><ul>
+<li>Cài đặt <code>@nestjs/cqrs</code>.</li>
+<li>Tạo thư mục <code>src/products/commands/impl</code>, <code>src/products/commands/handlers</code>, <code>src/products/queries/impl</code>, <code>src/products/queries/handlers</code>.</li>
+<li>Tạo <code>CreateProductCommand</code>, <code>CreateProductHandler</code>, <code>GetProductByIdQuery</code>, <code>GetProductByIdHandler</code> như ví dụ lý thuyết.</li>
+<li>Tạo một <code>ProductsRepository</code> giả lập (hoặc sử dụng TypeORM/Mongoose Repository đã có).</li>
+<li>Cập nhật <code>ProductsModule</code> để import <code>CqrsModule</code> và đăng ký các handlers.</li>
+<li>Sửa đổi <code>ProductsService</code> (hoặc <code>ProductsController</code>/<code>ProductsResolver</code>) để sử dụng <code>CommandBus</code> và <code>QueryBus</code>.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Thiết lập Microservice Giao tiếp (Request-Response):</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Tạo một project NestJS mới tên là <code>inventory-service</code> (microservice).</li>
+<li><code>inventory-service</code> sử dụng transport TCP (ví dụ port 3004).</li>
+<li>Trong <code>inventory-service</code>, tạo một <code>@MessagePattern({ cmd: &#39;get_stock&#39; })</code> handler nhận <code>productId: string</code> và trả về số lượng tồn kho (giả lập).</li>
+<li>Trong <code>api-gateway</code> (project HTTP chính của bạn), tạo một endpoint <code>GET /products/:id/stock</code>. Endpoint này sẽ <code>send</code> message đến <code>inventory-service</code> để lấy thông tin tồn kho và trả về cho client.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Thiết lập Microservice Giao tiếp (Event-based):</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Tạo một project NestJS mới tên là <code>logging-service</code> (microservice).</li>
+<li><code>logging-service</code> sử dụng transport Redis (cần cài đặt Redis và chạy server).</li>
+<li>Trong <code>logging-service</code>, tạo một <code>@EventPattern(&#39;api_request_logged&#39;)</code> handler nhận payload (ví dụ: <code>{ method, url, timestamp }</code>) và log ra console.</li>
+<li>Trong <code>api-gateway</code>, sử dụng một interceptor (ví dụ <code>LoggingInterceptor</code> đã tạo) để sau khi log request, nó cũng <code>emit</code> một event <code>api_request_logged</code> đến <code>logging-service</code> với thông tin request.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Áp dụng CQRS cho <code>UsersModule</code> (phần Command):</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Cài đặt <code>@nestjs/cqrs</code> trong <code>api-gateway</code>.</li>
+<li>Tạo <code>CreateUserCommand</code> và <code>CreateUserHandler</code>.</li>
+<li>Trong <code>UsersController</code> (hoặc <code>AuthController</code> nếu logic tạo user ở đó), khi đăng ký user, thay vì gọi trực tiếp service, hãy dispatch <code>CreateUserCommand</code> qua <code>CommandBus</code>.</li>
+<li><code>CreateUserHandler</code> sẽ chứa logic tạo user (gọi <code>UsersService</code> hoặc repository).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Áp dụng CQRS cho <code>UsersModule</code> (phần Query):</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Tạo <code>GetUserByUsernameQuery</code> và <code>GetUserByUsernameHandler</code>.</li>
+<li>Trong <code>AuthService</code> (khi validate user lúc login), thay vì gọi trực tiếp <code>UsersService.findOneByUsername()</code>, hãy dispatch <code>GetUserByUsernameQuery</code> qua <code>QueryBus</code>.</li>
+<li><code>GetUserByUsernameHandler</code> sẽ chứa logic lấy user.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>(Nâng cao) Event Publishing sau Command:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Tạo <code>UserCreatedEvent</code>.</li>
+<li>Trong <code>CreateUserHandler</code>, sau khi user được tạo thành công, sử dụng <code>EventBus</code> để publish <code>UserCreatedEvent</code> với thông tin user.</li>
+<li>Tạo <code>UserCreatedEventHandler</code> lắng nghe event này và log ra thông tin (ví dụ: &quot;User X has been created!&quot;).</li>
+<li>Đăng ký Event Handler trong <code>UsersModule</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

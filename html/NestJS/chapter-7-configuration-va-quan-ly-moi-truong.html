@@ -1,0 +1,696 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-7-configuration-va-quan-ly-moi-truong</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 7: Configuration và Quản lý Môi trường</h1>
+<p><strong>Tên Chapter học:</strong> Configuration và Quản lý Môi trường</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu tầm quan trọng của quản lý cấu hình:</strong> Nhận thức rõ sự cần thiết của việc tách biệt cấu hình khỏi code, quản lý cấu hình cho các môi trường khác nhau (development, staging, production) một cách hiệu quả.</li>
+<li><strong>Sử dụng <code>@nestjs/config</code>:</strong><ul>
+<li>Thành thạo module <code>@nestjs/config</code> để tải và truy cập các biến môi trường từ file <code>.env</code>.</li>
+<li>Biết cách sử dụng <code>ConfigService</code> để lấy các giá trị cấu hình một cách an toàn kiểu (type-safe).</li>
+</ul>
+</li>
+<li><strong>Quản lý file <code>.env</code>:</strong><ul>
+<li>Hiểu cách sử dụng các file <code>.env</code> khác nhau (ví dụ: <code>.env.development</code>, <code>.env.production</code>) và cách NestJS ưu tiên tải chúng.</li>
+<li>Biết cách sử dụng các tùy chọn như <code>ignoreEnvFile</code>, <code>envFilePath</code>.</li>
+</ul>
+</li>
+<li><strong>Custom Configuration Files:</strong><ul>
+<li>Học cách tạo các file cấu hình TypeScript/JavaScript riêng biệt để nhóm các cấu hình liên quan (ví dụ: <code>database.config.ts</code>, <code>jwt.config.ts</code>).</li>
+<li>Sử dụng hàm <code>registerAs</code> để đăng ký các namespace cấu hình, giúp truy cập dễ dàng và có tổ chức.</li>
+</ul>
+</li>
+<li><strong>Validation Cấu hình:</strong><ul>
+<li>Áp dụng các schema validation (sử dụng Joi hoặc <code>class-validator</code>) để đảm bảo rằng tất cả các biến môi trường/cấu hình cần thiết được cung cấp và có định dạng đúng khi ứng dụng khởi động.</li>
+</ul>
+</li>
+<li><strong>Truy cập Cấu hình Type-Safe:</strong> Đảm bảo rằng việc truy cập các giá trị cấu hình là an toàn kiểu, tận dụng lợi thế của TypeScript.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Tại sao cần quản lý cấu hình?</strong></p>
+<ul>
+<li><strong>Tránh hardcode:</strong> Không nhúng các giá trị nhạy cảm (API keys, database credentials) hoặc các giá trị thay đổi theo môi trường (ports, URLs) trực tiếp vào code.</li>
+<li><strong>Linh hoạt theo môi trường:</strong> Dễ dàng thay đổi cấu hình khi deploy ứng dụng lên các môi trường khác nhau (development, testing, staging, production).</li>
+<li><strong>Bảo mật:</strong> Giữ các thông tin nhạy cảm tách biệt khỏi codebase, dễ dàng quản lý truy cập.</li>
+<li><strong>Dễ bảo trì:</strong> Cấu hình tập trung giúp việc cập nhật và quản lý trở nên đơn giản hơn.</li>
+</ul>
+</li>
+<li><p><strong>Module <code>@nestjs/config</code>:</strong></p>
+<ul>
+<li>Là giải pháp chính thức của NestJS để quản lý cấu hình.</li>
+<li><strong>Cài đặt:</strong> <code>npm install --save @nestjs/config</code></li>
+<li><strong>Cách hoạt động:</strong><ul>
+<li>Tải các biến môi trường từ file <code>.env</code> ở thư mục gốc của dự án.</li>
+<li>Ưu tiên các biến môi trường đã được set ở cấp hệ điều hành so với file <code>.env</code>.</li>
+<li>Cung cấp <code>ConfigService</code> để truy cập các biến cấu hình.</li>
+</ul>
+</li>
+<li><strong>Cấu hình cơ bản trong <code>AppModule</code>:</strong><pre><code class="language-typescript">// app.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { ConfigModule } from &#39;@nestjs/config&#39;;
+// ...
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Làm cho ConfigModule có sẵn toàn cục, không cần import ở module khác
+      // envFilePath: &#39;.development.env&#39;, // Chỉ định file .env cụ thể
+      // ignoreEnvFile: process.env.NODE_ENV === &#39;production&#39;, // Bỏ qua file .env nếu là production
+    }),
+    // ... các module khác
+  ],
+  // ...
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><strong>Truy cập cấu hình bằng <code>ConfigService</code>:</strong><pre><code class="language-typescript">// app.service.ts
+import { Injectable } from &#39;@nestjs/common&#39;;
+import { ConfigService } from &#39;@nestjs/config&#39;;
+
+@Injectable()
+export class AppService {
+  private readonly port: number;
+  constructor(private configService: ConfigService) {
+    // Lấy giá trị với kiểu dữ liệu mong muốn
+    this.port = this.configService.get&lt;number&gt;(&#39;PORT&#39;, 3000); // 3000 là giá trị mặc định nếu PORT không tìm thấy
+    console.log(`Application Port from config: ${this.port}`);
+    console.log(`Database URL: ${this.configService.get&lt;string&gt;(&#39;DATABASE_URL&#39;)}`);
+  }
+  // ...
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>File <code>.env</code>:</strong></p>
+<ul>
+<li>Tạo file <code>.env</code> ở thư mục gốc của dự án:<pre><code class="language-env">PORT=3001
+DATABASE_URL=&quot;postgresql://user:password@localhost:5432/mydb&quot;
+API_KEY=&quot;your_secret_api_key&quot;
+NODE_ENV=&quot;development&quot;
+JWT_SECRET=&quot;a_very_long_and_secure_jwt_secret_key&quot;
+JWT_EXPIRES_IN=&quot;3600s&quot; # 1 giờ
+</code></pre>
+</li>
+<li><strong>Thứ tự ưu tiên của file <code>.env</code>:</strong> NestJS sẽ tìm các file <code>.env</code> theo thứ tự: <code>.env.${process.env.NODE_ENV}.local</code>, <code>.env.${process.env.NODE_ENV}</code>, <code>.env.local</code>, <code>.env</code>. File đầu tiên tìm thấy sẽ được sử dụng.</li>
+<li>Nên thêm <code>.env</code> và các file <code>.env.*.local</code> vào <code>.gitignore</code>. Chỉ commit các file <code>.env.example</code> hoặc các file <code>.env</code> không chứa thông tin nhạy cảm.</li>
+</ul>
+</li>
+<li><p><strong>Custom Configuration Files (Typed Configuration):</strong></p>
+<ul>
+<li>Giúp tổ chức cấu hình tốt hơn, đặc biệt cho các cấu hình phức tạp, và cung cấp type safety.</li>
+<li>Sử dụng hàm <code>registerAs</code> để tạo các &quot;namespace&quot; cho cấu hình.</li>
+<li><strong>Ví dụ: <code>src/config/database.config.ts</code></strong><pre><code class="language-typescript">// src/config/database.config.ts
+import { registerAs } from &#39;@nestjs/config&#39;;
+
+export default registerAs(&#39;database&#39;, () =&gt; ({
+  type: process.env.DATABASE_TYPE || &#39;postgres&#39;,
+  host: process.env.DATABASE_HOST || &#39;localhost&#39;,
+  port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
+  username: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
+  synchronize: process.env.NODE_ENV !== &#39;production&#39;, // Hoặc false
+}));
+</code></pre>
+</li>
+<li><strong>Ví dụ: <code>src/config/jwt.config.ts</code></strong><pre><code class="language-typescript">// src/config/jwt.config.ts
+import { registerAs } from &#39;@nestjs/config&#39;;
+
+export default registerAs(&#39;jwt&#39;, () =&gt; ({
+  secret: process.env.JWT_SECRET,
+  expiresIn: process.env.JWT_EXPIRES_IN || &#39;1h&#39;,
+}));
+</code></pre>
+</li>
+<li><strong>Load custom config files trong <code>ConfigModule</code>:</strong><pre><code class="language-typescript">// app.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { ConfigModule } from &#39;@nestjs/config&#39;;
+import databaseConfig from &#39;./config/database.config&#39;; // Import
+import jwtConfig from &#39;./config/jwt.config&#39;; // Import
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig, jwtConfig], // Load các file config đã đăng ký
+    }),
+    // ...
+  ],
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><strong>Truy cập typed configuration:</strong><pre><code class="language-typescript">// some.service.ts
+import { Injectable } from &#39;@nestjs/common&#39;;
+import { ConfigService } from &#39;@nestjs/config&#39;;
+
+@Injectable()
+export class SomeService {
+  constructor(private configService: ConfigService) {
+    const dbHost = this.configService.get&lt;string&gt;(&#39;database.host&#39;);
+    const jwtSecret = this.configService.get&lt;string&gt;(&#39;jwt.secret&#39;);
+    console.log(`Database Host: ${dbHost}, JWT Secret: ${jwtSecret}`);
+
+    // Lấy toàn bộ object config cho một namespace
+    const dbConfig = this.configService.get(&#39;database&#39;);
+    console.log(&#39;DB Port from object:&#39;, dbConfig.port);
+  }
+}
+</code></pre>
+</li>
+<li><strong>Injecting namespaced configuration (type-safe):</strong>
+  Bạn có thể inject trực tiếp một phần của configuration đã được typed.<pre><code class="language-typescript">// src/config/app.config.ts
+import { registerAs } from &#39;@nestjs/config&#39;;
+
+export interface AppConfig {
+  port: number;
+  env: string;
+}
+
+export default registerAs(&#39;app&#39;, (): AppConfig =&gt; ({
+  port: parseInt(process.env.PORT, 10) || 3000,
+  env: process.env.NODE_ENV || &#39;development&#39;,
+}));
+
+// some.service.ts
+import { Inject, Injectable } from &#39;@nestjs/common&#39;;
+import { ConfigType } from &#39;@nestjs/config&#39;;
+import appConfig, { AppConfig } from &#39;../config/app.config&#39;; // Import cả default và type
+
+@Injectable()
+export class AnotherService {
+  constructor(
+    @Inject(appConfig.KEY) // appConfig.KEY là &#39;app&#39;
+    private readonly currentAppConfig: ConfigType&lt;typeof appConfig&gt;, // ConfigType&lt;typeof appConfig&gt; sẽ là AppConfig
+  ) {
+    console.log(&#39;Injected App Port:&#39;, this.currentAppConfig.port);
+    console.log(&#39;Injected App Env:&#39;, this.currentAppConfig.env);
+  }
+}
+</code></pre>
+  Để inject <code>appConfig.KEY</code>, <code>AppConfigModule</code> phải được import và <code>appConfig</code> phải được load.</li>
+</ul>
+</li>
+<li><p><strong>Validation Cấu hình:</strong></p>
+<ul>
+<li>Đảm bảo các biến môi trường cần thiết được cung cấp và đúng định dạng.</li>
+<li>Sử dụng Joi (thư viện validation phổ biến) hoặc <code>class-validator</code>.</li>
+<li><strong>Cài đặt Joi:</strong> <code>npm install --save joi</code></li>
+<li><strong>Cấu hình validation schema trong <code>ConfigModule</code>:</strong><pre><code class="language-typescript">// app.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { ConfigModule } from &#39;@nestjs/config&#39;;
+import * as Joi from &#39;joi&#39;; // Import Joi
+import databaseConfig from &#39;./config/database.config&#39;;
+import jwtConfig from &#39;./config/jwt.config&#39;;
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig, jwtConfig],
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string()
+          .valid(&#39;development&#39;, &#39;production&#39;, &#39;test&#39;, &#39;provision&#39;)
+          .default(&#39;development&#39;),
+        PORT: Joi.number().default(3000),
+        DATABASE_HOST: Joi.string().required(),
+        DATABASE_PORT: Joi.number().default(5432),
+        DATABASE_USER: Joi.string().required(),
+        DATABASE_PASSWORD: Joi.string().required(),
+        DATABASE_NAME: Joi.string().required(),
+        JWT_SECRET: Joi.string().required().min(32), // Yêu cầu secret dài ít nhất 32 ký tự
+        JWT_EXPIRES_IN: Joi.string().default(&#39;1h&#39;),
+      }),
+      validationOptions: {
+        allowUnknown: true, // Cho phép các biến môi trường không được định nghĩa trong schema
+        abortEarly: false, // Hiển thị tất cả các lỗi validation, không dừng ở lỗi đầu tiên
+      },
+    }),
+    // ...
+  ],
+})
+export class AppModule {}
+</code></pre>
+  Nếu validation thất bại, ứng dụng sẽ không khởi động và báo lỗi.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example (Cập nhật ứng dụng với <code>@nestjs/config</code>):</strong></p>
+<ol>
+<li><p><strong>Cài đặt:</strong> <code>npm install @nestjs/config joi</code></p>
+</li>
+<li><p><strong>Tạo file <code>.env</code> ở thư mục gốc:</strong></p>
+<pre><code class="language-env"># Application
+NODE_ENV=development
+PORT=3001
+
+# Database (PostgreSQL example)
+DATABASE_TYPE=postgres
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=your_db_user
+DATABASE_PASSWORD=your_db_password
+DATABASE_NAME=your_db_name
+
+# JWT
+JWT_SECRET=&quot;ThisIsMySuperLongAndVerySecureSecretKeyForJWTGenerationAtLeast32Chars&quot;
+JWT_EXPIRES_IN=&quot;3600s&quot;
+</code></pre>
+</li>
+<li><p><strong>Tạo các file cấu hình custom:</strong></p>
+<ul>
+<li><code>src/config/app.config.ts</code>:<pre><code class="language-typescript">import { registerAs } from &#39;@nestjs/config&#39;;
+export default registerAs(&#39;application&#39;, () =&gt; ({
+  nodeEnv: process.env.NODE_ENV,
+  port: parseInt(process.env.PORT, 10) || 3001,
+}));
+</code></pre>
+</li>
+<li><code>src/config/database.config.ts</code>:<pre><code class="language-typescript">import { registerAs } from &#39;@nestjs/config&#39;;
+export default registerAs(&#39;database&#39;, () =&gt; ({
+  type: process.env.DATABASE_TYPE,
+  host: process.env.DATABASE_HOST,
+  port: parseInt(process.env.DATABASE_PORT, 10),
+  username: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  name: process.env.DATABASE_NAME,
+  synchronize: process.env.NODE_ENV !== &#39;production&#39;,
+}));
+</code></pre>
+</li>
+<li><code>src/config/jwt.config.ts</code>:<pre><code class="language-typescript">import { registerAs } from &#39;@nestjs/config&#39;;
+export default registerAs(&#39;jwt&#39;, () =&gt; ({
+  secret: process.env.JWT_SECRET,
+  expiresIn: process.env.JWT_EXPIRES_IN,
+}));
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Cập nhật <code>AppModule</code> (<code>src/app.module.ts</code>):</strong></p>
+<pre><code class="language-typescript">import { Module } from &#39;@nestjs/common&#39;;
+import { ConfigModule, ConfigService } from &#39;@nestjs/config&#39;;
+import * as Joi from &#39;joi&#39;;
+import { TypeOrmModule } from &#39;@nestjs/typeorm&#39;; // Nếu dùng TypeORM
+// import { MongooseModule } from &#39;@nestjs/mongoose&#39;; // Nếu dùng Mongoose
+import appConfig from &#39;./config/app.config&#39;;
+import databaseConfig from &#39;./config/database.config&#39;;
+import jwtConfig from &#39;./config/jwt.config&#39;;
+import { ProductsModule } from &#39;./products/products.module&#39;; // Ví dụ
+import { AuthModule } from &#39;./auth/auth.module&#39;; // Ví dụ
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [appConfig, databaseConfig, jwtConfig],
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid(&#39;development&#39;, &#39;production&#39;, &#39;test&#39;).default(&#39;development&#39;),
+        PORT: Joi.number().default(3001),
+        DATABASE_TYPE: Joi.string().default(&#39;postgres&#39;),
+        DATABASE_HOST: Joi.string().required(),
+        DATABASE_PORT: Joi.number().required(),
+        DATABASE_USER: Joi.string().required(),
+        DATABASE_PASSWORD: Joi.string().required(),
+        DATABASE_NAME: Joi.string().required(),
+        JWT_SECRET: Joi.string().required().min(32),
+        JWT_EXPIRES_IN: Joi.string().required(),
+      }),
+      validationOptions: {
+        abortEarly: false,
+      },
+    }),
+    // Cấu hình TypeOrmModule hoặc MongooseModule sử dụng ConfigService
+    TypeOrmModule.forRootAsync({ // Ví dụ cho TypeORM
+      imports: [ConfigModule], // Cần thiết nếu ConfigModule không isGlobal
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =&gt; ({
+        type: configService.get&lt;any&gt;(&#39;database.type&#39;),
+        host: configService.get&lt;string&gt;(&#39;database.host&#39;),
+        port: configService.get&lt;number&gt;(&#39;database.port&#39;),
+        username: configService.get&lt;string&gt;(&#39;database.username&#39;),
+        password: configService.get&lt;string&gt;(&#39;database.password&#39;),
+        database: configService.get&lt;string&gt;(&#39;database.name&#39;),
+        entities: [__dirname + &#39;/../**/*.entity{.ts,.js}&#39;], // Hoặc import trực tiếp
+        synchronize: configService.get&lt;boolean&gt;(&#39;database.synchronize&#39;),
+        // autoLoadEntities: true, // Cân nhắc dùng nếu entities rõ ràng
+      }),
+    }),
+    /* // Ví dụ cho Mongoose
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =&gt; ({
+        uri: `mongodb://${configService.get&lt;string&gt;(&#39;database.username&#39;)}:${configService.get&lt;string&gt;(&#39;database.password&#39;)}@${configService.get&lt;string&gt;(&#39;database.host&#39;)}:${configService.get&lt;number&gt;(&#39;database.port&#39;)}/${configService.get&lt;string&gt;(&#39;database.name&#39;)}?authSource=admin`,
+        // Các options khác nếu cần
+      }),
+    }),
+    */
+    ProductsModule,
+    AuthModule,
+  ],
+  // ... controllers, providers
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><p><strong>Cập nhật <code>main.ts</code> để sử dụng port từ config:</strong></p>
+<pre><code class="language-typescript">// src/main.ts
+import { NestFactory } from &#39;@nestjs/core&#39;;
+import { AppModule } from &#39;./app.module&#39;;
+import { ValidationPipe } from &#39;@nestjs/common&#39;;
+import { ConfigService } from &#39;@nestjs/config&#39;; // Import ConfigService
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService); // Lấy ConfigService instance
+  const port = configService.get&lt;number&gt;(&#39;application.port&#39;); // Sử dụng namespace &#39;application&#39;
+
+  app.useGlobalPipes(new ValidationPipe({ /* ... options ... */ }));
+  // ... các cài đặt global khác ...
+
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`Current NODE_ENV: ${configService.get&lt;string&gt;(&#39;application.nodeEnv&#39;)}`);
+}
+bootstrap();
+</code></pre>
+</li>
+<li><p><strong>Cập nhật <code>AuthModule</code> để sử dụng JWT config từ <code>ConfigService</code> (đã làm ở Chapter 6, nhưng đảm bảo nó đúng):</strong></p>
+<pre><code class="language-typescript">// src/auth/auth.module.ts
+// ...
+JwtModule.registerAsync({
+  imports: [ConfigModule], // Quan trọng nếu AuthModule không phải global
+  inject: [ConfigService],
+  useFactory: async (configService: ConfigService) =&gt; ({
+    secret: configService.get&lt;string&gt;(&#39;jwt.secret&#39;),
+    signOptions: {
+      expiresIn: configService.get&lt;string&gt;(&#39;jwt.expiresIn&#39;),
+    },
+  }),
+}),
+// ...
+</code></pre>
+<p>Và trong <code>JwtStrategy</code>, cũng inject <code>ConfigService</code> để lấy <code>jwt.secret</code>.</p>
+</li>
+</ol>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Tích hợp <code>@nestjs/config</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Cài đặt <code>@nestjs/config</code> và <code>joi</code>.</li>
+<li>Trong <code>AppModule</code>, import và cấu hình <code>ConfigModule.forRoot()</code> với <code>isGlobal: true</code>.</li>
+</ul>
+</li>
+<li><strong>Tạo file <code>.env</code> và các Typed Configurations:</strong><ul>
+<li><strong>Yêu cầu:</strong> Tạo file <code>.env</code> với các biến cần thiết cho ứng dụng của bạn (PORT, DATABASE_*, JWT_*).</li>
+<li>Tạo các file cấu hình typed (ví dụ: <code>app.config.ts</code>, <code>db.config.ts</code>, <code>jwt.config.ts</code>) sử dụng <code>registerAs</code>. Load chúng vào <code>ConfigModule</code>.</li>
+</ul>
+</li>
+<li><strong>Schema Validation cho Cấu hình:</strong><ul>
+<li><strong>Yêu cầu:</strong> Sử dụng Joi để định nghĩa một <code>validationSchema</code> trong <code>ConfigModule.forRoot()</code>. Đảm bảo các biến môi trường quan trọng được yêu cầu (<code>required()</code>) và có kiểu dữ liệu/giá trị hợp lệ.</li>
+<li>Thử xóa một biến môi trường required khỏi <code>.env</code> và chạy ứng dụng để xem lỗi validation.</li>
+</ul>
+</li>
+<li><strong>Sử dụng <code>ConfigService</code> trong ứng dụng:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Cập nhật <code>main.ts</code> để lấy <code>PORT</code> từ <code>ConfigService</code> (qua namespace <code>application.port</code>).</li>
+<li>Cập nhật cấu hình <code>TypeOrmModule</code> (hoặc <code>MongooseModule</code>) trong <code>AppModule</code> để sử dụng <code>forRootAsync</code> và <code>ConfigService</code> để lấy thông tin kết nối CSDL từ namespace <code>database</code>.</li>
+<li>Đảm bảo <code>AuthModule</code> (và <code>JwtStrategy</code>) sử dụng <code>ConfigService</code> để lấy thông tin <code>JWT_SECRET</code> và <code>JWT_EXPIRES_IN</code> từ namespace <code>jwt</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Inject Typed Configuration (Nâng cao):</strong><ul>
+<li><strong>Yêu cầu:</strong> Trong một service bất kỳ (ví dụ <code>ProductsService</code>), inject một phần của configuration (ví dụ: <code>appConfig</code>) sử dụng <code>@Inject(appConfig.KEY)</code> và <code>ConfigType</code>. Log ra một giá trị từ config đó trong constructor của service để kiểm tra.</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,4 +1,4 @@
-### Chapter 10: Các Loại Index và Tối Ưu Hóa Truy Vấn
+# Chapter 10: Các Loại Index và Tối Ưu Hóa Truy Vấn
 
 * **Tên bài học:** Tăng tốc độ truy vấn với các loại Index hiệu quả và kỹ thuật tối ưu hóa cơ bản.
 * **Tóm tắt lý thuyết:**

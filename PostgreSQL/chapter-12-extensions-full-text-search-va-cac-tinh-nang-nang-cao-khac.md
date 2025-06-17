@@ -1,4 +1,4 @@
-### Chapter 12: Extensions, Full-Text Search và Các Tính Năng Nâng Cao Khác
+# Chapter 12: Extensions, Full-Text Search và Các Tính Năng Nâng Cao Khác
 
 * **Tên bài học:** Mở rộng khả năng của PostgreSQL với Extensions, tìm kiếm văn bản mạnh mẽ, và khám phá các tính năng nâng cao khác.
 * **Tóm tắt lý thuyết:**

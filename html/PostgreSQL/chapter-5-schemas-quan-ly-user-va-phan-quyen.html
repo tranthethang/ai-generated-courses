@@ -1,0 +1,442 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-5-schemas-quan-ly-user-va-phan-quyen</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 5: Schemas, Quản Lý User và Phân Quyền</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Tổ chức và bảo mật cơ sở dữ liệu hiệu quả với Schemas, Roles và cơ chế phân quyền chi tiết.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Khái niệm Schema trong PostgreSQL:</strong><ul>
+<li>Schema là một không gian tên (namespace) bên trong một database. Nó chứa các đối tượng CSDL như bảng, view, index, sequence, function, operator.</li>
+<li>Mỗi database khi được tạo sẽ có một schema mặc định là <code>public</code>.</li>
+<li><strong>Lợi ích của việc sử dụng schema:</strong><ul>
+<li><strong>Tổ chức CSDL logic:</strong> Nhóm các đối tượng liên quan với nhau (ví dụ: schema <code>sales</code>, <code>hr</code>, <code>inventory</code>).</li>
+<li><strong>Tránh xung đột tên:</strong> Các đối tượng cùng tên có thể tồn tại ở các schema khác nhau.</li>
+<li><strong>Quản lý quyền truy cập chi tiết:</strong> Quyền có thể được gán trên từng schema.</li>
+<li><strong>Hỗ trợ multi-tenancy:</strong> Mỗi tenant (khách hàng) có thể có schema riêng trong cùng một database.</li>
+</ul>
+</li>
+<li>Cú pháp:<ul>
+<li><code>CREATE SCHEMA schema_name;</code></li>
+<li><code>CREATE SCHEMA IF NOT EXISTS schema_name;</code></li>
+<li><code>CREATE SCHEMA schema_name AUTHORIZATION role_name;</code> (Tạo schema và gán chủ sở hữu).</li>
+<li><code>DROP SCHEMA schema_name [CASCADE | RESTRICT];</code> (<code>CASCADE</code> xóa cả các đối tượng bên trong, <code>RESTRICT</code> (mặc định) chỉ xóa nếu schema rỗng).</li>
+</ul>
+</li>
+<li>Truy cập đối tượng trong schema: <code>schema_name.object_name</code>.</li>
+</ul>
+</li>
+<li><strong><code>search_path</code>:</strong><ul>
+<li>Biến môi trường của session, xác định thứ tự các schema được tìm kiếm khi một đối tượng được tham chiếu mà không có tên schema rõ ràng.</li>
+<li><code>SHOW search_path;</code> (Mặc định thường là <code>&quot;$user&quot;, public</code>). <code>$user</code> nghĩa là tìm schema có tên trùng với user hiện tại trước.</li>
+<li><code>SET search_path TO schema1, schema2, public;</code> (Thiết lập cho session hiện tại).</li>
+<li><code>SET LOCAL search_path TO ...;</code> (Thiết lập chỉ cho transaction hiện tại).</li>
+<li>Quan trọng cho việc bảo mật và tránh nhầm lẫn: nếu <code>search_path</code> không được quản lý cẩn thận, user có thể vô tình thực thi code từ schema không mong muốn.</li>
+</ul>
+</li>
+<li><strong>Quản lý User và Roles:</strong><ul>
+<li>Trong PostgreSQL, user và group đều là &quot;roles&quot;. Một role là một thực thể có thể sở hữu đối tượng CSDL và có các quyền truy cập.</li>
+<li><strong>Thuộc tính của Role:</strong><ul>
+<li><code>LOGIN</code>: Cho phép role đăng nhập. Role có thuộc tính này thường được gọi là &quot;user&quot;.</li>
+<li><code>NOLOGIN</code>: Không cho phép đăng nhập. Role có thuộc tính này thường được dùng làm &quot;group&quot;.</li>
+<li><code>SUPERUSER</code>: Có tất cả các quyền, bỏ qua mọi kiểm tra quyền. Rất nguy hiểm, chỉ dùng cho quản trị viên cấp cao nhất.</li>
+<li><code>CREATEDB</code>: Cho phép tạo database mới.</li>
+<li><code>CREATEROLE</code>: Cho phép tạo, sửa, xóa các role khác (không phải superuser).</li>
+<li><code>PASSWORD &#39;secret&#39;</code> / <code>PASSWORD NULL</code>: Đặt mật khẩu.</li>
+<li><code>ENCRYPTED PASSWORD &#39;md5...&#39;</code>: Đặt mật khẩu đã mã hóa (ít dùng trực tiếp).</li>
+<li><code>VALID UNTIL &#39;timestamp&#39;</code>: Mật khẩu hết hạn.</li>
+<li><code>IN ROLE role1, role2, ...</code>: Kế thừa quyền từ các role được liệt kê (role này là thành viên của các role kia).</li>
+<li><code>ROLE role_member1, role_member2, ...</code>: Các role khác là thành viên của role này.</li>
+<li><code>CONNECTION LIMIT count</code>: Giới hạn số kết nối đồng thời.</li>
+<li><code>BYPASSRLS</code>: Bỏ qua Row Level Security policies (sẽ học sau).</li>
+</ul>
+</li>
+<li>Cú pháp:<ul>
+<li><code>CREATE ROLE role_name [WITH option ...];</code></li>
+<li><code>ALTER ROLE role_name [WITH option ...];</code></li>
+<li><code>DROP ROLE role_name;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Phân quyền (Privileges):</strong><ul>
+<li><code>GRANT privilege_type [, ...] ON object_type object_name [, ...] TO role_specification [, ...] [WITH GRANT OPTION];</code><ul>
+<li><code>privilege_type</code>: <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>TRUNCATE</code>, <code>REFERENCES</code> (cho foreign key), <code>TRIGGER</code> (cho bảng); <code>USAGE</code> (cho schema, sequence, type, domain); <code>EXECUTE</code> (cho function, procedure); <code>CREATE</code> (cho database, schema, tablespace); <code>CONNECT</code> (cho database); <code>TEMPORARY</code> (cho database để tạo bảng tạm).</li>
+<li><code>object_type</code>: <code>TABLE</code>, <code>SCHEMA</code>, <code>DATABASE</code>, <code>SEQUENCE</code>, <code>FUNCTION</code>, <code>PROCEDURE</code>, <code>LANGUAGE</code>, <code>FOREIGN DATA WRAPPER</code>, <code>FOREIGN SERVER</code>, <code>TABLESPACE</code>, <code>TYPE</code>, <code>DOMAIN</code>, <code>LARGE OBJECT</code>.</li>
+<li><code>role_specification</code>: Tên role, <code>PUBLIC</code> (tất cả các role), <code>CURRENT_USER</code>, <code>SESSION_USER</code>.</li>
+<li><code>WITH GRANT OPTION</code>: Cho phép role được cấp quyền này tiếp tục cấp quyền đó cho role khác.</li>
+</ul>
+</li>
+<li><code>REVOKE [GRANT OPTION FOR] privilege_type [, ...] ON object_type object_name [, ...] FROM role_specification [, ...] [CASCADE | RESTRICT];</code><ul>
+<li><code>GRANT OPTION FOR</code>: Chỉ thu hồi <code>WITH GRANT OPTION</code>.</li>
+<li><code>CASCADE</code>: Thu hồi cả các quyền phụ thuộc (ví dụ, nếu A cấp cho B, B cấp cho C, thu hồi từ B với CASCADE sẽ thu hồi cả từ C).</li>
+<li><code>RESTRICT</code> (mặc định): Chỉ thu hồi nếu không có quyền phụ thuộc.</li>
+</ul>
+</li>
+<li><strong>Quyền mặc định (Default Privileges):</strong><ul>
+<li><code>ALTER DEFAULT PRIVILEGES [FOR ROLE target_role] [IN SCHEMA schema_name] GRANT ... ON TABLES TO ...;</code></li>
+<li>Cho phép định nghĩa các quyền sẽ tự động được gán cho các đối tượng mới được tạo trong tương lai bởi một role cụ thể hoặc trong một schema cụ thể. Rất hữu ích để quản lý quyền cho các ứng dụng.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Tạo schema cho các bộ phận
+CREATE SCHEMA IF NOT EXISTS human_resources;
+CREATE SCHEMA IF NOT EXISTS finance;
+CREATE SCHEMA IF NOT EXISTS sales;
+
+-- Tạo bảng trong schema cụ thể
+CREATE TABLE human_resources.Employees (
+    employee_id SERIAL PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    hire_date DATE,
+    department VARCHAR(50)
+);
+CREATE TABLE finance.Transactions (
+    transaction_id SERIAL PRIMARY KEY,
+    description TEXT,
+    amount NUMERIC(10,2),
+    transaction_date TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Thiết lập search_path cho session
+SET search_path TO human_resources, finance, sales, public;
+-- Bây giờ có thể gọi Employees thay vì human_resources.Employees
+
+-- Tạo roles
+CREATE ROLE hr_manager LOGIN PASSWORD &#39;hrpass1&#39; CREATEROLE; -- Có thể tạo role khác
+CREATE ROLE finance_analyst LOGIN PASSWORD &#39;finpass1&#39;;
+CREATE ROLE sales_team NOLOGIN; -- Role group
+CREATE ROLE sales_rep1 LOGIN PASSWORD &#39;salespass1&#39; IN ROLE sales_team;
+CREATE ROLE sales_rep2 LOGIN PASSWORD &#39;salespass2&#39; IN ROLE sales_team;
+
+-- Gán quyền
+-- hr_manager có toàn quyền trên schema human_resources
+GRANT ALL PRIVILEGES ON SCHEMA human_resources TO hr_manager;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA human_resources TO hr_manager;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA human_resources TO hr_manager;
+
+-- finance_analyst chỉ được đọc và thêm dữ liệu vào schema finance
+GRANT CONNECT ON DATABASE quan_ly_nhan_su TO finance_analyst; -- (Giả sử tên DB là quan_ly_nhan_su)
+GRANT USAGE ON SCHEMA finance TO finance_analyst;
+GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA finance TO finance_analyst;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA finance TO finance_analyst;
+
+-- sales_team (và các thành viên) có quyền đọc trên bảng Products (giả sử ở public)
+-- CREATE TABLE public.Products (product_id SERIAL PRIMARY KEY, name TEXT, price NUMERIC);
+-- GRANT SELECT ON public.Products TO sales_team;
+
+-- Thu hồi một số quyền
+REVOKE INSERT ON finance.Transactions FROM finance_analyst;
+
+-- Alter Default Privileges: Các bảng mới trong schema &#39;sales&#39; sẽ tự động cấp quyền SELECT cho &#39;sales_team&#39;
+ALTER DEFAULT PRIVILEGES IN SCHEMA sales
+GRANT SELECT ON TABLES TO sales_team;
+
+-- Tạo bảng mới trong sales, sales_team sẽ tự động có quyền SELECT
+-- CREATE TABLE sales.Leads (lead_id SERIAL PRIMARY KEY, lead_name TEXT);
+-- (sales_rep1 có thể SELECT từ sales.Leads)
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong><ol>
+<li><strong>Thiết lập môi trường:</strong><ul>
+<li>Trong database <code>my_project_db</code> đã tạo, tạo 3 schema: <code>engineering</code>, <code>marketing</code>, <code>support</code>.</li>
+</ul>
+</li>
+<li><strong>Tạo Roles và Users:</strong><ul>
+<li>Tạo role <code>engineering_lead</code> (LOGIN, PASSWORD, có thể tạo role khác).</li>
+<li>Tạo role <code>developer</code> (NOLOGIN, dùng làm group).</li>
+<li>Tạo 2 user <code>dev_user1</code> và <code>dev_user2</code> (LOGIN, PASSWORD), gán họ vào group <code>developer</code>.</li>
+<li>Tạo role <code>marketing_specialist</code> (LOGIN, PASSWORD).</li>
+<li>Tạo role <code>support_agent</code> (LOGIN, PASSWORD).</li>
+</ul>
+</li>
+<li><strong>Phân quyền cơ bản:</strong><ul>
+<li><code>engineering_lead</code>: Toàn quyền trên schema <code>engineering</code> (bao gồm tạo bảng, sequence).</li>
+<li><code>developer</code> (group): Quyền <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code> trên tất cả các bảng trong schema <code>engineering</code>. Quyền <code>USAGE</code> trên schema <code>engineering</code> và <code>USAGE, SELECT</code> trên các sequence trong schema <code>engineering</code>.</li>
+<li><code>marketing_specialist</code>: Quyền <code>SELECT</code>, <code>INSERT</code> trên các bảng trong schema <code>marketing</code>.</li>
+<li><code>support_agent</code>: Quyền <code>SELECT</code> trên các bảng trong schema <code>engineering</code> và <code>marketing</code>, quyền <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code> trên các bảng trong schema <code>support</code>.</li>
+<li>Tất cả các user trên đều cần quyền <code>CONNECT</code> vào database <code>my_project_db</code>.</li>
+</ul>
+</li>
+<li><strong>Kiểm tra quyền (Lý thuyết hoặc thực hành nếu có thể):</strong><ul>
+<li>Nếu <code>dev_user1</code> cố gắng <code>CREATE TABLE</code> trong schema <code>engineering</code>, điều gì sẽ xảy ra? Tại sao?</li>
+<li>Nếu <code>marketing_specialist</code> cố gắng <code>DELETE</code> từ một bảng trong schema <code>marketing</code>, điều gì sẽ xảy ra?</li>
+<li>Làm thế nào để <code>engineering_lead</code> có thể cấp quyền <code>SELECT</code> trên một bảng cụ thể trong <code>engineering</code> cho <code>support_agent</code>?</li>
+</ul>
+</li>
+<li><strong>Sử dụng <code>ALTER DEFAULT PRIVILEGES</code>:</strong><ul>
+<li>Thiết lập sao cho bất kỳ bảng nào được tạo mới trong schema <code>engineering</code> bởi <code>engineering_lead</code> sẽ tự động cấp quyền <code>SELECT</code> cho group <code>developer</code>.</li>
+<li>Tạo một bảng mới trong <code>engineering</code> bởi <code>engineering_lead</code> và kiểm tra (lý thuyết) xem <code>dev_user1</code> có quyền <code>SELECT</code> không.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

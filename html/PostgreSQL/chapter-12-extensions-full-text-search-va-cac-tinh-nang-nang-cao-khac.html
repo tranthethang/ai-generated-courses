@@ -1,0 +1,455 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-12-extensions-full-text-search-va-cac-tinh-nang-nang-cao-khac</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 12: Extensions, Full-Text Search và Các Tính Năng Nâng Cao Khác</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Mở rộng khả năng của PostgreSQL với Extensions, tìm kiếm văn bản mạnh mẽ, và khám phá các tính năng nâng cao khác.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Extensions (Tiện ích mở rộng):</strong><ul>
+<li>Là các module phần mềm có thể được tải vào PostgreSQL server đang chạy để cung cấp thêm chức năng, kiểu dữ liệu, toán tử, hàm, phương thức index, ngôn ngữ thủ tục...</li>
+<li>PostgreSQL có một hệ sinh thái extension phong phú.</li>
+<li>Lệnh quản lý:<ul>
+<li><code>CREATE EXTENSION extension_name [IF NOT EXISTS] [SCHEMA schema_name] [VERSION version_number];</code></li>
+<li><code>DROP EXTENSION extension_name [IF EXISTS] [CASCADE | RESTRICT];</code></li>
+<li><code>ALTER EXTENSION extension_name UPDATE [TO new_version];</code></li>
+<li><code>\dx</code> trong <code>psql</code> để liệt kê các extension đã cài đặt.</li>
+</ul>
+</li>
+<li><strong>Một số extension phổ biến:</strong><ul>
+<li><code>uuid-ossp</code>: Cung cấp các hàm tạo UUID (ví dụ: <code>uuid_generate_v1()</code>, <code>uuid_generate_v4()</code>).</li>
+<li><code>pgcrypto</code>: Các hàm mã hóa (hashing, PGP encryption). Ví dụ: <code>crypt()</code>, <code>digest()</code>, <code>pgp_sym_encrypt()</code>.</li>
+<li><code>hstore</code>: Kiểu dữ liệu key-value đơn giản (ít dùng hơn JSONB hiện nay nhưng vẫn hữu ích trong một số trường hợp).</li>
+<li><code>pg_trgm</code> (Trigram Matching): Hỗ trợ tìm kiếm mờ (fuzzy string matching) dựa trên so khớp trigram. Cung cấp toán tử <code>%</code> (similarity) và <code>&lt;-&gt;</code> (distance), hỗ trợ index GIN/GiST.</li>
+<li><code>PostGIS</code>: Extension mạnh mẽ nhất cho dữ liệu không gian địa lý (GIS), cung cấp kiểu dữ liệu hình học, hàm và toán tử không gian, hỗ trợ index R-Tree qua GiST.</li>
+<li><code>tablefunc</code>: Cung cấp các hàm tạo bảng pivot (ví dụ: <code>crosstab</code>).</li>
+<li><code>btree_gin</code>, <code>btree_gist</code>: Cho phép tạo index GIN/GiST trên các kiểu dữ liệu B-tree chuẩn, hữu ích khi muốn kết hợp nhiều loại index.</li>
+<li><code>postgres_fdw</code>: Một Foreign Data Wrapper cho phép truy cập dữ liệu từ các server PostgreSQL khác.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Full-Text Search (FTS):</strong><ul>
+<li>Khả năng tìm kiếm văn bản tự nhiên, có xếp hạng mức độ liên quan (relevancy) của kết quả.</li>
+<li><strong>Các thành phần chính:</strong><ul>
+<li><strong><code>tsvector</code></strong>: Kiểu dữ liệu biểu diễn một tài liệu (document) đã được xử lý cho FTS. Nó là một danh sách các <em>lexemes</em> (từ đã được chuẩn hóa, ví dụ: stemming) cùng với vị trí của chúng.</li>
+<li><strong><code>tsquery</code></strong>: Kiểu dữ liệu biểu diễn một câu truy vấn tìm kiếm, bao gồm các lexemes và các toán tử logic (<code>&amp;</code> AND, <code>|</code> OR, <code>!</code> NOT, <code>&lt;-&gt;</code> PHRASE).</li>
+<li><strong>Hàm chuyển đổi:</strong><ul>
+<li><code>to_tsvector([config regconfig,] document text)</code>: Chuyển text thành <code>tsvector</code>. <code>config</code> (tùy chọn) chỉ định cấu hình ngôn ngữ (ví dụ: <code>&#39;english&#39;</code>, <code>&#39;simple&#39;</code>, <code>&#39;vietnamese&#39;</code> nếu có). Cấu hình này quyết định cách parser tách từ, loại bỏ stop words, và stemming.</li>
+<li><code>to_tsquery([config regconfig,] querytext text)</code>: Chuyển text thành <code>tsquery</code>.</li>
+<li><code>plainto_tsquery([config regconfig,] querytext text)</code>: Tương tự <code>to_tsquery</code> nhưng coi tất cả các từ trong <code>querytext</code> là AND với nhau.</li>
+<li><code>phraseto_tsquery([config regconfig,] querytext text)</code>: Tìm kiếm cụm từ chính xác.</li>
+<li><code>websearch_to_tsquery([config regconfig,] querytext text)</code>: Chuyển đổi query theo kiểu Google search.</li>
+</ul>
+</li>
+<li><strong>Toán tử khớp (<code>@@</code>):</strong> <code>tsvector_column @@ tsquery_value</code> -&gt; trả về TRUE nếu vector khớp với query.</li>
+<li><strong>Ranking (Xếp hạng):</strong><ul>
+<li><code>ts_rank(tsvector, tsquery [, normalization_option])</code>: Tính điểm relevancy dựa trên tần suất xuất hiện của từ.</li>
+<li><code>ts_rank_cd(tsvector, tsquery [, normalization_option])</code>: Tương tự <code>ts_rank</code> nhưng xem xét cả mật độ (cover density).</li>
+</ul>
+</li>
+<li><strong>Highlighting:</strong> <code>ts_headline([config regconfig,] document text, query tsquery [, options])</code>: Hiển thị một đoạn trích từ tài liệu với các từ khóa khớp được làm nổi bật.</li>
+<li><strong>Indexing FTS:</strong> Sử dụng GIN hoặc GiST index trên cột <code>tsvector</code> để tăng tốc độ tìm kiếm. GIN thường nhanh hơn cho FTS.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Foreign Data Wrappers (FDW):</strong><ul>
+<li>Cho phép PostgreSQL truy cập dữ liệu từ các nguồn dữ liệu bên ngoài (gọi là &quot;foreign servers&quot;) như thể chúng là các bảng cục bộ trong PostgreSQL.</li>
+<li>Các bước thiết lập:<ol>
+<li><code>CREATE EXTENSION fdw_name;</code> (ví dụ: <code>postgres_fdw</code>, <code>mysql_fdw</code>, <code>file_fdw</code>).</li>
+<li><code>CREATE SERVER foreign_server_name FOREIGN DATA WRAPPER fdw_name OPTIONS (host &#39;...&#39;, port &#39;...&#39;, dbname &#39;...&#39;);</code></li>
+<li><code>CREATE USER MAPPING FOR local_user SERVER foreign_server_name OPTIONS (user &#39;remote_user&#39;, password &#39;remote_pass&#39;);</code></li>
+<li><code>CREATE FOREIGN TABLE local_table_name (...) SERVER foreign_server_name OPTIONS (schema_name &#39;remote_schema&#39;, table_name &#39;remote_table&#39;);</code>
+  Hoặc <code>IMPORT FOREIGN SCHEMA remote_schema [LIMIT TO (table1, table2)] FROM SERVER foreign_server_name INTO local_schema;</code></li>
+</ol>
+</li>
+<li>Sau đó có thể truy vấn <code>local_table_name</code> như bảng bình thường.</li>
+</ul>
+</li>
+<li><strong>Materialized Views:</strong><ul>
+<li>Lưu trữ kết quả vật lý của một câu truy vấn. Khác với view thông thường (là truy vấn ảo, chạy lại mỗi khi gọi), materialized view lưu dữ liệu thực tế.</li>
+<li>Hữu ích cho các truy vấn phức tạp, tốn thời gian chạy, mà dữ liệu nguồn không thay đổi quá thường xuyên.</li>
+<li><code>CREATE MATERIALIZED VIEW view_name AS SELECT ...;</code></li>
+<li><code>REFRESH MATERIALIZED VIEW view_name;</code> (Để cập nhật dữ liệu. Có thể <code>CONCURRENTLY</code> để không block truy vấn đọc).</li>
+<li>Có thể tạo index trên materialized view.</li>
+</ul>
+</li>
+<li><strong>Các tính năng khác (Sơ lược):</strong><ul>
+<li><strong>Table Partitioning:</strong> Chia một bảng lớn thành các bảng con (partitions) nhỏ hơn dựa trên một key (ví dụ: theo dải ngày, theo danh sách giá trị). Cải thiện hiệu năng quản lý và truy vấn.</li>
+<li><strong>Row Level Security (RLS):</strong> Định nghĩa các policy để kiểm soát những dòng nào user có thể xem hoặc sửa đổi trong một bảng.</li>
+<li><strong>Parallel Query:</strong> PostgreSQL có thể tự động song song hóa một số phần của truy vấn phức tạp để tận dụng nhiều CPU core.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Sử dụng Extension uuid-ossp (nếu chưa có từ Chapter trước)
+CREATE EXTENSION IF NOT EXISTS &quot;uuid-ossp&quot;;
+SELECT uuid_generate_v4();
+
+-- Sử dụng Extension pg_trgm cho tìm kiếm mờ
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+SELECT similarity(&#39;PostgreSQL&#39;, &#39;Postgres&#39;); -- Độ tương đồng
+-- CREATE INDEX idx_product_name_trgm ON Products USING GIN (product_name gin_trgm_ops);
+-- SELECT product_name FROM Products WHERE product_name % &#39;Laptap Pro&#39;; -- Tìm kiếm mờ
+
+-- Full-Text Search cơ bản
+-- Giả sử bảng Articles (id SERIAL, title TEXT, body TEXT, body_tsvector TSVECTOR)
+/*
+ALTER TABLE Articles ADD COLUMN body_tsvector TSVECTOR;
+CREATE OR REPLACE FUNCTION update_articles_tsvector() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.body_tsvector = to_tsvector(&#39;pg_catalog.english&#39;, COALESCE(NEW.title, &#39;&#39;) || &#39; &#39; || COALESCE(NEW.body, &#39;&#39;));
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER trg_articles_tsvector_update
+BEFORE INSERT OR UPDATE ON Articles
+FOR EACH ROW EXECUTE FUNCTION update_articles_tsvector();
+CREATE INDEX idx_articles_fts ON Articles USING GIN(body_tsvector);
+*/
+
+-- INSERT INTO Articles (title, body) VALUES (&#39;PostgreSQL Performance Tips&#39;, &#39;Indexing and query optimization are key for PostgreSQL performance.&#39;);
+-- INSERT INTO Articles (title, body) VALUES (&#39;Learning SQL Basics&#39;, &#39;SQL is a powerful language for databases.&#39;);
+
+SELECT title, body
+FROM Articles
+WHERE body_tsvector @@ plainto_tsquery(&#39;english&#39;, &#39;performance optimization&#39;);
+
+SELECT title, ts_rank_cd(body_tsvector, query) AS rank,
+       ts_headline(&#39;english&#39;, body, query, &#39;StartSel = &lt;mark&gt;, StopSel = &lt;/mark&gt;&#39;) AS highlighted_body
+FROM Articles, plainto_tsquery(&#39;english&#39;, &#39;PostgreSQL performance&#39;) query
+WHERE query @@ body_tsvector
+ORDER BY rank DESC;
+
+-- Materialized View: Tổng hợp số lượng sản phẩm theo brand
+CREATE MATERIALIZED VIEW ProductCountByBrand AS
+SELECT product_attributes -&gt;&gt; &#39;brand&#39; AS brand, COUNT(*) as num_products
+FROM Products
+WHERE product_attributes ? &#39;brand&#39;
+GROUP BY product_attributes -&gt;&gt; &#39;brand&#39;;
+
+SELECT * FROM ProductCountByBrand ORDER BY num_products DESC;
+-- Sau khi dữ liệu Products thay đổi:
+REFRESH MATERIALIZED VIEW CONCURRENTLY ProductCountByBrand; -- Cần UNIQUE index trên MV để chạy CONCURRENTLY
+
+-- Foreign Data Wrapper (ví dụ với file_fdw - truy cập file CSV)
+/*
+CREATE EXTENSION IF NOT EXISTS file_fdw;
+CREATE SERVER csv_server FOREIGN DATA WRAPPER file_fdw;
+CREATE FOREIGN TABLE my_csv_data (
+    col1 TEXT,
+    col2 INT,
+    col3 DATE
+) SERVER csv_server OPTIONS (filename &#39;/path/to/your/data.csv&#39;, format &#39;csv&#39;, header &#39;true&#39;);
+SELECT * FROM my_csv_data;
+*/
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong><ol>
+<li><strong><code>pgcrypto</code> và Mật khẩu:</strong><ul>
+<li>Cài đặt extension <code>pgcrypto</code>.</li>
+<li>Tạo bảng <code>AppUsers</code> (username TEXT PRIMARY KEY, password_hash TEXT).</li>
+<li>Viết một function PL/pgSQL <code>register_user(p_username TEXT, p_password TEXT)</code> sử dụng <code>crypt(p_password, gen_salt(&#39;bf&#39;))</code> để hash mật khẩu và lưu vào bảng.</li>
+<li>Viết một function <code>check_user_password(p_username TEXT, p_password TEXT)</code> trả về <code>BOOLEAN</code> bằng cách so sánh <code>crypt(p_password, password_hash)</code> với <code>password_hash</code> đã lưu.</li>
+</ul>
+</li>
+<li><strong>Full-Text Search cho Blog:</strong><ul>
+<li>Tạo bảng <code>BlogPosts</code> (post_id SERIAL, title TEXT, content TEXT, published_date DATE, tags TEXT[]).</li>
+<li>Thêm cột <code>content_tsvector TSVECTOR</code>.</li>
+<li>Tạo trigger để tự động cập nhật <code>content_tsvector</code> từ <code>title</code> và <code>content</code> mỗi khi có <code>INSERT</code> hoặc <code>UPDATE</code>. Sử dụng cấu hình <code>&#39;english&#39;</code>.</li>
+<li>Tạo GIN index trên <code>content_tsvector</code>.</li>
+<li>Viết các truy vấn:<ul>
+<li>Tìm các bài blog chứa từ &quot;database&quot; VÀ &quot;performance&quot;.</li>
+<li>Tìm các bài blog chứa cụm từ &quot;best practices&quot;.</li>
+<li>Hiển thị kết quả tìm kiếm có xếp hạng và highlight.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><code>pg_trgm</code> cho Tìm kiếm Tên Sản phẩm Gần đúng:</strong><ul>
+<li>Sử dụng bảng <code>Products</code> từ các Chapter trước. Cài đặt <code>pg_trgm</code>.</li>
+<li>Tạo GIN index sử dụng <code>gin_trgm_ops</code> trên cột <code>product_name</code>.</li>
+<li>Viết truy vấn tìm các sản phẩm có tên gần giống với &quot;Smatphone Lite X&quot; (ví dụ, người dùng gõ sai). Hiển thị độ tương đồng.</li>
+</ul>
+</li>
+<li><strong>Materialized View cho Báo cáo:</strong><ul>
+<li>Tạo một Materialized View tên <code>MonthlySalesSummary</code> từ bảng <code>Sales</code> (từ bài tập Chapter 7) để tính tổng số lượng bán (<code>total_quantity_sold</code>) và tổng doanh thu (<code>total_revenue</code>) cho mỗi tháng (<code>sale_month</code> được <code>DATE_TRUNC</code> về tháng).</li>
+<li>Tạo index trên <code>sale_month</code> của Materialized View.</li>
+<li>Viết lệnh để làm mới Materialized View. Thảo luận khi nào nên làm mới (ví dụ: cuối ngày, theo cron job).</li>
+</ul>
+</li>
+<li><strong>(Nâng cao/Tự nghiên cứu) <code>tablefunc</code> với <code>crosstab</code>:</strong><ul>
+<li>Cài đặt extension <code>tablefunc</code>.</li>
+<li>Giả sử có bảng <code>QuarterlySales</code> (product_name TEXT, quarter TEXT, sales_amount NUMERIC) (ví dụ: quarter là &#39;Q1 2023&#39;, &#39;Q2 2023&#39;,...).</li>
+<li>Sử dụng hàm <code>crosstab</code> để tạo một báo cáo pivot table hiển thị <code>product_name</code> làm dòng, mỗi quý làm một cột, và <code>sales_amount</code> là giá trị. (Đây là bài tập khó, cần đọc kỹ tài liệu <code>crosstab</code>).</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

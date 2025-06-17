@@ -1,0 +1,387 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-1-gioi-thieu-postgresql-va-chuyen-doi-tu-mysql</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 1: Giới thiệu PostgreSQL và Chuyển đổi từ MySQL</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Khởi đầu với PostgreSQL: Những điểm khác biệt chính, cài đặt và cấu hình cơ bản.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>PostgreSQL là gì?</strong><ul>
+<li>Lịch sử phát triển: Nguồn gốc từ dự án Ingres tại Đại học California, Berkeley. Sự phát triển qua các phiên bản và cộng đồng mã nguồn mở mạnh mẽ.</li>
+<li>Kiến trúc tổng quan: Mô hình client-server. Các tiến trình chính (Postmaster, Backend Processes, WAL Writer, Checkpointer, Background Writer). Cơ chế lưu trữ dữ liệu (Tablespaces, Databases, Schemas, Tables, Heap, Indexes).</li>
+<li>Đặc điểm nổi bật: Tuân thủ ACID đầy đủ, hỗ trợ MVCC (Multi-Version Concurrency Control) cho phép đọc ghi đồng thời hiệu quả, tính mở rộng cao (custom types, functions, operators, index methods, procedural languages), hệ thống kiểu dữ liệu phong phú, tính năng SQL nâng cao.</li>
+</ul>
+</li>
+<li><strong>So sánh PostgreSQL và MySQL:</strong><ul>
+<li><strong>Kiểu dữ liệu:</strong> PostgreSQL có hệ thống kiểu dữ liệu đa dạng hơn (ARRAY, JSONB, UUID, ENUM, Geometric types, Network address types, TIMESTAMPTZ). MySQL gần đây đã cải thiện (JSON), nhưng PostgreSQL vẫn mạnh hơn về tính nhất quán và tuân thủ chuẩn SQL.</li>
+<li><strong>Tuân thủ SQL Standard:</strong> PostgreSQL nổi tiếng với việc tuân thủ chặt chẽ chuẩn SQL. MySQL có một số cú pháp hoặc hành vi riêng.</li>
+<li><strong>JSON Support:</strong> Cả hai đều hỗ trợ JSON. PostgreSQL <code>JSONB</code> (binary JSON) thường được coi là mạnh mẽ hơn cho việc truy vấn và indexing so với JSON của MySQL.</li>
+<li><strong>Transactions &amp; MVCC:</strong> Cả hai đều hỗ trợ ACID. PostgreSQL sử dụng MVCC từ rất sớm và được coi là triển khai rất tốt. InnoDB của MySQL cũng sử dụng MVCC.</li>
+<li><strong>Extensibility:</strong> PostgreSQL vượt trội với khả năng tạo extensions, custom data types, functions, operators.</li>
+<li><strong>Replication:</strong> Cả hai đều có các giải pháp replication mạnh mẽ. PostgreSQL có streaming replication (physical) và logical replication.</li>
+<li><strong>Performance:</strong> Hiệu năng phụ thuộc vào workload cụ thể, cấu hình và tuning. PostgreSQL thường được đánh giá cao cho các workload phức tạp, OLAP, và các ứng dụng đòi hỏi tính toàn vẹn dữ liệu cao. MySQL thường nhanh cho các workload OLTP đơn giản, read-heavy.</li>
+<li><strong>Licensing:</strong> PostgreSQL (BSD-like license) hoàn toàn miễn phí và mã nguồn mở. MySQL có phiên bản Community (GPL) và các phiên bản thương mại.</li>
+<li><strong>Trường hợp sử dụng:</strong> PostgreSQL phù hợp cho các hệ thống yêu cầu tính toàn vẹn dữ liệu cao, truy vấn phức tạp, ứng dụng GIS, kho dữ liệu. MySQL phổ biến cho các ứng dụng web, CMS, các hệ thống read-heavy.</li>
+</ul>
+</li>
+<li><strong>Các thuật ngữ PostgreSQL quan trọng:</strong><ul>
+<li><strong>Database Cluster:</strong> Một tập hợp các database được quản lý bởi một instance PostgreSQL server duy nhất.</li>
+<li><strong>Database:</strong> Một tập hợp các schema, bảng, view, function và các đối tượng SQL khác. Trong PostgreSQL, một database là một đơn vị cô lập hoàn toàn (không thể join chéo database trực tiếp như trong MySQL trừ khi dùng FDW).</li>
+<li><strong>Schema:</strong> Một không gian tên (namespace) bên trong một database. Chứa các bảng, view, function... Một database có thể có nhiều schema. Schema <code>public</code> là mặc định. Giúp tổ chức CSDL, tránh xung đột tên, quản lý quyền truy cập chi tiết. Khác với MySQL nơi &quot;database&quot; gần tương đương với &quot;schema&quot; của PostgreSQL.</li>
+<li><strong>Role:</strong> Trong PostgreSQL, không có sự phân biệt rõ ràng giữa &quot;user&quot; và &quot;group&quot; như một số CSDL khác. Tất cả đều là &quot;roles&quot;. Một role có thể có các thuộc tính như <code>LOGIN</code> (cho phép đăng nhập), <code>SUPERUSER</code>, <code>CREATEDB</code>, <code>CREATEROLE</code>, và có thể là thành viên của các role khác.</li>
+</ul>
+</li>
+<li><strong>Công cụ dòng lệnh <code>psql</code>:</strong><ul>
+<li>Giao diện dòng lệnh tương tác mạnh mẽ cho PostgreSQL.</li>
+<li>Các lệnh meta-commands thường dùng: <code>\l</code> (list databases), <code>\c &lt;db_name&gt;</code> (connect to database), <code>\dt</code> (list tables in current schema), <code>\d &lt;table_name&gt;</code> (describe table), <code>\dn</code> (list schemas), <code>\df</code> (list functions), <code>\dv</code> (list views), <code>\du</code> (list roles), <code>\timing</code> (toggle timing for queries), <code>\e</code> (edit current query in editor), <code>\i &lt;filename&gt;</code> (execute commands from file), <code>\q</code> (quit).</li>
+</ul>
+</li>
+<li><strong>Giới thiệu pgAdmin:</strong><ul>
+<li>Công cụ quản trị và phát triển PostgreSQL mã nguồn mở phổ biến, có giao diện đồ họa.</li>
+<li>Tính năng chính: Object browser, SQL query tool với syntax highlighting, execution plan visualization, schema diff, backup/restore GUI, server status monitoring.</li>
+</ul>
+</li>
+<li><strong>Hướng dẫn cài đặt PostgreSQL:</strong><ul>
+<li>Windows: Sử dụng trình cài đặt từ EnterpriseDB.</li>
+<li>Linux: Sử dụng package manager của distro (apt, yum, dnf). Thêm repository chính thức của PostgreSQL để có phiên bản mới nhất.</li>
+<li>macOS: Sử dụng Homebrew hoặc Postgres.app.</li>
+<li>Docker: Cách phổ biến để chạy PostgreSQL trong môi trường cô lập.</li>
+<li>Cấu hình cơ bản sau cài đặt:<ul>
+<li><code>postgresql.conf</code>: File cấu hình chính (ví dụ: <code>listen_addresses</code>, <code>max_connections</code>, <code>shared_buffers</code>).</li>
+<li><code>pg_hba.conf</code> (Host-Based Authentication): File cấu hình xác thực client.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Kết nối tới server PostgreSQL bằng psql (từ terminal)
+-- psql -U postgres -h localhost 
+-- (Mật khẩu có thể được hỏi hoặc cấu hình trong .pgpass)
+
+-- Liệt kê các database hiện có
+\l
+
+-- Tạo một database mới
+CREATE DATABASE quan_ly_nhan_su;
+
+-- Kết nối tới database vừa tạo
+\c quan_ly_nhan_su;
+
+-- Tạo một role mới cho phép đăng nhập
+CREATE ROLE dev_user LOGIN PASSWORD &#39;securepassword123&#39;;
+
+-- Tạo một role khác không cho phép đăng nhập (dùng làm group)
+CREATE ROLE developers_group;
+
+-- Gán dev_user vào group developers_group
+GRANT developers_group TO dev_user;
+
+-- Gán quyền cho role dev_user trên database quan_ly_nhan_su
+GRANT ALL PRIVILEGES ON DATABASE quan_ly_nhan_su TO dev_user;
+-- Hoặc chi tiết hơn:
+GRANT CONNECT ON DATABASE quan_ly_nhan_su TO dev_user;
+-- (Quyền trên các object bên trong database sẽ được gán sau)
+
+-- Xem danh sách các role
+\du
+
+-- Xem cấu trúc một bảng (nếu có)
+-- \d ten_bang;
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong><ol>
+<li><strong>Cài đặt:</strong> Cài đặt thành công phiên bản PostgreSQL mới nhất trên máy cá nhân của bạn (Windows, macOS, hoặc Linux).</li>
+<li><strong>Kết nối và Khám phá:</strong><ul>
+<li>Sử dụng <code>psql</code> để kết nối tới PostgreSQL server với user <code>postgres</code> (hoặc user admin mặc định).</li>
+<li>Liệt kê tất cả các database mặc định.</li>
+<li>Tạo một database mới tên là <code>my_project_db</code>.</li>
+<li>Kết nối vào <code>my_project_db</code>.</li>
+</ul>
+</li>
+<li><strong>Quản lý Roles:</strong><ul>
+<li>Tạo một role mới tên <code>project_admin</code> với mật khẩu tự chọn và quyền <code>LOGIN</code>, <code>CREATEDB</code>.</li>
+<li>Tạo một role khác tên <code>project_user</code> với mật khẩu tự chọn và quyền <code>LOGIN</code>.</li>
+<li>Gán toàn bộ quyền trên database <code>my_project_db</code> cho role <code>project_admin</code>.</li>
+<li>Gán quyền <code>CONNECT</code> vào <code>my_project_db</code> cho role <code>project_user</code>.</li>
+</ul>
+</li>
+<li><strong>pgAdmin:</strong><ul>
+<li>Cài đặt pgAdmin.</li>
+<li>Kết nối tới PostgreSQL server của bạn bằng pgAdmin.</li>
+<li>Sử dụng pgAdmin để xem các database và roles bạn vừa tạo.</li>
+</ul>
+</li>
+<li><strong>Tìm hiểu file cấu hình:</strong><ul>
+<li>Xác định vị trí file <code>postgresql.conf</code> và <code>pg_hba.conf</code> trên hệ thống của bạn.</li>
+<li>Mở và xem qua nội dung của chúng (không cần thay đổi gì). Tìm hiểu xem <code>listen_addresses</code> đang được đặt là gì và các rule mặc định trong <code>pg_hba.conf</code>.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

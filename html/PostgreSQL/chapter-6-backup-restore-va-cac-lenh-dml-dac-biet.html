@@ -1,0 +1,442 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-6-backup-restore-va-cac-lenh-dml-dac-biet</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 6: Backup, Restore và Các Lệnh DML Đặc Biệt</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Bảo vệ dữ liệu với Backup/Restore và làm chủ các kỹ thuật DML nâng cao (UPSERT, RETURNING, DELETE USING).</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Backup và Restore (Logical Backup):</strong><ul>
+<li><strong><code>pg_dump</code></strong>: Công cụ dòng lệnh để tạo bản sao lưu logic của một database PostgreSQL. Kết quả có thể là một file script SQL (plain format) hoặc một file archive (custom, directory, tar format).<ul>
+<li>Plain format (<code>-Fp</code> hoặc mặc định): File text chứa các lệnh SQL để tạo lại schema và dữ liệu. Khôi phục bằng <code>psql</code>.</li>
+<li>Custom format (<code>-Fc</code>): Định dạng nén, linh hoạt, cho phép chọn lọc đối tượng khi khôi phục, khôi phục song song. Khôi phục bằng <code>pg_restore</code>. <strong>Khuyến nghị sử dụng.</strong></li>
+<li>Directory format (<code>-Fd</code>): Lưu mỗi bảng và đối tượng lớn vào một file riêng trong một thư mục. Hỗ trợ khôi phục song song. Khôi phục bằng <code>pg_restore</code>.</li>
+<li>Tar format (<code>-Ft</code>): Tương tự custom nhưng không nén. Khôi phục bằng <code>pg_restore</code>.</li>
+<li>Các tùy chọn quan trọng:<ul>
+<li><code>-U username</code>, <code>-W</code> (prompt password), <code>-h host</code>, <code>-p port</code>.</li>
+<li><code>database_name</code>.</li>
+<li><code>-f filename</code> (output file).</li>
+<li><code>-n schema_name</code> (chỉ backup schema cụ thể).</li>
+<li><code>-t table_name</code> (chỉ backup bảng cụ thể, có thể dùng wildcard).</li>
+<li><code>--inserts</code> hoặc <code>--column-inserts</code> (dùng lệnh <code>INSERT</code> thay vì <code>COPY</code>, chậm hơn nhưng dễ port đi nơi khác).</li>
+<li><code>-j num_jobs</code> (backup song song, chỉ cho directory format).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><code>pg_dumpall</code></strong>: Backup tất cả các database trong một cluster, bao gồm cả các đối tượng global (roles, tablespaces). Output luôn là plain SQL.</li>
+<li><strong><code>pg_restore</code></strong>: Công cụ để khôi phục database từ file archive được tạo bởi <code>pg_dump</code> (custom, directory, tar).<ul>
+<li>Cần tạo database rỗng trước khi khôi phục (trừ khi dùng <code>-C</code> với <code>pg_dump</code> để bao gồm lệnh tạo DB).</li>
+<li>Các tùy chọn quan trọng:<ul>
+<li><code>-d database_name</code> (database để khôi phục vào).</li>
+<li><code>-C</code> (tạo database trước khi khôi phục - database name lấy từ archive).</li>
+<li><code>-c</code> (clean - drop các đối tượng CSDL trước khi tạo lại).</li>
+<li><code>-j num_jobs</code> (khôi phục song song).</li>
+<li><code>-L filename</code> (list nội dung archive).</li>
+<li><code>-n schema_name</code>, <code>-t table_name</code> (chỉ khôi phục đối tượng cụ thể).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><code>psql</code></strong>: Dùng để khôi phục từ file SQL script (plain format): <code>psql -U username -d database_name -f backup_file.sql</code>.</li>
+</ul>
+</li>
+<li><strong>Physical Backup (Giới thiệu sơ lược):</strong><ul>
+<li>Sao chép toàn bộ các file dữ liệu của database cluster.</li>
+<li>Point-in-Time Recovery (PITR): Khả năng khôi phục database về bất kỳ thời điểm nào giữa hai lần backup, bằng cách sử dụng base backup và các file WAL (Write-Ahead Log).</li>
+<li>Công cụ: <code>pg_basebackup</code>, các công cụ chuyên dụng như <code>pgBackRest</code>, <code>Barman</code>.</li>
+</ul>
+</li>
+<li><strong><code>INSERT ... ON CONFLICT DO NOTHING / DO UPDATE</code> (UPSERT):</strong><ul>
+<li>Tính năng mạnh mẽ của PostgreSQL để xử lý xung đột khi chèn dữ liệu (thường là vi phạm ràng buộc <code>UNIQUE</code> hoặc <code>PRIMARY KEY</code>).</li>
+<li><strong><code>ON CONFLICT (conflict_target) DO NOTHING</code></strong>: Nếu có xung đột, không làm gì cả, bỏ qua việc chèn.<ul>
+<li><code>conflict_target</code>: Có thể là tên cột (hoặc các cột) có ràng buộc <code>UNIQUE</code>, hoặc tên của một ràng buộc <code>UNIQUE</code> (<code>ON CONSTRAINT constraint_name</code>).</li>
+</ul>
+</li>
+<li><strong><code>ON CONFLICT (conflict_target) DO UPDATE SET column1 = value1 [, ...]</code></strong>: Nếu có xung đột, cập nhật dòng hiện có.<ul>
+<li>Bên trong mệnh đề <code>SET</code>, bạn có thể tham chiếu đến các giá trị của dòng hiện có (ví dụ: <code>TableName.column_name</code>) và các giá trị đáng lẽ đã được chèn nếu không có xung đột thông qua bảng ảo <code>excluded</code> (ví dụ: <code>excluded.column_name</code>).</li>
+<li>Có thể thêm mệnh đề <code>WHERE condition</code> vào <code>DO UPDATE</code> để chỉ cập nhật nếu điều kiện thỏa mãn.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Mệnh đề <code>RETURNING</code>:</strong><ul>
+<li>Trả về các giá trị từ các dòng bị ảnh hưởng bởi câu lệnh <code>INSERT</code>, <code>UPDATE</code>, hoặc <code>DELETE</code>.</li>
+<li>Rất hữu ích để lấy ID tự tăng, các giá trị mặc định, hoặc các giá trị vừa được thay đổi mà không cần thực hiện một câu lệnh <code>SELECT</code> riêng biệt.</li>
+<li>Cú pháp: <code>... RETURNING expression [AS alias] [, ...] | *</code></li>
+</ul>
+</li>
+<li><strong><code>DELETE USING</code>:</strong><ul>
+<li>Xóa các dòng trong một bảng dựa trên điều kiện join với một hoặc nhiều bảng khác.</li>
+<li>Cú pháp: <code>DELETE FROM target_table USING other_table1 [, other_table2 ...] WHERE join_condition AND other_conditions;</code></li>
+<li>Khác với subquery trong <code>DELETE FROM ... WHERE id IN (SELECT ...)</code>: <code>DELETE USING</code> thường hiệu quả hơn và linh hoạt hơn.</li>
+</ul>
+</li>
+<li><strong><code>TRUNCATE TABLE table_name [, ...]</code>:</strong><ul>
+<li>Xóa nhanh tất cả các dòng khỏi một hoặc nhiều bảng.</li>
+<li>Nhanh hơn <code>DELETE</code> không có <code>WHERE</code> vì nó không scan bảng và không ghi WAL cho từng dòng (trừ khi có trigger).</li>
+<li>Không kích hoạt trigger <code>ON DELETE</code> cho từng dòng (chỉ trigger <code>ON TRUNCATE</code> ở mức statement).</li>
+<li>Tùy chọn:<ul>
+<li><code>RESTART IDENTITY</code>: Reset các sequence liên quan đến các cột <code>SERIAL</code> của bảng về giá trị ban đầu.</li>
+<li><code>CONTINUE IDENTITY</code> (mặc định): Không thay đổi sequence.</li>
+<li><code>CASCADE</code>: Tự động truncate cả các bảng có khóa ngoại tham chiếu đến bảng bị truncate.</li>
+<li><code>RESTRICT</code> (mặc định): Không cho truncate nếu có khóa ngoại tham chiếu đến, trừ khi các bảng đó cũng được liệt kê trong lệnh <code>TRUNCATE</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Backup database &#39;my_project_db&#39; sang file custom format (dòng lệnh terminal)
+-- pg_dump -U postgres -Fc -f my_project_db_backup.dump my_project_db
+
+-- Tạo database mới và khôi phục (dòng lệnh terminal)
+-- createdb -U postgres my_project_db_restored
+-- pg_restore -U postgres -d my_project_db_restored my_project_db_backup.dump
+
+-- INSERT ON CONFLICT DO NOTHING
+CREATE TABLE EmailSubscribers (email VARCHAR(255) PRIMARY KEY, name VARCHAR(100), subscribed_at TIMESTAMPTZ DEFAULT NOW());
+INSERT INTO EmailSubscribers (email, name) VALUES (&#39;user1@example.com&#39;, &#39;User One&#39;);
+INSERT INTO EmailSubscribers (email, name) VALUES (&#39;user1@example.com&#39;, &#39;User One Again&#39;)
+ON CONFLICT (email) DO NOTHING; -- Sẽ không chèn dòng thứ hai
+
+-- INSERT ON CONFLICT DO UPDATE (cập nhật tên và thời gian nếu email đã tồn tại)
+INSERT INTO EmailSubscribers (email, name) VALUES (&#39;user1@example.com&#39;, &#39;User One Updated Name&#39;)
+ON CONFLICT (email) DO UPDATE SET
+    name = excluded.name,
+    subscribed_at = NOW();
+
+-- INSERT với RETURNING
+CREATE TABLE ProductSales (sale_id SERIAL PRIMARY KEY, product_name TEXT, quantity INT, sale_time TIMESTAMPTZ);
+INSERT INTO ProductSales (product_name, quantity, sale_time)
+VALUES (&#39;Laptop X200&#39;, 2, NOW())
+RETURNING sale_id, product_name, sale_time;
+
+-- UPDATE với RETURNING
+UPDATE ProductSales SET quantity = quantity + 1 WHERE product_name = &#39;Laptop X200&#39;
+RETURNING product_name, quantity AS new_quantity;
+
+-- DELETE với RETURNING
+-- DELETE FROM ProductSales WHERE quantity &lt; 2
+-- RETURNING *; -- Trả về tất cả các cột của các dòng đã xóa
+
+-- DELETE USING: Xóa các đơn hàng cũ (trước 2022) của các khách hàng không hoạt động
+CREATE TABLE Customers (customer_id INT PRIMARY KEY, name TEXT, status VARCHAR(10) DEFAULT &#39;active&#39;); -- &#39;active&#39; or &#39;inactive&#39;
+-- INSERT INTO Customers VALUES (1, &#39;Alice&#39;, &#39;active&#39;), (2, &#39;Bob&#39;, &#39;inactive&#39;), (3, &#39;Charlie&#39;, &#39;active&#39;);
+-- INSERT INTO Orders (customer_id, order_date, total_amount) VALUES
+-- (1, &#39;2021-05-10 UTC&#39;, 100), (2, &#39;2021-11-20 UTC&#39;, 150), (3, &#39;2023-01-01 UTC&#39;, 200);
+
+DELETE FROM Orders o
+USING Customers c
+WHERE o.customer_id = c.customer_id
+  AND c.status = &#39;inactive&#39;
+  AND EXTRACT(YEAR FROM o.order_date) &lt; 2022;
+
+-- TRUNCATE
+CREATE TABLE TempLogs (log_entry TEXT);
+INSERT INTO TempLogs VALUES (&#39;Log 1&#39;), (&#39;Log 2&#39;);
+TRUNCATE TABLE TempLogs RESTART IDENTITY; -- Nếu TempLogs có cột SERIAL, sequence sẽ reset
+-- (Lưu ý: RESTART IDENTITY không có ý nghĩa nếu không có cột SERIAL/IDENTITY)
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong><ol>
+<li><strong>Backup và Restore Toàn diện:</strong><ul>
+<li>Sử dụng <code>pg_dump</code> để backup database <code>my_project_db</code> của bạn với định dạng <code>custom</code> (<code>-Fc</code>).</li>
+<li>Xóa database <code>my_project_db</code> (cẩn thận!).</li>
+<li>Tạo lại database <code>my_project_db</code> rỗng.</li>
+<li>Sử dụng <code>pg_restore</code> để khôi phục toàn bộ dữ liệu vào <code>my_project_db</code>.</li>
+</ul>
+</li>
+<li><strong>Backup Chọn lọc:</strong><ul>
+<li>Backup chỉ schema <code>engineering</code> từ <code>my_project_db</code> ra một file archive riêng.</li>
+<li>Backup chỉ bảng <code>Products</code> (nếu có, hoặc một bảng bất kỳ bạn chọn) ra một file SQL (plain format).</li>
+</ul>
+</li>
+<li><strong>Thực hành <code>ON CONFLICT</code>:</strong><ul>
+<li>Tạo bảng <code>ProductInventory</code> (product_sku VARCHAR(50) PRIMARY KEY, product_name TEXT, stock_level INT, last_updated TIMESTAMPTZ).</li>
+<li>Viết câu lệnh <code>INSERT</code> để thêm sản phẩm mới.</li>
+<li>Viết câu lệnh <code>INSERT ... ON CONFLICT (product_sku) DO UPDATE SET ...</code> để:<ul>
+<li>Nếu <code>product_sku</code> đã tồn tại, cộng <code>stock_level</code> từ <code>excluded</code> vào <code>stock_level</code> hiện tại và cập nhật <code>last_updated</code>.</li>
+<li>Thử chèn một sản phẩm mới, sau đó chèn lại sản phẩm đó với <code>stock_level</code> khác để kiểm tra logic cập nhật.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Sử dụng <code>RETURNING</code>:</strong><ul>
+<li>Khi thêm một nhân viên mới vào bảng <code>human_resources.Employees</code> (từ bài tập Chapter 5), sử dụng <code>RETURNING</code> để lấy <code>employee_id</code> và <code>hire_date</code> (nếu <code>hire_date</code> có giá trị default là <code>CURRENT_DATE</code>).</li>
+<li>Viết câu lệnh <code>UPDATE</code> để tăng <code>stock_level</code> của tất cả sản phẩm trong <code>ProductInventory</code> có <code>stock_level &lt; 10</code> lên thêm 5 đơn vị, và dùng <code>RETURNING</code> để trả về <code>product_sku</code> và <code>stock_level</code> mới.</li>
+</ul>
+</li>
+<li><strong><code>DELETE USING</code> và <code>TRUNCATE</code>:</strong><ul>
+<li>Giả sử bạn có bảng <code>ArchivedOrders</code> và <code>ActiveOrders</code>. Viết câu lệnh <code>DELETE USING</code> để xóa các đơn hàng trong <code>ActiveOrders</code> mà đã tồn tại (cùng <code>order_id</code>) trong <code>ArchivedOrders</code>.</li>
+<li>Tạo một bảng log tạm <code>DailyActionLog</code>. Sau khi xử lý xong log trong ngày, bạn muốn xóa sạch bảng này và reset sequence (nếu có). Sử dụng <code>TRUNCATE TABLE ... RESTART IDENTITY;</code>. Thảo luận khi nào nên dùng <code>TRUNCATE</code> thay vì <code>DELETE</code>.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

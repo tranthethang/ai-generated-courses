@@ -1,0 +1,461 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-8-window-functions</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 8: Window Functions</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Phân tích dữ liệu chuyên sâu và hiệu quả với Window Functions.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Window Functions là gì?</strong><ul>
+<li>Window Functions thực hiện các phép tính trên một tập các dòng của bảng có liên quan (gọi là &quot;window&quot; hoặc &quot;cửa sổ&quot;) đến dòng hiện tại.</li>
+<li>Khác với các hàm tổng hợp (aggregate functions) thông thường kết hợp với <code>GROUP BY</code>:<ul>
+<li><code>GROUP BY</code> gộp nhiều dòng thành một dòng kết quả duy nhất cho mỗi nhóm.</li>
+<li>Window Functions không làm giảm số lượng dòng trả về; chúng trả về một giá trị cho mỗi dòng dựa trên &quot;cửa sổ&quot; các dòng liên quan đến nó.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Cú pháp cơ bản:</strong><pre><code class="language-sql">function_name ([arguments]) OVER (
+    [PARTITION BY expression_list]
+    [ORDER BY expression_list [ASC | DESC] [NULLS FIRST | NULLS LAST]]
+    [frame_clause]
+)
+</code></pre>
+<ul>
+<li><code>function_name</code>: Tên của window function (ví dụ: <code>SUM()</code>, <code>RANK()</code>, <code>LAG()</code>).</li>
+<li><code>OVER (...)</code>: Mệnh đề xác định &quot;cửa sổ&quot;.</li>
+<li><strong><code>PARTITION BY expression_list</code></strong>: (Tùy chọn) Chia các dòng của kết quả truy vấn thành các phân vùng (partitions). Window function được áp dụng riêng biệt cho mỗi phân vùng. Nếu bỏ qua, toàn bộ tập kết quả được coi là một phân vùng duy nhất.</li>
+<li><strong><code>ORDER BY expression_list</code></strong>: (Tùy chọn, nhưng thường cần thiết cho nhiều hàm) Sắp xếp các dòng bên trong mỗi phân vùng. Thứ tự này quan trọng cho các hàm xếp hạng và các hàm phụ thuộc vào vị trí tương đối của các dòng (như <code>LAG</code>, <code>LEAD</code>).</li>
+<li><strong><code>frame_clause</code></strong>: (Tùy chọn) Xác định một tập con các dòng (gọi là &quot;window frame&quot;) bên trong phân vùng hiện tại để hàm tính toán. Nếu bỏ qua, frame mặc định phụ thuộc vào hàm và có <code>ORDER BY</code> hay không.<ul>
+<li>Cú pháp frame: <code>mode BETWEEN frame_start AND frame_end</code></li>
+<li><code>mode</code>: <code>ROWS</code> (dựa trên số dòng offset), <code>RANGE</code> (dựa trên giá trị offset so với giá trị dòng hiện tại trong <code>ORDER BY</code>), <code>GROUPS</code> (PostgreSQL 11+, dựa trên nhóm các dòng có cùng giá trị <code>ORDER BY</code>).</li>
+<li><code>frame_start</code>, <code>frame_end</code>:<ul>
+<li><code>UNBOUNDED PRECEDING</code>: Bắt đầu từ dòng đầu tiên của phân vùng.</li>
+<li><code>N PRECEDING</code>: N dòng trước dòng hiện tại.</li>
+<li><code>CURRENT ROW</code>: Dòng hiện tại.</li>
+<li><code>N FOLLOWING</code>: N dòng sau dòng hiện tại.</li>
+<li><code>UNBOUNDED FOLLOWING</code>: Kết thúc ở dòng cuối cùng của phân vùng.</li>
+</ul>
+</li>
+<li>Ví dụ frame phổ biến cho tổng lũy kế: <code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Các loại Window Functions:</strong><ul>
+<li><strong>Hàm xếp hạng (Ranking Functions):</strong><ul>
+<li><code>ROW_NUMBER()</code>: Gán một số thứ tự duy nhất cho mỗi dòng trong phân vùng, bắt đầu từ 1, theo thứ tự <code>ORDER BY</code>.</li>
+<li><code>RANK()</code>: Gán hạng cho mỗi dòng. Các dòng có cùng giá trị <code>ORDER BY</code> sẽ có cùng hạng. Hạng tiếp theo sẽ bị bỏ qua (ví dụ: 1, 1, 3).</li>
+<li><code>DENSE_RANK()</code>: Tương tự <code>RANK()</code>, nhưng không có khoảng trống trong dãy hạng (ví dụ: 1, 1, 2).</li>
+<li><code>NTILE(num_buckets)</code>: Chia các dòng trong mỗi phân vùng thành <code>num_buckets</code> nhóm (gọi là &quot;tiles&quot;) và gán số thứ tự nhóm cho mỗi dòng.</li>
+</ul>
+</li>
+<li><strong>Hàm tổng hợp (Aggregate Window Functions):</strong><ul>
+<li>Các hàm tổng hợp quen thuộc (<code>SUM()</code>, <code>AVG()</code>, <code>COUNT()</code>, <code>MAX()</code>, <code>MIN()</code>) có thể được sử dụng như window functions khi có mệnh đề <code>OVER()</code>.</li>
+<li>Ví dụ: <code>SUM(salary) OVER (PARTITION BY department_id)</code> sẽ tính tổng lương cho mỗi phòng ban và hiển thị giá trị đó cho mọi nhân viên trong phòng ban đó.</li>
+</ul>
+</li>
+<li><strong>Hàm giá trị (Value Window Functions) / Hàm điều hướng (Navigation Functions):</strong><ul>
+<li><code>LAG(expression [, offset [, default_value]])</code>: Truy cập giá trị của <code>expression</code> từ dòng đứng <em>trước</em> dòng hiện tại <code>offset</code> vị trí trong phân vùng (mặc định <code>offset</code> là 1).</li>
+<li><code>LEAD(expression [, offset [, default_value]])</code>: Truy cập giá trị của <code>expression</code> từ dòng đứng <em>sau</em> dòng hiện tại <code>offset</code> vị trí trong phân vùng.</li>
+<li><code>FIRST_VALUE(expression)</code>: Trả về giá trị của <code>expression</code> từ dòng đầu tiên của window frame.</li>
+<li><code>LAST_VALUE(expression)</code>: Trả về giá trị của <code>expression</code> từ dòng cuối cùng của window frame. (Lưu ý: frame mặc định có thể không như bạn mong đợi, thường cần chỉ định frame rõ ràng như <code>ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING</code>).</li>
+<li><code>NTH_VALUE(expression, n)</code>: Trả về giá trị của <code>expression</code> từ dòng thứ <code>n</code> của window frame.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Sử dụng tên cửa sổ (Named Windows):</strong><ul>
+<li>Nếu bạn sử dụng cùng một định nghĩa cửa sổ (<code>PARTITION BY</code>, <code>ORDER BY</code>, <code>frame_clause</code>) cho nhiều window functions, bạn có thể định nghĩa nó một lần bằng mệnh đề <code>WINDOW</code>.</li>
+</ul>
+<pre><code class="language-sql">SELECT
+    SUM(salary) OVER w,
+    AVG(salary) OVER w
+FROM employees
+WINDOW w AS (PARTITION BY department_id ORDER BY hire_date);
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Giả sử bảng SalesByEmployee (employee_name TEXT, sale_month DATE, monthly_sales NUMERIC, department TEXT)
+/*
+CREATE TABLE SalesByEmployee (
+    employee_name TEXT, sale_month DATE, monthly_sales NUMERIC, department TEXT,
+    PRIMARY KEY (employee_name, sale_month)
+);
+INSERT INTO SalesByEmployee VALUES
+(&#39;Alice&#39;, &#39;2023-01-01&#39;, 5000, &#39;Electronics&#39;), (&#39;Alice&#39;, &#39;2023-02-01&#39;, 5500, &#39;Electronics&#39;),
+(&#39;Alice&#39;, &#39;2023-03-01&#39;, 4800, &#39;Electronics&#39;), (&#39;Bob&#39;, &#39;2023-01-01&#39;, 7000, &#39;Electronics&#39;),
+(&#39;Bob&#39;, &#39;2023-02-01&#39;, 7200, &#39;Electronics&#39;), (&#39;Charlie&#39;, &#39;2023-01-01&#39;, 6000, &#39;Appliances&#39;),
+(&#39;Charlie&#39;, &#39;2023-02-01&#39;, 6300, &#39;Appliances&#39;), (&#39;Charlie&#39;, &#39;2023-03-01&#39;, 6100, &#39;Appliances&#39;);
+*/
+
+-- 1. Xếp hạng nhân viên theo doanh số mỗi tháng trong từng phòng ban
+SELECT
+    employee_name,
+    department,
+    sale_month,
+    monthly_sales,
+    RANK() OVER (PARTITION BY department, sale_month ORDER BY monthly_sales DESC) as rank_in_dept_month,
+    DENSE_RANK() OVER (PARTITION BY department ORDER BY SUM(monthly_sales) DESC) as overall_dept_rank_by_total_sales -- Cần subquery hoặc CTE để tính tổng trước
+FROM SalesByEmployee;
+-- Để xếp hạng department theo tổng sales, cần một CTE:
+WITH DepartmentTotalSales AS (
+    SELECT department, SUM(monthly_sales) as total_dept_sales
+    FROM SalesByEmployee
+    GROUP BY department
+)
+SELECT
+    sbe.employee_name, sbe.department, sbe.sale_month, sbe.monthly_sales,
+    RANK() OVER (PARTITION BY sbe.department, sbe.sale_month ORDER BY sbe.monthly_sales DESC) as rank_in_dept_month,
+    DENSE_RANK() OVER (ORDER BY dts.total_dept_sales DESC) as department_rank_by_total
+FROM SalesByEmployee sbe
+JOIN DepartmentTotalSales dts ON sbe.department = dts.department;
+
+
+-- 2. Tính tổng doanh số lũy kế (running total) của mỗi nhân viên qua các tháng
+SELECT
+    employee_name,
+    department,
+    sale_month,
+    monthly_sales,
+    SUM(monthly_sales) OVER (PARTITION BY employee_name ORDER BY sale_month
+                             ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total_sales
+FROM SalesByEmployee
+ORDER BY employee_name, sale_month;
+
+-- 3. So sánh doanh số tháng hiện tại với tháng trước của mỗi nhân viên
+SELECT
+    employee_name,
+    sale_month,
+    monthly_sales,
+    LAG(monthly_sales, 1, 0.0) OVER (PARTITION BY employee_name ORDER BY sale_month) AS previous_month_sales,
+    monthly_sales - LAG(monthly_sales, 1, 0.0) OVER (PARTITION BY employee_name ORDER BY sale_month) AS sales_diff
+FROM SalesByEmployee
+ORDER BY employee_name, sale_month;
+
+-- 4. Tính tỷ lệ doanh số của mỗi nhân viên so với tổng doanh số phòng ban trong tháng đó
+SELECT
+    employee_name,
+    department,
+    sale_month,
+    monthly_sales,
+    SUM(monthly_sales) OVER (PARTITION BY department, sale_month) AS total_sales_in_dept_month,
+    (monthly_sales * 100.0 / SUM(monthly_sales) OVER (PARTITION BY department, sale_month)) AS percentage_of_dept_sales
+FROM SalesByEmployee
+ORDER BY department, sale_month, employee_name;
+
+-- 5. Tìm nhân viên có doanh số cao nhất và thấp nhất trong mỗi phòng ban (sử dụng FIRST_VALUE, LAST_VALUE với frame phù hợp)
+SELECT DISTINCT
+    department,
+    FIRST_VALUE(employee_name) OVER (PARTITION BY department ORDER BY monthly_sales DESC
+                                     ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS top_performer_this_month_any, -- Lấy 1 người bất kỳ nếu nhiều người cùng sales cao nhất
+    LAST_VALUE(employee_name) OVER (PARTITION BY department ORDER BY monthly_sales DESC
+                                    RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS bottom_performer_by_value_range -- (Cẩn thận với LAST_VALUE và frame mặc định)
+FROM SalesByEmployee;
+-- Cách tốt hơn để lấy top/bottom (ví dụ cho top):
+WITH RankedSales AS (
+  SELECT employee_name, department, monthly_sales,
+         RANK() OVER (PARTITION BY department ORDER BY monthly_sales DESC) as rn_desc,
+         RANK() OVER (PARTITION BY department ORDER BY monthly_sales ASC) as rn_asc
+  FROM SalesByEmployee
+  -- WHERE sale_month = &#39;specific_month&#39; -- Nếu xét theo tháng cụ thể
+)
+SELECT department, employee_name, monthly_sales, &#39;Top Performer&#39; as category
+FROM RankedSales WHERE rn_desc = 1
+UNION ALL
+SELECT department, employee_name, monthly_sales, &#39;Bottom Performer&#39; as category
+FROM RankedSales WHERE rn_asc = 1;
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong>
+  Sử dụng bảng <code>EmployeeSalaries</code> (employee_id INT, full_name TEXT, department TEXT, hire_date DATE, salary NUMERIC).<ol>
+<li><strong>Xếp hạng lương:</strong><ul>
+<li>Xếp hạng tất cả nhân viên theo lương từ cao đến thấp (<code>ROW_NUMBER</code>, <code>RANK</code>, <code>DENSE_RANK</code>).</li>
+<li>Xếp hạng nhân viên theo lương trong mỗi <code>department</code>.</li>
+</ul>
+</li>
+<li><strong>Phân nhóm lương (NTILE):</strong> Chia nhân viên trong mỗi <code>department</code> thành 4 nhóm (quartiles) dựa trên mức lương của họ.</li>
+<li><strong>Lương lũy kế và trung bình động:</strong><ul>
+<li>Tính tổng lương lũy kế cho mỗi <code>department</code> theo <code>hire_date</code>.</li>
+<li>Tính mức lương trung bình động 3 tháng gần nhất (theo <code>hire_date</code>) cho mỗi nhân viên (nếu có đủ dữ liệu 3 tháng).</li>
+</ul>
+</li>
+<li><strong>So sánh lương:</strong><ul>
+<li>Đối với mỗi nhân viên, hiển thị mức lương của nhân viên được tuyển dụng ngay trước và ngay sau họ trong cùng một <code>department</code>.</li>
+<li>Tính phần trăm chênh lệch lương của mỗi nhân viên so với mức lương trung bình của <code>department</code> của họ.</li>
+</ul>
+</li>
+<li><strong>Nhân viên đầu tiên và cuối cùng được tuyển:</strong><ul>
+<li>Đối với mỗi <code>department</code>, tìm nhân viên được tuyển dụng đầu tiên và cuối cùng.</li>
+<li>Hiển thị mức lương của nhân viên có lương cao nhất và thấp nhất trong toàn công ty.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

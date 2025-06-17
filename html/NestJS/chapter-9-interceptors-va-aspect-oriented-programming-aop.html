@@ -1,0 +1,623 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-9-interceptors-va-aspect-oriented-programming-aop</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 9: Interceptors và Aspect-Oriented Programming (AOP)</h1>
+<p><strong>Tên Chapter học:</strong> Interceptors và Aspect-Oriented Programming (AOP)</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu rõ Interceptors:</strong> Nắm vững vai trò và cách hoạt động của Interceptors trong NestJS. Biết chúng được thực thi ở đâu trong request lifecycle.</li>
+<li><strong>Các khả năng của Interceptors:</strong><ul>
+<li>Bind extra logic trước và sau khi route handler thực thi.</li>
+<li>Transform kết quả trả về từ route handler.</li>
+<li>Transform exception được ném từ route handler.</li>
+<li>Override hoàn toàn việc thực thi của route handler (ít phổ biến hơn).</li>
+</ul>
+</li>
+<li><strong>Sử dụng Interceptors cho các tác vụ phổ biến:</strong><ul>
+<li><strong>Logging:</strong> Ghi log chi tiết về request và response (ví dụ: thời gian xử lý, method, URL, status code).</li>
+<li><strong>Response Mapping/Transformation:</strong> Chuẩn hóa cấu trúc response JSON trả về cho client (ví dụ: luôn wrap data trong một object <code>{ &quot;data&quot;: ..., &quot;statusCode&quot;: ... }</code>).</li>
+<li><strong>Caching:</strong> Triển khai cơ chế caching đơn giản cho các response của API.</li>
+<li><strong>Timeout:</strong> Xử lý timeout cho các request kéo dài.</li>
+</ul>
+</li>
+<li><strong>Aspect-Oriented Programming (AOP):</strong> Hiểu khái niệm AOP và cách Interceptors là một công cụ để áp dụng AOP trong NestJS để xử lý các &quot;cross-cutting concerns&quot;.</li>
+<li><strong>Tạo Custom Interceptors:</strong> Học cách tạo interceptor tùy chỉnh bằng cách implement interface <code>NestInterceptor</code>.</li>
+<li><strong>Binding Interceptors:</strong> Áp dụng interceptors ở các cấp độ khác nhau (global, controller, method).</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Interceptors là gì?</strong></p>
+<ul>
+<li>Interceptors là các class được đánh dấu bằng <code>@Injectable()</code> decorator và phải implement interface <code>NestInterceptor</code>.</li>
+<li>Chúng có một method duy nhất là <code>intercept(context: ExecutionContext, next: CallHandler): Observable&lt;any&gt; | Promise&lt;Observable&lt;any&gt;&gt;</code>.</li>
+<li><strong><code>ExecutionContext</code></strong>: Tương tự như trong Guards và Filters, cung cấp thông tin về request.</li>
+<li><strong><code>CallHandler</code></strong>:<ul>
+<li>Interface có một method <code>handle(): Observable&lt;any&gt;</code>.</li>
+<li>Gọi <code>next.handle()</code> sẽ thực thi route handler tương ứng.</li>
+<li>Giá trị trả về từ <code>next.handle()</code> là một <code>Observable</code> chứa response từ route handler.</li>
+</ul>
+</li>
+<li><strong>Request Lifecycle với Interceptor:</strong>
+  <code>Client Request</code> -&gt; <code>Middleware</code> -&gt; <code>Guards</code> -&gt; <strong><code>Interceptor (pre-controller)</code></strong> -&gt; <code>Pipes</code> -&gt; <code>Controller Handler</code> -&gt; <strong><code>Interceptor (post-controller)</code></strong> -&gt; <code>Exception Filters (if error)</code> -&gt; <code>Server Response</code></li>
+<li>Interceptors có thể chạy code <strong>trước khi</strong> <code>next.handle()</code> được gọi và <strong>sau khi</strong> <code>Observable</code> từ <code>next.handle()</code> trả về kết quả (sử dụng các RxJS operators như <code>tap</code>, <code>map</code>).</li>
+</ul>
+</li>
+<li><p><strong>Khả năng của Interceptors:</strong></p>
+<ul>
+<li><strong>Bind extra logic:</strong> Thực hiện các tác vụ phụ trợ.</li>
+<li><strong>Transform result (<code>map</code> operator):</strong> Thay đổi dữ liệu trả về từ handler.<pre><code class="language-typescript">import { map } from &#39;rxjs/operators&#39;;
+// ...
+intercept(context: ExecutionContext, next: CallHandler): Observable&lt;any&gt; {
+  return next
+    .handle()
+    .pipe(map(data =&gt; ({ data }))); // Wrap data trong { data: ... }
+}
+</code></pre>
+</li>
+<li><strong>Transform exception (<code>catchError</code> operator):</strong> Thay đổi hoặc xử lý lỗi được ném từ handler.<pre><code class="language-typescript">import { catchError } from &#39;rxjs/operators&#39;;
+import { throwError } from &#39;rxjs&#39;;
+// ...
+intercept(context: ExecutionContext, next: CallHandler): Observable&lt;any&gt; {
+  return next
+    .handle()
+    .pipe(catchError(err =&gt; throwError(() =&gt; new MyCustomException(err))));
+}
+</code></pre>
+</li>
+<li><strong>Handle timeout (<code>timeout</code> operator):</strong></li>
+<li><strong>Caching (<code>tap</code> và logic cache):</strong></li>
+<li><strong>Logging (<code>tap</code> operator):</strong><pre><code class="language-typescript">import { tap } from &#39;rxjs/operators&#39;;
+// ...
+intercept(context: ExecutionContext, next: CallHandler): Observable&lt;any&gt; {
+  console.log(&#39;Before handler...&#39;);
+  const now = Date.now();
+  return next
+    .handle()
+    .pipe(tap(() =&gt; console.log(`After handler... ${Date.now() - now}ms`)));
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Aspect-Oriented Programming (AOP):</strong></p>
+<ul>
+<li>AOP là một mô hình lập trình nhằm tăng tính module hóa bằng cách cho phép tách biệt các <strong>cross-cutting concerns</strong>.</li>
+<li><strong>Cross-cutting concerns</strong> là các khía cạnh của chương trình ảnh hưởng đến nhiều phần khác nhau của hệ thống (ví dụ: logging, security, caching, transaction management, error handling).</li>
+<li>Interceptors trong NestJS là một cách để implement AOP. Chúng cho phép bạn &quot;chèn&quot; logic (advice) vào các điểm cụ thể (join points - ở đây là trước/sau route handler) mà không cần sửa đổi trực tiếp code của handler đó.</li>
+</ul>
+</li>
+<li><p><strong>Tạo Custom Interceptors:</strong></p>
+<ul>
+<li>Implement <code>NestInterceptor</code> interface.</li>
+<li>Sử dụng các RxJS operators để thao tác với stream dữ liệu (response).</li>
+<li><strong>Ví dụ: <code>TransformResponseInterceptor</code> để chuẩn hóa response:</strong><pre><code class="language-typescript">// src/common/interceptors/transform-response.interceptor.ts
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, HttpStatus } from &#39;@nestjs/common&#39;;
+import { Observable } from &#39;rxjs&#39;;
+import { map } from &#39;rxjs/operators&#39;;
+
+export interface StandardResponse&lt;T&gt; {
+  statusCode: number;
+  message?: string; // Tùy chọn, có thể thêm message thành công
+  data: T;
+}
+
+@Injectable()
+export class TransformResponseInterceptor&lt;T&gt; implements NestInterceptor&lt;T, StandardResponse&lt;T&gt;&gt; {
+  intercept(context: ExecutionContext, next: CallHandler): Observable&lt;StandardResponse&lt;T&gt;&gt; {
+    const httpContext = context.switchToHttp();
+    const response = httpContext.getResponse();
+    const statusCode = response.statusCode || HttpStatus.OK; // Lấy status code thực tế
+
+    return next.handle().pipe(
+      map(data =&gt; ({
+        statusCode: statusCode,
+        // message: &#39;Success&#39;, // Có thể thêm message nếu muốn
+        data: data,
+      })),
+    );
+  }
+}
+</code></pre>
+</li>
+<li><strong>Ví dụ: <code>LoggingInterceptor</code> đơn giản:</strong><pre><code class="language-typescript">// src/common/interceptors/logging.interceptor.ts
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from &#39;@nestjs/common&#39;;
+import { Observable } from &#39;rxjs&#39;;
+import { tap } from &#39;rxjs/operators&#39;;
+import { Request } from &#39;express&#39;;
+
+@Injectable()
+export class LoggingInterceptor implements NestInterceptor {
+  private readonly logger = new Logger(LoggingInterceptor.name);
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable&lt;any&gt; {
+    const request = context.switchToHttp().getRequest&lt;Request&gt;();
+    const { method, url, ip } = request;
+    const now = Date.now();
+
+    this.logger.log(`Incoming Request: ${method} ${url} from IP: ${ip}`);
+
+    return next.handle().pipe(
+      tap((data) =&gt; { // data là response data
+        const response = context.switchToHttp().getResponse();
+        this.logger.log(
+          `Outgoing Response: ${method} ${url} Status: ${response.statusCode} - ${Date.now() - now}ms`,
+        );
+        // Để log data response, cẩn thận với dữ liệu lớn hoặc nhạy cảm
+        // this.logger.debug(&#39;Response data:&#39;, data);
+      }),
+    );
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Binding Interceptors:</strong></p>
+<ul>
+<li>Tương tự như Pipes và Guards.</li>
+<li><strong>Global-scoped:</strong><pre><code class="language-typescript">// src/main.ts
+app.useGlobalInterceptors(new LoggingInterceptor());
+app.useGlobalInterceptors(new TransformResponseInterceptor()); // Thứ tự quan trọng
+</code></pre>
+</li>
+<li><strong>Controller-scoped:</strong> <code>@UseInterceptors(LoggingInterceptor)</code></li>
+<li><strong>Method-scoped:</strong> <code>@UseInterceptors(new CustomCacheInterceptor())</code></li>
+<li><strong>Thứ tự thực thi:</strong> Interceptor được bind global chạy trước, sau đó đến controller-scoped, rồi đến method-scoped. Khi response quay trở lại, thứ tự sẽ ngược lại.</li>
+</ul>
+</li>
+<li><p><strong>Caching với Interceptors (<code>@nestjs/cache-manager</code>):</strong></p>
+<ul>
+<li>NestJS cung cấp module <code>@nestjs/cache-manager</code> để dễ dàng tích hợp caching.</li>
+<li><strong>Cài đặt:</strong> <code>npm install @nestjs/cache-manager cache-manager</code></li>
+<li><strong>Cấu hình <code>CacheModule</code>:</strong><pre><code class="language-typescript">// app.module.ts
+import { CacheModule, Module } from &#39;@nestjs/common&#39;;
+// import * as redisStore from &#39;cache-manager-redis-store&#39;; // Nếu dùng Redis
+
+@Module({
+  imports: [
+    CacheModule.register({
+      isGlobal: true, // Làm CacheModule global
+      ttl: 5, // Time to live in seconds (mặc định 5s)
+      max: 100, // Max number of items in cache (mặc định 100)
+      // store: redisStore, // Nếu dùng Redis
+      // host: &#39;localhost&#39;,
+      // port: 6379,
+    }),
+    // ...
+  ],
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><strong>Sử dụng <code>CacheInterceptor</code> có sẵn:</strong><pre><code class="language-typescript">import { Controller, Get, UseInterceptors, CacheInterceptor, CacheKey, CacheTTL } from &#39;@nestjs/common&#39;;
+
+@Controller(&#39;cats&#39;)
+@UseInterceptors(CacheInterceptor) // Áp dụng cho tất cả route trong controller này
+export class CatsController {
+  @Get()
+  @CacheKey(&#39;all_cats&#39;) // Key cho cache
+  @CacheTTL(60) // Override TTL thành 60s cho route này
+  async findAll(): Promise&lt;any[]&gt; {
+    console.log(&#39;Fetching all cats from service/DB...&#39;);
+    // ... logic lấy cats ...
+    return [{ name: &#39;Miu&#39;, age: 2 }];
+  }
+
+  @Get(&#39;:id&#39;)
+  // Sẽ tự động tạo key dựa trên URL, hoặc có thể custom với @CacheKey
+  async findOne(@Param(&#39;id&#39;) id: string): Promise&lt;any&gt; {
+    console.log(`Fetching cat ${id} from service/DB...`);
+    // ... logic lấy cat ...
+    return { name: `Miu ${id}`, age: 3 };
+  }
+}
+</code></pre>
+</li>
+<li><strong>Tương tác trực tiếp với Cache Manager:</strong> Inject <code>CACHE_MANAGER</code>.<pre><code class="language-typescript">import { Injectable, Inject, CACHE_MANAGER } from &#39;@nestjs/common&#39;;
+import { Cache } from &#39;cache-manager&#39;;
+
+@Injectable()
+export class AppService {
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+
+  async getCachedData(key: string): Promise&lt;any&gt; {
+    const value = await this.cacheManager.get(key);
+    if (value) {
+      return value;
+    }
+    // ... logic lấy data từ nguồn ...
+    // await this.cacheManager.set(key, dataToCache, { ttl: 60 });
+    return dataToCache;
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example:</strong></p>
+<ol>
+<li><p><strong>Tạo <code>LoggingInterceptor</code> và <code>TransformResponseInterceptor</code>:</strong></p>
+<ul>
+<li>(Như code ví dụ ở phần lý thuyết)</li>
+<li><code>src/common/interceptors/logging.interceptor.ts</code></li>
+<li><code>src/common/interceptors/transform-response.interceptor.ts</code></li>
+</ul>
+</li>
+<li><p><strong>Áp dụng global trong <code>main.ts</code>:</strong></p>
+<pre><code class="language-typescript">// src/main.ts
+import { LoggingInterceptor } from &#39;./common/interceptors/logging.interceptor&#39;;
+import { TransformResponseInterceptor } from &#39;./common/interceptors/transform-response.interceptor&#39;;
+// ...
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  // ...
+  app.useGlobalInterceptors(new LoggingInterceptor()); // Logging nên chạy trước
+  app.useGlobalInterceptors(new TransformResponseInterceptor()); // Transform response sau cùng
+  // ...
+  await app.listen(port);
+}
+</code></pre>
+</li>
+<li><p><strong>Thực hành với Caching:</strong></p>
+<ul>
+<li><strong>Cài đặt:</strong> <code>npm install @nestjs/cache-manager cache-manager</code></li>
+<li><strong>Cấu hình <code>CacheModule.register({ isGlobal: true, ttl: 10 })</code> trong <code>AppModule</code>.</strong></li>
+<li><strong>Trong <code>ProductsController</code>, áp dụng <code>CacheInterceptor</code> cho endpoint <code>GET /products</code>:</strong><pre><code class="language-typescript">// src/products/products.controller.ts
+import { Controller, Get, UseInterceptors, CacheInterceptor, CacheKey } from &#39;@nestjs/common&#39;;
+import { ProductsService } from &#39;./products.service&#39;;
+// ...
+
+@Controller(&#39;products&#39;)
+export class ProductsController {
+  constructor(private readonly productsService: ProductsService) {}
+
+  @Get()
+  @UseInterceptors(CacheInterceptor) // Sử dụng CacheInterceptor mặc định
+  @CacheKey(&#39;all_products_cache&#39;) // Đặt một key cố định cho cache này
+  // @CacheTTL(30) // Override TTL nếu cần (ví dụ 30 giây)
+  async findAll() {
+    this.productsService.getLogger().log(&#39;Controller: Finding all products (might be cached)&#39;);
+    return this.productsService.findAll();
+  }
+
+  @Get(&#39;:id&#39;)
+  @UseInterceptors(CacheInterceptor) // Cache sẽ tự động dựa trên URL
+  async findOne(@Param(&#39;id&#39;, ParseIntPipe) id: number) {
+    this.productsService.getLogger().log(`Controller: Finding product ${id} (might be cached)`);
+    return this.productsService.findOne(id);
+  }
+  // ...
+}
+</code></pre>
+</li>
+<li>Trong <code>ProductsService</code>, thêm log để biết khi nào hàm thực sự được gọi (không phải từ cache).<pre><code class="language-typescript">// src/products/products.service.ts
+// ...
+async findAll(): Promise&lt;Product[]&gt; {
+  this.logger.log(&#39;Service: Actually fetching all products from DB&#39;); // Log này chỉ xuất hiện khi không có cache hit
+  return this.productsRepository.find();
+}
+async findOne(id: number): Promise&lt;Product&gt; {
+  this.logger.log(`Service: Actually fetching product ${id} from DB`); // Log này chỉ xuất hiện khi không có cache hit
+  // ...
+}
+// ...
+public getLogger() { return this.logger; } // Helper để controller log
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Tạo <code>ResponseTimingInterceptor</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Viết một interceptor tên là <code>ResponseTimingInterceptor</code> để đo và log thời gian xử lý của mỗi request.</li>
+<li>Interceptor này cũng nên thêm một header tùy chỉnh vào response, ví dụ <code>X-Response-Time: &lt;thời gian xử lý&gt;ms</code>.</li>
+<li>Áp dụng interceptor này ở global scope.</li>
+</ul>
+</li>
+<li><strong>Tạo <code>ExcludeNullInterceptor</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Viết một interceptor tên là <code>ExcludeNullInterceptor</code> để tự động loại bỏ tất cả các trường có giá trị <code>null</code> (không phải <code>undefined</code>) khỏi đối tượng response data trước khi gửi về client.</li>
+<li>Áp dụng global. Test với một endpoint trả về object có một vài trường <code>null</code>.</li>
+</ul>
+</li>
+<li><strong>Triển khai <code>CacheInterceptor</code> cho <code>ProductsController</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Cài đặt <code>@nestjs/cache-manager</code> và <code>cache-manager</code>.</li>
+<li>Cấu hình <code>CacheModule.register({ isGlobal: true, ttl: 20 })</code> trong <code>AppModule</code> (TTL 20 giây).</li>
+<li>Áp dụng <code>CacheInterceptor</code> (từ <code>@nestjs/common</code>) cho endpoint <code>GET /products</code> và <code>GET /products/:id</code> trong <code>ProductsController</code>.</li>
+<li>Sử dụng <code>@CacheKey()</code> và <code>@CacheTTL()</code> nếu cần.</li>
+<li>Thêm log vào service methods để xác nhận khi nào dữ liệu được lấy từ DB và khi nào từ cache. Test bằng cách gọi API nhiều lần.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Tạo <code>AddOwnerInfoInterceptor</code> (Nâng cao, giả sử có Authentication):</strong><ul>
+<li><strong>Yêu cầu:</strong> Giả sử bạn đã có hệ thống authentication và <code>request.user</code> chứa thông tin user đã đăng nhập (ví dụ <code>user.id</code>).</li>
+<li>Viết một interceptor <code>AddOwnerInfoInterceptor</code> chỉ áp dụng cho các request <code>POST</code> đến một endpoint tạo resource (ví dụ <code>POST /products</code>).</li>
+<li>Interceptor này sẽ tự động thêm <code>ownerId: request.user.id</code> vào <code>request.body</code> trước khi DTO validation và handler được gọi.</li>
+<li><strong>Lưu ý:</strong> Cẩn thận khi sửa đổi <code>request.body</code>. Đảm bảo DTO của bạn có trường <code>ownerId</code> (có thể là optional và được validate).</li>
+<li><strong>Gợi ý:</strong><pre><code class="language-typescript">// ...
+intercept(context: ExecutionContext, next: CallHandler): Observable&lt;any&gt; {
+    const request = context.switchToHttp().getRequest();
+    if (request.method === &#39;POST&#39; &amp;&amp; request.user &amp;&amp; request.user.id) {
+        request.body.ownerId = request.user.id; // Thêm thông tin owner
+    }
+    return next.handle();
+}
+// ...
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Nghiên cứu và giải thích:</strong><ul>
+<li><strong>Yêu cầu:</strong> RxJS operators (<code>map</code>, <code>tap</code>, <code>catchError</code>, <code>finalize</code>) thường được sử dụng trong interceptors. Hãy chọn 2 operator, giải thích cách chúng hoạt động và cung cấp một ví dụ nhỏ về cách chúng có thể được sử dụng trong một interceptor của NestJS.</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

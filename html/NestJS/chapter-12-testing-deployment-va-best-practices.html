@@ -1,0 +1,713 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-12-testing-deployment-va-best-practices</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 12: Testing, Deployment và Best Practices</h1>
+<p><strong>Tên Chapter học:</strong> Testing, Deployment và Best Practices</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Testing trong NestJS:</strong><ul>
+<li>Hiểu các loại testing: Unit Test, Integration Test, E2E (End-to-End) Test.</li>
+<li>Sử dụng Jest (framework testing mặc định của NestJS) và <code>@nestjs/testing</code> để viết test.</li>
+<li>Thực hành viết unit test cho services, controllers, pipes, guards. Mock dependencies.</li>
+<li>Thực hành viết E2E test cho các API endpoint sử dụng <code>supertest</code>.</li>
+</ul>
+</li>
+<li><strong>Deployment Strategies:</strong><ul>
+<li>Giới thiệu các chiến lược deployment phổ biến cho ứng dụng Node.js/NestJS.</li>
+<li><strong>Docker:</strong> Containerize ứng dụng NestJS. Viết <code>Dockerfile</code> cơ bản và <code>docker-compose.yml</code> để chạy ứng dụng cùng với CSDL.</li>
+<li><strong>Serverless (Giới thiệu):</strong> Khái niệm triển khai NestJS trên các nền tảng serverless (AWS Lambda, Google Cloud Functions) sử dụng các adapter.</li>
+<li><strong>PM2:</strong> Giới thiệu PM2 như một process manager mạnh mẽ cho Node.js trong môi trường production.</li>
+</ul>
+</li>
+<li><strong>Best Practices:</strong><ul>
+<li><strong>Code Organization:</strong> Tái khẳng định tầm quan trọng của feature modules, cấu trúc thư mục rõ ràng.</li>
+<li><strong>Performance:</strong> Caching, lazy loading modules, tối ưu query CSDL, sử dụng Fastify (nếu cần).</li>
+<li><strong>Security:</strong> Helmet, CORS, rate limiting, input validation, bảo vệ khỏi các lỗ hổng phổ biến (XSS, SQL Injection - thông qua ORM), quản lý secret.</li>
+<li><strong>API Documentation:</strong> Sử dụng <code>@nestjs/swagger</code> để tự động tạo tài liệu API tương tác (OpenAPI/Swagger UI).</li>
+</ul>
+</li>
+<li><strong>Ôn tập và Q&amp;A:</strong> Tổng kết kiến thức toàn khóa, giải đáp các thắc mắc còn lại.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Testing trong NestJS:</strong></p>
+<ul>
+<li>NestJS được thiết kế để dễ dàng testing. CLI tự động tạo file test spec.</li>
+<li><strong>Jest:</strong> Framework testing mặc định.</li>
+<li><strong><code>@nestjs/testing</code>:</strong> Cung cấp các utility để test, đặc biệt là <code>Test.createTestingModule()</code>.</li>
+<li><strong>Các loại Test:</strong><ul>
+<li><strong>Unit Tests:</strong><ul>
+<li>Test các đơn vị code nhỏ nhất một cách cô lập (class, method, function).</li>
+<li>Dependencies thường được mock (giả lập).</li>
+<li>Nhanh, tập trung vào logic của đơn vị đó.</li>
+<li>Ví dụ: Test một method của service, test một pipe, một guard.</li>
+</ul>
+</li>
+<li><strong>Integration Tests:</strong><ul>
+<li>Test sự tương tác giữa nhiều components (ví dụ: controller với service, service với module CSDL).</li>
+<li>Có thể sử dụng CSDL test hoặc mock một phần.</li>
+<li>Đảm bảo các phần của ứng dụng làm việc cùng nhau đúng cách.</li>
+</ul>
+</li>
+<li><strong>E2E (End-to-End) Tests:</strong><ul>
+<li>Test toàn bộ flow của ứng dụng từ góc độ người dùng (HTTP request -&gt; HTTP response).</li>
+<li>Mô phỏng môi trường thực tế nhất có thể.</li>
+<li>Thường chậm hơn unit/integration test.</li>
+<li>Sử dụng <code>supertest</code> để gửi HTTP request đến ứng dụng đang chạy.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Viết Unit Test (Ví dụ Service):</strong><pre><code class="language-typescript">// products.service.spec.ts
+import { Test, TestingModule } from &#39;@nestjs/testing&#39;;
+import { ProductsService } from &#39;./products.service&#39;;
+import { getRepositoryToken } from &#39;@nestjs/typeorm&#39;; // Nếu dùng TypeORM
+import { Product } from &#39;./entities/product.entity&#39;;
+import { Repository } from &#39;typeorm&#39;;
+import { NotFoundException } from &#39;@nestjs/common&#39;;
+
+// Tạo mock repository
+const mockProductRepository = {
+  find: jest.fn(),
+  findOneBy: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
+  // ... các method khác cần mock
+};
+
+describe(&#39;ProductsService&#39;, () =&gt; {
+  let service: ProductsService;
+  let repository: Repository&lt;Product&gt;;
+
+  beforeEach(async () =&gt; {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ProductsService,
+        {
+          provide: getRepositoryToken(Product), // Cung cấp token của repository
+          useValue: mockProductRepository,    // Sử dụng mock object
+        },
+      ],
+    }).compile();
+
+    service = module.get&lt;ProductsService&gt;(ProductsService);
+    repository = module.get&lt;Repository&lt;Product&gt;&gt;(getRepositoryToken(Product));
+  });
+
+  it(&#39;should be defined&#39;, () =&gt; {
+    expect(service).toBeDefined();
+  });
+
+  describe(&#39;findAll&#39;, () =&gt; {
+    it(&#39;should return an array of products&#39;, async () =&gt; {
+      const mockProducts = [{ id: 1, name: &#39;Test Product&#39;, price: 100 }];
+      mockProductRepository.find.mockResolvedValue(mockProducts); // Giả lập find() trả về
+      expect(await service.findAll()).toEqual(mockProducts);
+      expect(repository.find).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe(&#39;findOne&#39;, () =&gt; {
+    it(&#39;should return a single product if found&#39;, async () =&gt; {
+      const mockProduct = { id: 1, name: &#39;Test Product&#39;, price: 100 };
+      mockProductRepository.findOneBy.mockResolvedValue(mockProduct);
+      expect(await service.findOne(1)).toEqual(mockProduct);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+    });
+
+    it(&#39;should throw NotFoundException if product not found&#39;, async () =&gt; {
+      mockProductRepository.findOneBy.mockResolvedValue(null);
+      await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+    });
+  });
+  // ... Các test khác cho create, update, remove
+});
+</code></pre>
+</li>
+<li><strong>Viết E2E Test:</strong><ul>
+<li>Thường đặt trong thư mục <code>test/</code>.</li>
+<li>Sử dụng <code>supertest</code> để gửi request.</li>
+</ul>
+<pre><code class="language-typescript">// test/products.e2e-spec.ts
+import { Test, TestingModule } from &#39;@nestjs/testing&#39;;
+import { INestApplication, ValidationPipe } from &#39;@nestjs/common&#39;;
+import * as request from &#39;supertest&#39;;
+import { AppModule } from &#39;../src/app.module&#39;; // Import AppModule chính
+
+describe(&#39;ProductsController (e2e)&#39;, () =&gt; {
+  let app: INestApplication;
+
+  beforeAll(async () =&gt; { // beforeAll để khởi tạo app một lần
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule], // Sử dụng AppModule thật
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true })); // Áp dụng global pipes nếu có
+    await app.init();
+  });
+
+  afterAll(async () =&gt; {
+    await app.close();
+  });
+
+  it(&#39;/products (GET) - should get all products&#39;, () =&gt; {
+    return request(app.getHttpServer()) // Lấy HTTP server của app
+      .get(&#39;/products&#39;)
+      .expect(200) // Mong đợi status code 200
+      .expect((res) =&gt; { // Mong đợi response body
+        expect(Array.isArray(res.body.data)).toBe(true); // Nếu có TransformResponseInterceptor
+        // expect(Array.isArray(res.body)).toBe(true); // Nếu không có interceptor đó
+      });
+  });
+
+  it(&#39;/products (POST) - should create a product&#39;, async () =&gt; {
+    const createProductDto = { name: &#39;E2E Test Product&#39;, price: 99, stock: 10 };
+    const response = await request(app.getHttpServer())
+      .post(&#39;/products&#39;)
+      // .set(&#39;Authorization&#39;, &#39;Bearer your_jwt_token&#39;) // Nếu endpoint cần auth
+      .send(createProductDto)
+      .expect(201); // Hoặc 200 nếu TransformResponseInterceptor thay đổi status
+
+    // expect(response.body.data.name).toEqual(createProductDto.name);
+    expect(response.body.data).toMatchObject(createProductDto);
+    // Thêm các assertions khác
+  });
+
+  // ... Các test E2E khác cho GET :id, PUT, DELETE ...
+});
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Deployment Strategies:</strong></p>
+<ul>
+<li><strong>Docker:</strong><ul>
+<li><strong><code>Dockerfile</code>:</strong> Định nghĩa cách build image cho ứng dụng.<pre><code class="language-dockerfile"># Stage 1: Build the application
+FROM node:18-alpine As builder
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install --only=production # Chỉ cài đặt production dependencies
+COPY . .
+RUN npm run build # Build ứng dụng NestJS (tạo thư mục /dist)
+
+# Stage 2: Setup a production-ready image
+FROM node:18-alpine
+WORKDIR /usr/src/app
+# Copy production dependencies and built application from builder stage
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/dist ./dist
+COPY package.json . # package.json có thể cần cho một số trường hợp
+
+# Mở port mà ứng dụng chạy (từ .env hoặc config)
+EXPOSE 3000
+# Lệnh để chạy ứng dụng
+CMD [&quot;node&quot;, &quot;dist/main.js&quot;]
+</code></pre>
+</li>
+<li><strong><code>.dockerignore</code>:</strong> Liệt kê các file/thư mục không cần copy vào image.<pre><code>node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+dist
+.git
+.env
+</code></pre>
+</li>
+<li><strong><code>docker-compose.yml</code>:</strong> Định nghĩa và chạy multi-container applications (ví dụ: app + database).<pre><code class="language-yaml">version: &#39;3.8&#39;
+services:
+  nest-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my_nest_app
+    ports:
+      - &quot;3000:3000&quot; # Map port host:container (port container là port app chạy)
+    depends_on:
+      - postgres_db # Đảm bảo DB khởi động trước app
+    environment: # Truyền biến môi trường vào container
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_HOST=postgres_db # Tên service của DB trong docker-compose
+      - DATABASE_PORT=5432
+      - DATABASE_USER=youruser
+      - DATABASE_PASSWORD=yourpassword
+      - DATABASE_NAME=yourdb
+      - JWT_SECRET=yourproductionjwtsecret
+      - JWT_EXPIRES_IN=1h
+    # volumes: # Nếu cần mount code local vào dev (không khuyến khích cho production build)
+    #   - .:/usr/src/app
+    #   - /usr/src/app/node_modules
+    networks:
+      - app_network
+
+  postgres_db:
+    image: postgres:14-alpine
+    container_name: my_postgres_db
+    environment:
+      - POSTGRES_USER=youruser
+      - POSTGRES_PASSWORD=yourpassword
+      - POSTGRES_DB=yourdb
+    ports:
+      - &quot;5432:5432&quot;
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist data
+    networks:
+      - app_network
+
+volumes:
+  postgres_data: # Define a named volume
+
+networks:
+  app_network:
+    driver: bridge
+</code></pre>
+</li>
+<li><strong>Lệnh:</strong> <code>docker build -t my-nest-app-image .</code>, <code>docker-compose up -d</code>.</li>
+</ul>
+</li>
+<li><strong>Serverless (AWS Lambda, Google Cloud Functions, Azure Functions):</strong><ul>
+<li>NestJS có thể chạy trên môi trường serverless với các adapter như <code>@vendia/serverless-express</code> hoặc <code>@nestjs/platform-fastify</code> với <code>aws-lambda-fastify</code>.</li>
+<li>Ưu điểm: Tự động scale, trả tiền theo_mức_độ_sử_dụng.</li>
+<li>Nhược điểm: Cold starts, giới hạn thời gian thực thi.</li>
+</ul>
+</li>
+<li><strong>PM2 (Process Manager 2):</strong><ul>
+<li>Một process manager mạnh mẽ cho Node.js trong production.</li>
+<li>Giúp:<ul>
+<li>Giữ ứng dụng chạy mãi (auto-restart khi crash).</li>
+<li>Load balancing (cluster mode).</li>
+<li>Monitoring.</li>
+<li>Log management.</li>
+</ul>
+</li>
+<li><strong>Cài đặt:</strong> <code>npm install pm2 -g</code></li>
+<li><strong>Chạy app:</strong> <code>pm2 start dist/main.js --name my-app -i max</code> (<code>-i max</code> để chạy cluster mode với số core CPU tối đa).</li>
+<li><strong>Lệnh hữu ích:</strong> <code>pm2 list</code>, <code>pm2 logs my-app</code>, <code>pm2 stop my-app</code>, <code>pm2 restart my-app</code>, <code>pm2 delete my-app</code>.</li>
+<li>Tạo file <code>ecosystem.config.js</code> để cấu hình chi tiết.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Best Practices:</strong></p>
+<ul>
+<li><strong>Code Organization:</strong><ul>
+<li>Feature modules (mỗi module cho một domain/feature).</li>
+<li>Shared module (cho các components dùng chung).</li>
+<li>Core module (cho các services, providers dùng một lần khi app khởi tạo, ví dụ <code>ConfigModule</code>).</li>
+<li>Cấu trúc thư mục rõ ràng trong từng module (ví dụ: <code>controllers</code>, <code>services</code>, <code>dto</code>, <code>entities</code>, <code>guards</code>, <code>pipes</code>, <code>resolvers</code>, <code>graphql</code>).</li>
+</ul>
+</li>
+<li><strong>Performance:</strong><ul>
+<li><strong>Caching:</strong> Sử dụng <code>@nestjs/cache-manager</code> cho các dữ liệu ít thay đổi.</li>
+<li><strong>Lazy Loading Modules:</strong> Cho các module không cần thiết ngay khi khởi động (sử dụng <code>LazyModuleLoader</code>).</li>
+<li><strong>Database Query Optimization:</strong> Tránh N+1 (dùng DataLoader cho GraphQL, eager/lazy loading cho TypeORM), sử dụng index, tối ưu câu query.</li>
+<li><strong>Chọn Transport phù hợp cho Microservices:</strong> gRPC thường nhanh hơn TCP/Redis cho request-response.</li>
+<li><strong>Sử dụng Fastify:</strong> <code>NestFastifyApplication</code> có thể cho performance tốt hơn <code>NestExpressApplication</code> trong một số trường hợp.<pre><code class="language-typescript">// main.ts
+import { NestFactory } from &#39;@nestjs/core&#39;;
+import { FastifyAdapter, NestFastifyApplication } from &#39;@nestjs/platform-fastify&#39;;
+// ...
+const app = await NestFactory.create&lt;NestFastifyApplication&gt;(
+  AppModule,
+  new FastifyAdapter(),
+);
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Security:</strong><ul>
+<li><strong>Helmet:</strong> Middleware giúp bảo vệ khỏi các lỗ hổng web phổ biến bằng cách set các HTTP header (cài đặt <code>helmet</code>).
+  <code>app.use(helmet());</code></li>
+<li><strong>CORS (Cross-Origin Resource Sharing):</strong> Cấu hình <code>app.enableCors()</code> cho phép request từ các domain khác.</li>
+<li><strong>Rate Limiting:</strong> Chống brute-force, DoS (sử dụng <code>nestjs-rate-limiter</code> hoặc <code>express-rate-limit</code>).</li>
+<li><strong>Input Validation:</strong> Luôn sử dụng <code>ValidationPipe</code> và DTOs.</li>
+<li><strong>ORM/ODM Security:</strong> Sử dụng ORM/ODM giúp chống SQL/NoSQL Injection (nhưng vẫn cần cẩn thận với raw queries).</li>
+<li><strong>Quản lý Secrets:</strong> Dùng <code>@nestjs/config</code> và biến môi trường, không hardcode secrets.</li>
+<li><strong>HTTPS:</strong> Luôn sử dụng HTTPS trong production.</li>
+<li><strong>Authentication &amp; Authorization:</strong> Triển khai JWT, Passport, Guards một cách cẩn thận.</li>
+</ul>
+</li>
+<li><strong>API Documentation (<code>@nestjs/swagger</code>):</strong><ul>
+<li>Tự động tạo tài liệu API tương tác dựa trên OpenAPI Specification.</li>
+<li><strong>Cài đặt:</strong> <code>npm install --save @nestjs/swagger swagger-ui-express</code></li>
+<li><strong>Cấu hình trong <code>main.ts</code>:</strong><pre><code class="language-typescript">// src/main.ts
+import { DocumentBuilder, SwaggerModule } from &#39;@nestjs/swagger&#39;;
+// ...
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  // ...
+  const config = new DocumentBuilder()
+    .setTitle(&#39;My API Documentation&#39;)
+    .setDescription(&#39;The API description for my awesome NestJS app&#39;)
+    .setVersion(&#39;1.0&#39;)
+    .addTag(&#39;cats&#39;, &#39;Everything about your cats&#39;) // Thêm tag cho các group API
+    .addTag(&#39;products&#39;)
+    .addBearerAuth() // Nếu dùng JWT Bearer token
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup(&#39;api-docs&#39;, app, document); // Endpoint là /api-docs
+  // ...
+  await app.listen(port);
+}
+</code></pre>
+</li>
+<li><strong>Sử dụng Decorators trong DTOs và Controllers:</strong><ul>
+<li><code>@ApiProperty()</code>, <code>@ApiPropertyOptional()</code> trong DTOs.</li>
+<li><code>@ApiOperation()</code>, <code>@ApiResponse()</code>, <code>@ApiParam()</code>, <code>@ApiQuery()</code>, <code>@ApiBody()</code>, <code>@ApiTags()</code>, <code>@ApiBearerAuth()</code> trong Controllers.</li>
+</ul>
+<pre><code class="language-typescript">// products.controller.ts
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from &#39;@nestjs/swagger&#39;;
+// ...
+@ApiTags(&#39;products&#39;) // Gắn controller này vào tag &#39;products&#39;
+@Controller(&#39;products&#39;)
+export class ProductsController {
+  // ...
+  @Post()
+  @ApiOperation({ summary: &#39;Create a new product&#39; }) // Mô tả operation
+  @ApiResponse({ status: 201, description: &#39;The product has been successfully created.&#39;, type: ProductTypeGQL }) // Mô tả response, ProductTypeGQL là class đại diện cho schema response
+  @ApiResponse({ status: 400, description: &#39;Bad Request.&#39; })
+  @ApiBody({ type: CreateProductDto }) // Mô tả request body
+  @ApiBearerAuth() // Yêu cầu Bearer token
+  @UseGuards(JwtAuthGuard)
+  create(@Body() createProductDto: CreateProductDto) {
+    return this.productsService.create(createProductDto);
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example (Testing và Swagger):</strong></p>
+<ol>
+<li><strong>Viết Unit Test cho <code>ProductsService.create()</code>:</strong><ul>
+<li>Giả sử <code>create</code> method trong <code>ProductsService</code> gọi <code>this.productsRepository.create(dto)</code> và <code>this.productsRepository.save(entity)</code>.</li>
+<li>Mock <code>productsRepository.create</code> và <code>productsRepository.save</code>.</li>
+<li>Kiểm tra xem các method mock có được gọi với đúng tham số không và service trả về kết quả mong đợi.</li>
+</ul>
+</li>
+<li><strong>Viết E2E Test cho <code>POST /products</code>:</strong><ul>
+<li>Khởi tạo app trong <code>beforeAll</code>.</li>
+<li>Gửi request POST đến <code>/products</code> với payload hợp lệ.</li>
+<li>Expect status code 201 (hoặc 200 nếu có transform).</li>
+<li>Expect response body chứa thông tin sản phẩm đã tạo.</li>
+<li>(Nâng cao) Nếu endpoint cần auth, set <code>Authorization</code> header trong request.</li>
+</ul>
+</li>
+<li><strong>Tích hợp Swagger:</strong><ul>
+<li>Cài đặt <code>@nestjs/swagger swagger-ui-express</code>.</li>
+<li>Cấu hình <code>SwaggerModule</code> trong <code>main.ts</code>.</li>
+<li>Thêm các decorator <code>@ApiTags</code>, <code>@ApiOperation</code>, <code>@ApiResponse</code>, <code>@ApiBody</code> vào <code>ProductsController</code> và <code>CreateProductDto</code>.</li>
+<li>Chạy app và truy cập <code>/api-docs</code> để xem UI Swagger.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Viết Unit Tests:</strong><ul>
+<li><strong>Yêu cầu:</strong> Viết unit test cho ít nhất 2 method trong <code>AuthService</code> (ví dụ: <code>validateUserCredentials</code> và <code>login</code>). Mock các dependency nếu có (ví dụ <code>UsersService</code>, <code>JwtService</code>).</li>
+<li>Viết unit test cho một custom <code>Pipe</code> hoặc <code>Guard</code> bạn đã tạo ở các Chapter trước.</li>
+</ul>
+</li>
+<li><strong>Viết E2E Tests:</strong><ul>
+<li><strong>Yêu cầu:</strong> Viết E2E test cho ít nhất 2 endpoint quan trọng của ứng dụng (ví dụ: <code>POST /auth/login</code> và <code>GET /products/:id</code>).</li>
+<li>Đảm bảo xử lý trường hợp thành công và trường hợp lỗi (ví dụ: sai credentials cho login, không tìm thấy product).</li>
+</ul>
+</li>
+<li><strong>Tạo <code>Dockerfile</code> và <code>docker-compose.yml</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Viết <code>Dockerfile</code> cho ứng dụng NestJS của bạn (sử dụng multi-stage build).</li>
+<li>Viết <code>docker-compose.yml</code> để chạy ứng dụng NestJS cùng với một CSDL (PostgreSQL hoặc MongoDB) mà ứng dụng của bạn đang sử dụng.</li>
+<li>Build và chạy ứng dụng bằng Docker Compose. Test xem API có hoạt động không.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Tích hợp <code>@nestjs/swagger</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Cài đặt và cấu hình <code>@nestjs/swagger</code>.</li>
+<li>Thêm các decorator cần thiết (<code>@ApiTags</code>, <code>@ApiOperation</code>, <code>@ApiResponse</code>, <code>@ApiBody</code>, <code>@ApiProperty</code>, <code>@ApiBearerAuth</code> nếu có) cho <code>AuthController</code>, <code>ProductsController</code>, và các DTOs liên quan.</li>
+<li>Chạy ứng dụng và khám phá tài liệu API trên <code>/api-docs</code>. Thử &quot;Try it out&quot; một vài endpoint.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Nghiên cứu và trình bày một Best Practice:</strong><ul>
+<li><strong>Yêu cầu:</strong> Chọn một trong các best practices được đề cập (ví dụ: Rate Limiting, Helmet, Lazy Loading Modules).</li>
+<li>Nghiên cứu sâu hơn về nó trong ngữ cảnh NestJS.</li>
+<li>Trình bày (ngắn gọn) cách triển khai và lợi ích của nó.</li>
+</ul>
+</li>
+<li><strong>(Tự chọn) Triển khai ứng dụng lên một Platform:</strong><ul>
+<li><strong>Yêu cầu:</strong> Nếu có thời gian và kinh nghiệm, thử triển khai ứng dụng NestJS của bạn (đã Dockerize) lên một platform cloud nhỏ (ví dụ: Heroku, Fly.io, Railway, hoặc một free tier của AWS/GCP/Azure).</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

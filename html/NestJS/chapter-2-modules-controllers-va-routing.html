@@ -1,0 +1,580 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-2-modules-controllers-va-routing</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 2: Modules, Controllers và Routing</h1>
+<p><strong>Tên Chapter học:</strong> Modules, Controllers và Routing</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu sâu về Modules:</strong> Nắm vững cách sử dụng <code>@Module()</code> decorator để đóng gói và tổ chức các thành phần liên quan của ứng dụng (controllers, providers). Hiểu về <code>imports</code>, <code>exports</code>, <code>controllers</code>, <code>providers</code> trong module definition.</li>
+<li><strong>Tạo và sử dụng Controllers:</strong> Thành thạo cách tạo controllers với <code>@Controller()</code> decorator để xử lý các incoming HTTP requests. Biết cách đặt prefix cho routes ở cấp controller.</li>
+<li><strong>Routing nâng cao:</strong><ul>
+<li>Sử dụng các HTTP method decorators: <code>@Get()</code>, <code>@Post()</code>, <code>@Put()</code>, <code>@Delete()</code>, <code>@Patch()</code>, <code>@Options()</code>, <code>@Head()</code>, <code>@All()</code>.</li>
+<li>Làm việc với Route Parameters (<code>@Param()</code>): Trích xuất các tham số động từ URL.</li>
+<li>Làm việc với Query Parameters (<code>@Query()</code>): Trích xuất các tham số từ query string của URL.</li>
+<li>Xử lý Request Body (<code>@Body()</code>): Nhận dữ liệu gửi lên từ client trong body của request (thường là JSON).</li>
+</ul>
+</li>
+<li><strong>Đối tượng Request và Response:</strong><ul>
+<li>Hiểu cách truy cập đối tượng <code>Request</code> gốc (từ Express/Fastify) bằng <code>@Req()</code> decorator để lấy thông tin chi tiết (headers, IP address, etc.).</li>
+<li>Hiểu cách truy cập đối tượng <code>Response</code> gốc bằng <code>@Res()</code> decorator để tùy chỉnh response một cách linh hoạt (cẩn trọng khi sử dụng vì nó bỏ qua các cơ chế chuẩn của NestJS như interceptors, <code>HttpCode</code> decorator).</li>
+</ul>
+</li>
+<li><strong>DTOs (Data Transfer Objects):</strong> Giới thiệu khái niệm DTOs như một cách để định hình cấu trúc dữ liệu cho request body và response payload, giúp code rõ ràng và dễ dàng validation sau này.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Modules (<code>@Module()</code>):</strong></p>
+<ul>
+<li>Như đã giới thiệu, modules là cách để cấu trúc ứng dụng NestJS.</li>
+<li><strong><code>imports</code></strong>: Một mảng các module khác mà module hiện tại cần sử dụng các providers đã được export từ chúng.</li>
+<li><strong><code>controllers</code></strong>: Một mảng các controller được định nghĩa trong module này. NestJS sẽ instantiate chúng.</li>
+<li><strong><code>providers</code></strong>: Một mảng các provider (services, factories, etc.) sẽ được NestJS injector instantiate và có thể được inject vào các thành phần khác trong module này (hoặc được export để sử dụng ở module khác).</li>
+<li><strong><code>exports</code></strong>: Một subset của các <code>providers</code> mà module này muốn cung cấp cho các module khác import nó.</li>
+<li><strong>Global Modules (<code>@Global()</code>):</strong> Các provider của một global module sẽ có sẵn ở mọi nơi mà không cần import module đó vào từng module con. Sử dụng cẩn thận để tránh làm ô nhiễm global scope.</li>
+<li><strong>Dynamic Modules:</strong> Cho phép tạo các module có thể tùy chỉnh (configurable) khi chúng được import. Sẽ tìm hiểu kỹ hơn ở các Chapter nâng cao.</li>
+</ul>
+</li>
+<li><p><strong>Controllers (<code>@Controller()</code>):</strong></p>
+<ul>
+<li>Controllers chịu trách nhiệm định tuyến các request đến các handler phù hợp.</li>
+<li>Decorator <code>@Controller(&#39;prefix&#39;)</code> cho phép bạn nhóm các route liên quan dưới một path prefix chung. Ví dụ, <code>@Controller(&#39;cats&#39;)</code> sẽ khiến tất cả các route trong controller đó bắt đầu bằng <code>/cats</code>.</li>
+<li>Mỗi method trong controller xử lý một request cụ thể được đánh dấu bằng các HTTP method decorator.</li>
+</ul>
+</li>
+<li><p><strong>Routing và Request Handling:</strong></p>
+<ul>
+<li><strong>HTTP Method Decorators:</strong><ul>
+<li><code>@Get(path?)</code>: Xử lý GET request.</li>
+<li><code>@Post(path?)</code>: Xử lý POST request.</li>
+<li><code>@Put(path?)</code>: Xử lý PUT request.</li>
+<li><code>@Delete(path?)</code>: Xử lý DELETE request.</li>
+<li><code>@Patch(path?)</code>: Xử lý PATCH request.</li>
+<li><code>@Options(path?)</code>: Xử lý OPTIONS request.</li>
+<li><code>@Head(path?)</code>: Xử lý HEAD request.</li>
+<li><code>@All(path?)</code>: Xử lý tất cả các HTTP method.</li>
+<li><code>path</code> là một tham số tùy chọn, nếu bỏ qua, nó sẽ là path của controller (nếu có prefix) hoặc <code>/</code> (nếu không có prefix controller).</li>
+</ul>
+</li>
+<li><strong>Route Parameters (<code>@Param(name?, pipe?)</code>):</strong><ul>
+<li>Dùng để lấy các phần động của URL. Ví dụ: <code>/cats/:id</code>.</li>
+<li><code>@Param(&#39;id&#39;) id: string</code> sẽ lấy giá trị của <code>id</code>.</li>
+<li>Nếu không có <code>name</code>, <code>@Param()</code> sẽ trả về một object chứa tất cả các route params.</li>
+</ul>
+</li>
+<li><strong>Query Parameters (<code>@Query(name?, pipe?)</code>):</strong><ul>
+<li>Dùng để lấy các tham số từ query string. Ví dụ: <code>/cats/search?breed=Persian&amp;age=2</code>.</li>
+<li><code>@Query(&#39;breed&#39;) breed: string</code> sẽ lấy giá trị của <code>breed</code>.</li>
+<li>Nếu không có <code>name</code>, <code>@Query()</code> sẽ trả về một object chứa tất cả các query params.</li>
+</ul>
+</li>
+<li><strong>Request Body (<code>@Body(property?, pipe?)</code>):</strong><ul>
+<li>Dùng để lấy dữ liệu được gửi trong body của request (thường là JSON cho POST, PUT, PATCH).</li>
+<li><code>@Body() createCatDto: CreateCatDto</code> sẽ lấy toàn bộ body và (nếu có pipe) chuyển đổi/validate nó thành <code>CreateCatDto</code>.</li>
+<li><code>@Body(&#39;name&#39;) name: string</code> sẽ chỉ lấy thuộc tính <code>name</code> từ body.</li>
+</ul>
+</li>
+<li><strong>Headers (<code>@Headers(name?)</code>):</strong><ul>
+<li>Dùng để lấy giá trị của một header cụ thể hoặc tất cả headers.</li>
+<li><code>@Headers(&#39;user-agent&#39;) userAgent: string</code>.</li>
+</ul>
+</li>
+<li><strong>Status Codes (<code>@HttpCode(statusCode)</code>):</strong><ul>
+<li>Mặc định, NestJS trả về status <code>200 OK</code> cho hầu hết các request thành công và <code>201 Created</code> cho POST request.</li>
+<li>Decorator <code>@HttpCode()</code> cho phép bạn thay đổi status code mặc định cho một handler. Ví dụ: <code>@HttpCode(204)</code>.</li>
+</ul>
+</li>
+<li><strong>Redirects (<code>@Redirect(url, statusCode?)</code>):</strong><ul>
+<li>Cho phép chuyển hướng request đến một URL khác.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Request &amp; Response Objects:</strong></p>
+<ul>
+<li><strong><code>@Req()</code> hoặc <code>@Request()</code>:</strong> Cung cấp quyền truy cập vào đối tượng request gốc của framework HTTP nền tảng (Express hoặc Fastify).<pre><code class="language-typescript">import { Controller, Get, Req } from &#39;@nestjs/common&#39;;
+import { Request } from &#39;express&#39;; // Hoặc từ &#39;fastify&#39;
+
+@Controller(&#39;cats&#39;)
+export class CatsController {
+  @Get(&#39;profile&#39;)
+  getProfile(@Req() req: Request) {
+    console.log(req.headers);
+    // ... làm gì đó với req
+    return &#39;This action returns your profile based on request&#39;;
+  }
+}
+</code></pre>
+</li>
+<li><strong><code>@Res()</code> hoặc <code>@Response()</code>:</strong> Cung cấp quyền truy cập vào đối tượng response gốc. <strong>LƯU Ý QUAN TRỌNG:</strong> Khi bạn inject <code>@Res()</code> vào một method handler, bạn sẽ chịu trách nhiệm hoàn toàn cho việc quản lý response (ví dụ: gọi <code>res.json(...)</code> hoặc <code>res.send(...)</code>). NestJS sẽ không còn tự động xử lý response cho handler đó nữa. Điều này có nghĩa là các tính năng như interceptors và <code>@HttpCode()</code> sẽ không hoạt động như mong đợi. Nên sử dụng cẩn thận và chỉ khi thực sự cần thiết.<pre><code class="language-typescript">import { Controller, Get, Res } from &#39;@nestjs/common&#39;;
+import { Response } from &#39;express&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController {
+  @Get(&#39;custom-response&#39;)
+  getCustomResponse(@Res() res: Response) {
+    res.status(200).json({ message: &#39;This is a custom response!&#39; });
+  }
+}
+</code></pre>
+</li>
+<li><strong>Thư viện cụ thể (<code>@Res({ passthrough: true })</code>):</strong> Để vẫn sử dụng được các tính năng của NestJS (như interceptors) trong khi vẫn có thể set cookie hoặc header tùy chỉnh, bạn có thể dùng <code>passthrough: true</code>. NestJS sẽ vẫn gửi response dựa trên giá trị return của handler, nhưng bạn có thể thao tác với đối tượng <code>res</code> trước đó.</li>
+</ul>
+</li>
+<li><p><strong>DTOs (Data Transfer Objects):</strong></p>
+<ul>
+<li>DTO là một object đơn giản dùng để truyền dữ liệu giữa các lớp hoặc qua mạng.</li>
+<li>Trong NestJS, DTOs thường được sử dụng để định nghĩa hình dạng (shape) của request body hoặc response payload.</li>
+<li>Chúng thường là các class TypeScript với các thuộc tính.</li>
+<li>Việc sử dụng DTOs giúp:<ul>
+<li><strong>Strong Typing:</strong> Cung cấp type safety cho dữ liệu request/response.</li>
+<li><strong>Validation:</strong> Dễ dàng tích hợp với các thư viện validation (sẽ học ở Chapter 5) để kiểm tra tính hợp lệ của dữ liệu đầu vào.</li>
+<li><strong>Clear Contracts:</strong> Định nghĩa rõ ràng &quot;hợp đồng&quot; dữ liệu giữa client và server.</li>
+</ul>
+</li>
+<li>Ví dụ một DTO đơn giản:<pre><code class="language-typescript">// src/cats/dto/create-cat.dto.ts
+export class CreateCatDto {
+  name: string;
+  age: number;
+  breed: string;
+}
+</code></pre>
+  Sử dụng trong controller:<pre><code class="language-typescript">// src/cats/cats.controller.ts
+import { Controller, Post, Body } from &#39;@nestjs/common&#39;;
+import { CreateCatDto } from &#39;./dto/create-cat.dto&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController {
+  @Post()
+  async create(@Body() createCatDto: CreateCatDto) {
+    console.log(createCatDto); // createCatDto sẽ là một instance của CreateCatDto
+    return &#39;This action adds a new cat&#39;;
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example (Tạo <code>CatsModule</code> và <code>CatsController</code>):</strong></p>
+<ol>
+<li><p><strong>Tạo module và controller bằng Nest CLI:</strong></p>
+<pre><code class="language-bash">nest generate module cats
+nest generate controller cats --no-spec # --no-spec để không tạo file test
+</code></pre>
+<p>Lệnh này sẽ:</p>
+<ul>
+<li>Tạo thư mục <code>src/cats</code>.</li>
+<li>Tạo <code>src/cats/cats.module.ts</code>.</li>
+<li>Tạo <code>src/cats/cats.controller.ts</code>.</li>
+<li>Tự động cập nhật <code>src/app.module.ts</code> để import <code>CatsModule</code>.</li>
+</ul>
+</li>
+<li><p><strong><code>src/cats/cats.module.ts</code>:</strong></p>
+<pre><code class="language-typescript">import { Module } from &#39;@nestjs/common&#39;;
+import { CatsController } from &#39;./cats.controller&#39;;
+// import { CatsService } from &#39;./cats.service&#39;; // Sẽ thêm ở Chapter sau
+
+@Module({
+  controllers: [CatsController],
+  // providers: [CatsService] // Sẽ thêm ở Chapter sau
+})
+export class CatsModule {}
+</code></pre>
+</li>
+<li><p><strong><code>src/cats/dto/create-cat.dto.ts</code> (Tạo file này thủ công):</strong></p>
+<pre><code class="language-typescript">export class CreateCatDto {
+  readonly name: string; // readonly khuyến khích tính bất biến
+  readonly age: number;
+  readonly breed: string;
+}
+</code></pre>
+</li>
+<li><p><strong><code>src/cats/cats.controller.ts</code>:</strong></p>
+<pre><code class="language-typescript">import { Controller, Get, Post, Body, Param, Query, Put, Delete, HttpCode } from &#39;@nestjs/common&#39;;
+import { CreateCatDto } from &#39;./dto/create-cat.dto&#39;; // Import DTO
+
+interface Cat {
+  id: number;
+  name: string;
+  age: number;
+  breed: string;
+}
+
+// Dữ liệu giả lập tạm thời
+let cats: Cat[] = [
+  { id: 1, name: &#39;Miu&#39;, age: 2, breed: &#39;Persian&#39; },
+  { id: 2, name: &#39;Tom&#39;, age: 3, breed: &#39;Siamese&#39; },
+];
+let nextId = 3;
+
+@Controller(&#39;cats&#39;) // Prefix cho tất cả các route trong controller này là /cats
+export class CatsController {
+  // GET /cats
+  @Get()
+  findAll(@Query(&#39;breed&#39;) breed?: string): Cat[] {
+    if (breed) {
+      return cats.filter(cat =&gt; cat.breed.toLowerCase() === breed.toLowerCase());
+    }
+    return cats;
+  }
+
+  // GET /cats/search?limit=10&amp;offset=0
+  @Get(&#39;search&#39;)
+  searchCats(@Query(&#39;limit&#39;) limit: string, @Query(&#39;offset&#39;) offset: string) {
+    return `Searching cats with limit: ${limit}, offset: ${offset}`;
+  }
+
+  // GET /cats/:id
+  // Ví dụ: /cats/1
+  @Get(&#39;:id&#39;)
+  findOne(@Param(&#39;id&#39;) id: string): Cat | { message: string } {
+    const catId = parseInt(id, 10);
+    const cat = cats.find(c =&gt; c.id === catId);
+    if (!cat) {
+      return { message: `Cat with ID ${id} not found` };
+    }
+    return cat;
+  }
+
+  // POST /cats
+  @Post()
+  @HttpCode(201) // Set default status code to 201 Created
+  create(@Body() createCatDto: CreateCatDto): Cat {
+    const newCat: Cat = {
+      id: nextId++,
+      ...createCatDto,
+    };
+    cats.push(newCat);
+    return newCat;
+  }
+
+  // PUT /cats/:id
+  @Put(&#39;:id&#39;)
+  update(@Param(&#39;id&#39;) id: string, @Body() updateCatDto: Partial&lt;CreateCatDto&gt;): Cat | { message: string } {
+    const catId = parseInt(id, 10);
+    const catIndex = cats.findIndex(c =&gt; c.id === catId);
+    if (catIndex === -1) {
+      return { message: `Cat with ID ${id} not found for update` };
+    }
+    cats[catIndex] = { ...cats[catIndex], ...updateCatDto };
+    return cats[catIndex];
+  }
+
+  // DELETE /cats/:id
+  @Delete(&#39;:id&#39;)
+  @HttpCode(204) // No Content
+  remove(@Param(&#39;id&#39;) id: string): void | { message: string } {
+    const catId = parseInt(id, 10);
+    const catIndex = cats.findIndex(c =&gt; c.id === catId);
+    if (catIndex === -1) {
+      // Thực tế nên throw NotFoundException, sẽ học sau
+      console.log(`Cat with ID ${id} not found for deletion`);
+      return { message: `Cat with ID ${id} not found for deletion` };
+    }
+    cats.splice(catIndex, 1);
+    // Không trả về gì cho 204
+  }
+}
+</code></pre>
+</li>
+</ol>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Tạo <code>ProductsModule</code> và <code>ProductsController</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Sử dụng Nest CLI để tạo một module mới tên là <code>ProductsModule</code> và <code>ProductsController</code> bên trong module đó.</li>
+<li><strong>Lệnh:</strong> <code>nest g module products</code>, <code>nest g controller products --no-spec</code> (nhớ chọn products module khi CLI hỏi).</li>
+<li><strong>Kiểm tra:</strong> Đảm bảo <code>ProductsModule</code> được tự động import vào <code>AppModule</code>.</li>
+</ul>
+</li>
+<li><strong>Triển khai các endpoints CRUD cơ bản cho Products:</strong><ul>
+<li><strong>Yêu cầu:</strong> Trong <code>ProductsController</code>, triển khai các handler cho các route sau (sử dụng mảng dữ liệu giả lập tương tự như ví dụ <code>CatsController</code>):<ul>
+<li><code>GET /products</code>: Trả về danh sách tất cả sản phẩm.</li>
+<li><code>GET /products/:productId</code>: Trả về thông tin sản phẩm theo <code>productId</code>.</li>
+<li><code>POST /products</code>: Nhận thông tin sản phẩm từ <code>request body</code> và thêm vào danh sách.</li>
+<li><code>PUT /products/:productId</code>: Cập nhật thông tin sản phẩm theo <code>productId</code>.</li>
+<li><code>DELETE /products/:productId</code>: Xóa sản phẩm theo <code>productId</code>.</li>
+</ul>
+</li>
+<li><strong>DTO:</strong> Tạo <code>CreateProductDto.ts</code> và <code>UpdateProductDto.ts</code> trong thư mục <code>src/products/dto/</code> để định nghĩa cấu trúc dữ liệu cho request body. Ví dụ: <code>Product</code> có thể có <code>id</code>, <code>name</code>, <code>price</code>, <code>description</code>.</li>
+</ul>
+</li>
+<li><strong>Sử dụng Query Parameters để lọc sản phẩm:</strong><ul>
+<li><strong>Yêu cầu:</strong> Mở rộng endpoint <code>GET /products</code> để chấp nhận một query parameter tùy chọn, ví dụ <code>maxPrice</code>. Nếu <code>maxPrice</code> được cung cấp, chỉ trả về các sản phẩm có giá nhỏ hơn hoặc bằng <code>maxPrice</code>.</li>
+<li><strong>Ví dụ URL:</strong> <code>GET /products?maxPrice=100</code>.</li>
+</ul>
+</li>
+<li><strong>Truy cập Request Headers:</strong><ul>
+<li><strong>Yêu cầu:</strong> Trong một trong các handler của <code>ProductsController</code> (ví dụ <code>GET /products/:productId</code>), sử dụng <code>@Req()</code> decorator để lấy đối tượng request và log ra <code>user-agent</code> từ headers của request đó.</li>
+</ul>
+</li>
+<li><strong>Kiểm tra bằng Postman/Insomnia:</strong><ul>
+<li><strong>Yêu cầu:</strong> Sử dụng một công cụ API client như Postman hoặc Insomnia để gửi request đến tất cả các endpoint bạn vừa tạo trong <code>ProductsController</code>. Kiểm tra xem chúng có hoạt động đúng như mong đợi không (status codes, request body, response body, route params, query params).</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

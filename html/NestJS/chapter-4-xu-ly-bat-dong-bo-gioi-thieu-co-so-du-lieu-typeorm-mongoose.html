@@ -1,0 +1,698 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-4-xu-ly-bat-dong-bo-gioi-thieu-co-so-du-lieu-typeorm-mongoose</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 4: Xử lý bất đồng bộ &amp; Giới thiệu Cơ sở dữ liệu (TypeORM/Mongoose)</h1>
+<p><strong>Tên Chapter học:</strong> Xử lý bất đồng bộ &amp; Giới thiệu Cơ sở dữ liệu (TypeORM/Mongoose)</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Xử lý bất đồng bộ (Asynchronous Operations):</strong><ul>
+<li>Thành thạo việc sử dụng <code>async/await</code> trong controllers và services để làm việc với các tác vụ bất đồng bộ (ví dụ: tương tác CSDL, gọi API bên ngoài).</li>
+<li>Hiểu cách NestJS xử lý <code>Promise</code> trả về từ các route handler.</li>
+</ul>
+</li>
+<li><strong>Giới thiệu ORM/ODM:</strong><ul>
+<li>Hiểu khái niệm ORM (Object-Relational Mapper) cho cơ sở dữ liệu quan hệ (SQL) và ODM (Object-Document Mapper) cho cơ sở dữ liệu NoSQL dạng document (ví dụ: MongoDB).</li>
+<li>Nắm được lợi ích của việc sử dụng ORM/ODM (trừu tượng hóa CSDL, giảm code boilerplate, type safety với TypeScript).</li>
+</ul>
+</li>
+<li><strong>TypeORM (cho SQL):</strong><ul>
+<li>Giới thiệu về TypeORM, một ORM phổ biến cho TypeScript và JavaScript.</li>
+<li>Cài đặt các package cần thiết: <code>@nestjs/typeorm</code>, <code>typeorm</code>, và database driver (ví dụ: <code>pg</code> cho PostgreSQL, <code>mysql2</code> cho MySQL).</li>
+<li>Cấu hình <code>TypeOrmModule.forRoot()</code> để kết nối ứng dụng NestJS với một CSDL SQL (ví dụ: PostgreSQL).</li>
+<li>Định nghĩa Entities (ánh xạ tới các bảng trong CSDL) sử dụng decorators của TypeORM.</li>
+<li>Sử dụng Repositories (<code>Repository&lt;Entity&gt;</code>) để thực hiện các thao tác CRUD (Create, Read, Update, Delete) với entities.</li>
+</ul>
+</li>
+<li><strong>Mongoose (cho NoSQL - MongoDB):</strong><ul>
+<li>Giới thiệu về Mongoose, một ODM phổ biến cho MongoDB.</li>
+<li>Cài đặt các package cần thiết: <code>@nestjs/mongoose</code>, <code>mongoose</code>.</li>
+<li>Cấu hình <code>MongooseModule.forRoot()</code> để kết nối ứng dụng NestJS với MongoDB.</li>
+<li>Định nghĩa Schemas và Models để mô tả cấu trúc của documents trong collections.</li>
+<li>Sử dụng Mongoose Models (<code>Model&lt;Document&gt;</code>) để thực hiện các thao tác CRUD với documents.</li>
+</ul>
+</li>
+<li><strong>Thực hành CRUD cơ bản:</strong> Áp dụng kiến thức đã học để kết nối với một CSDL (học viên chọn TypeORM hoặc Mongoose) và thực hiện các thao tác tạo, đọc, cập nhật, xóa dữ liệu cho một entity/schema đơn giản.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Xử lý bất đồng bộ trong NestJS:</strong></p>
+<ul>
+<li>Hầu hết các tác vụ I/O (như truy vấn CSDL, gọi API) là bất đồng bộ. JavaScript sử dụng <code>Promise</code> để xử lý các tác vụ này.</li>
+<li><code>async/await</code> là cú pháp giúp viết code bất đồng bộ trông giống như code đồng bộ, dễ đọc và quản lý hơn.</li>
+<li>Trong NestJS, các route handler và service method có thể là các <code>async</code> function trả về <code>Promise</code>. NestJS sẽ tự động xử lý (resolve) <code>Promise</code> đó trước khi gửi response.<pre><code class="language-typescript">// cats.service.ts
+@Injectable()
+export class CatsService {
+  async findOne(id: number): Promise&lt;Cat&gt; {
+    // Giả lập một tác vụ bất đồng bộ (ví dụ: query database)
+    return new Promise(resolve =&gt; {
+      setTimeout(() =&gt; {
+        const cat = this.cats.find(c =&gt; c.id === id);
+        resolve(cat);
+      }, 100);
+    });
+  }
+}
+
+// cats.controller.ts
+@Controller(&#39;cats&#39;)
+export class CatsController {
+  constructor(private catsService: CatsService) {}
+
+  @Get(&#39;:id&#39;)
+  async findOne(@Param(&#39;id&#39;, ParseIntPipe) id: number): Promise&lt;Cat&gt; {
+    const cat = await this.catsService.findOne(id); // Sử dụng await
+    if (!cat) {
+      throw new NotFoundException(`Cat with ID ${id} not found`);
+    }
+    return cat;
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>ORM (Object-Relational Mapper) và ODM (Object-Document Mapper):</strong></p>
+<ul>
+<li><strong>ORM (ví dụ: TypeORM, Sequelize, Prisma):</strong><ul>
+<li>Dùng cho cơ sở dữ liệu quan hệ (SQL) như PostgreSQL, MySQL, SQL Server, SQLite.</li>
+<li>Cho phép bạn làm việc với CSDL bằng cách sử dụng các đối tượng và class trong ngôn ngữ lập trình của bạn (ví dụ: TypeScript) thay vì viết các câu lệnh SQL thuần.</li>
+<li>Ánh xạ các class (entities) tới các bảng (tables) và các thuộc tính của class tới các cột (columns).</li>
+</ul>
+</li>
+<li><strong>ODM (ví dụ: Mongoose):</strong><ul>
+<li>Dùng cho cơ sở dữ liệu NoSQL dạng document (ví dụ: MongoDB).</li>
+<li>Cung cấp một lớp trừu tượng để làm việc với các document và collection trong MongoDB bằng cách sử dụng các đối tượng và schema trong code.</li>
+</ul>
+</li>
+<li><strong>Lợi ích chung:</strong><ul>
+<li><strong>Tăng năng suất:</strong> Giảm lượng code boilerplate phải viết cho các thao tác CSDL.</li>
+<li><strong>Trừu tượng hóa CSDL:</strong> Dễ dàng thay đổi CSDL nền tảng (ở một mức độ nhất định).</li>
+<li><strong>Type Safety:</strong> Với TypeScript, ORM/ODM giúp đảm bảo kiểu dữ liệu khi tương tác với CSDL.</li>
+<li><strong>Tính năng nâng cao:</strong> Thường cung cấp các tính năng như migrations, relations, transactions.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>TypeORM với NestJS:</strong></p>
+<ul>
+<li><strong>Cài đặt:</strong><pre><code class="language-bash">npm install --save @nestjs/typeorm typeorm pg # Cho PostgreSQL
+# hoặc
+npm install --save @nestjs/typeorm typeorm mysql2 # Cho MySQL
+</code></pre>
+</li>
+<li><strong>Cấu hình <code>TypeOrmModule</code>:</strong><ul>
+<li>Trong <code>AppModule</code> (hoặc một module cấu hình CSDL riêng), import <code>TypeOrmModule.forRoot()</code> hoặc <code>TypeOrmModule.forRootAsync()</code> (để load cấu hình động, ví dụ từ <code>ConfigService</code>).</li>
+</ul>
+<pre><code class="language-typescript">// app.module.ts (ví dụ cơ bản)
+import { Module } from &#39;@nestjs/common&#39;;
+import { TypeOrmModule } from &#39;@nestjs/typeorm&#39;;
+import { Cat } from &#39;./cats/entities/cat.entity&#39;; // Entity sẽ tạo
+import { CatsModule } from &#39;./cats/cats.module&#39;;
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: &#39;postgres&#39;, // hoặc &#39;mysql&#39;, &#39;sqlite&#39;, etc.
+      host: &#39;localhost&#39;,
+      port: 5432,
+      username: &#39;your_db_user&#39;,
+      password: &#39;your_db_password&#39;,
+      database: &#39;your_db_name&#39;,
+      entities: [Cat], // Danh sách các entity
+      synchronize: true, // CHỈ DÙNG TRONG DEVELOPMENT: tự động tạo schema CSDL.
+                         // KHÔNG DÙNG TRONG PRODUCTION, sử dụng migrations thay thế.
+    }),
+    CatsModule,
+  ],
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><strong>Định nghĩa Entities:</strong><ul>
+<li>Entity là một class được đánh dấu bằng decorator <code>@Entity()</code> và các thuộc tính của nó được đánh dấu bằng các decorator như <code>@PrimaryGeneratedColumn()</code>, <code>@Column()</code>, <code>@ManyToOne()</code>, etc.</li>
+</ul>
+<pre><code class="language-typescript">// src/cats/entities/cat.entity.ts
+import { Entity, Column, PrimaryGeneratedColumn } from &#39;typeorm&#39;;
+
+@Entity() // Mặc định tên bảng sẽ là &#39;cat&#39; (lowercase của tên class)
+// @Entity(&#39;my_cats_table&#39;) // Có thể tùy chỉnh tên bảng
+export class Cat {
+  @PrimaryGeneratedColumn() // Khóa chính tự tăng
+  id: number;
+
+  @Column({ length: 100 })
+  name: string;
+
+  @Column()
+  age: number;
+
+  @Column()
+  breed: string;
+
+  @Column({ default: true }) // Giá trị mặc định
+  isActive: boolean;
+}
+</code></pre>
+</li>
+<li><strong>Đăng ký Entity trong Module Feature:</strong><ul>
+<li>Trong module cụ thể (ví dụ <code>CatsModule</code>), sử dụng <code>TypeOrmModule.forFeature([Cat])</code> để inject <code>Repository&lt;Cat&gt;</code>.</li>
+</ul>
+<pre><code class="language-typescript">// src/cats/cats.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { TypeOrmModule } from &#39;@nestjs/typeorm&#39;;
+import { CatsController } from &#39;./cats.controller&#39;;
+import { CatsService } from &#39;./cats.service&#39;;
+import { Cat } from &#39;./entities/cat.entity&#39;; // Import entity
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Cat])], // Đăng ký Cat entity cho module này
+  controllers: [CatsController],
+  providers: [CatsService],
+})
+export class CatsModule {}
+</code></pre>
+</li>
+<li><strong>Sử dụng Repositories trong Services:</strong><ul>
+<li>Inject <code>Repository&lt;EntityName&gt;</code> vào service bằng <code>@InjectRepository(EntityName)</code>.</li>
+<li>Repository cung cấp các method để tương tác với CSDL: <code>find()</code>, <code>findOne()</code>, <code>findOneBy()</code>, <code>save()</code>, <code>create()</code>, <code>update()</code>, <code>delete()</code>, <code>query()</code>, etc.</li>
+</ul>
+<pre><code class="language-typescript">// src/cats/cats.service.ts
+import { Injectable, NotFoundException } from &#39;@nestjs/common&#39;;
+import { InjectRepository } from &#39;@nestjs/typeorm&#39;;
+import { Repository } from &#39;typeorm&#39;;
+import { Cat } from &#39;./entities/cat.entity&#39;;
+import { CreateCatDto } from &#39;./dto/create-cat.dto&#39;;
+import { UpdateCatDto } from &#39;./dto/update-cat.dto&#39;;
+
+@Injectable()
+export class CatsService {
+  constructor(
+    @InjectRepository(Cat) // Inject repository của Cat entity
+    private catsRepository: Repository&lt;Cat&gt;,
+  ) {}
+
+  async create(createCatDto: CreateCatDto): Promise&lt;Cat&gt; {
+    const newCat = this.catsRepository.create(createCatDto); // Tạo instance, chưa lưu DB
+    return this.catsRepository.save(newCat); // Lưu vào DB
+  }
+
+  async findAll(breed?: string): Promise&lt;Cat[]&gt; {
+    if (breed) {
+      return this.catsRepository.find({ where: { breed } });
+    }
+    return this.catsRepository.find();
+  }
+
+  async findOne(id: number): Promise&lt;Cat&gt; {
+    const cat = await this.catsRepository.findOneBy({ id });
+    if (!cat) {
+      throw new NotFoundException(`Cat with ID ${id} not found`);
+    }
+    return cat;
+  }
+
+  async update(id: number, updateCatDto: UpdateCatDto): Promise&lt;Cat&gt; {
+    // preload tìm entity theo id, nếu có thì merge data mới vào, nếu không thì undefined
+    const cat = await this.catsRepository.preload({
+      id: id,
+      ...updateCatDto,
+    });
+    if (!cat) {
+      throw new NotFoundException(`Cat with ID ${id} not found for update`);
+    }
+    return this.catsRepository.save(cat); // Lưu thay đổi
+  }
+
+  async remove(id: number): Promise&lt;void&gt; {
+    const result = await this.catsRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Cat with ID ${id} not found for deletion`);
+    }
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Mongoose với NestJS:</strong></p>
+<ul>
+<li><strong>Cài đặt:</strong><pre><code class="language-bash">npm install --save @nestjs/mongoose mongoose
+</code></pre>
+</li>
+<li><strong>Cấu hình <code>MongooseModule</code>:</strong><ul>
+<li>Trong <code>AppModule</code> (hoặc module cấu hình), import <code>MongooseModule.forRoot()</code> hoặc <code>MongooseModule.forRootAsync()</code>.</li>
+</ul>
+<pre><code class="language-typescript">// app.module.ts (ví dụ cơ bản)
+import { Module } from &#39;@nestjs/common&#39;;
+import { MongooseModule } from &#39;@nestjs/mongoose&#39;;
+import { CatsModule } from &#39;./cats/cats.module&#39;;
+
+@Module({
+  imports: [
+    MongooseModule.forRoot(&#39;mongodb://localhost:27017/nest_cats_db&#39;), // Connection string
+    CatsModule,
+  ],
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><strong>Định nghĩa Schemas và Interfaces (cho type-safety):</strong><ul>
+<li>Schema định nghĩa cấu trúc của document, default values, validators, etc.</li>
+<li>Interface TypeScript thường được tạo để đại diện cho Document type.</li>
+</ul>
+<pre><code class="language-typescript">// src/cats/schemas/cat.schema.ts
+import { Prop, Schema, SchemaFactory } from &#39;@nestjs/mongoose&#39;;
+import { Document } from &#39;mongoose&#39;;
+
+export type CatDocument = Cat &amp; Document; // Kết hợp Cat interface với Mongoose Document
+
+@Schema({ timestamps: true }) // Tự động thêm createdAt, updatedAt
+export class Cat {
+  // Bỏ @PrimaryGeneratedColumn() vì MongoDB tự tạo _id
+  // id: number; // Không cần nếu dùng _id của MongoDB
+
+  @Prop({ required: true, index: true }) // required, index
+  name: string;
+
+  @Prop({ required: true })
+  age: number;
+
+  @Prop()
+  breed: string;
+
+  @Prop({ default: true })
+  isActive: boolean;
+}
+
+export const CatSchema = SchemaFactory.createForClass(Cat);
+</code></pre>
+</li>
+<li><strong>Đăng ký Schema trong Module Feature:</strong><ul>
+<li>Trong module cụ thể (ví dụ <code>CatsModule</code>), sử dụng <code>MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }])</code>.</li>
+</ul>
+<pre><code class="language-typescript">// src/cats/cats.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { MongooseModule } from &#39;@nestjs/mongoose&#39;;
+import { CatsController } from &#39;./cats.controller&#39;;
+import { CatsService } from &#39;./cats.service&#39;;
+import { Cat, CatSchema } from &#39;./schemas/cat.schema&#39;; // Import schema và class
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }]), // Đăng ký schema
+  ],
+  controllers: [CatsController],
+  providers: [CatsService],
+})
+export class CatsModule {}
+</code></pre>
+</li>
+<li><strong>Sử dụng Models trong Services:</strong><ul>
+<li>Inject Model vào service bằng <code>@InjectModel(Cat.name)</code>.</li>
+<li>Model cung cấp các method để tương tác với collection: <code>find()</code>, <code>findById()</code>, <code>create()</code>, <code>updateOne()</code>, <code>deleteOne()</code>, etc.</li>
+</ul>
+<pre><code class="language-typescript">// src/cats/cats.service.ts
+import { Injectable, NotFoundException } from &#39;@nestjs/common&#39;;
+import { InjectModel } from &#39;@nestjs/mongoose&#39;;
+import { Model } from &#39;mongoose&#39;;
+import { Cat, CatDocument } from &#39;./schemas/cat.schema&#39;;
+import { CreateCatDto } from &#39;./dto/create-cat.dto&#39;;
+import { UpdateCatDto } from &#39;./dto/update-cat.dto&#39;;
+
+@Injectable()
+export class CatsService {
+  constructor(
+    @InjectModel(Cat.name) private catModel: Model&lt;CatDocument&gt;, // Inject model
+  ) {}
+
+  async create(createCatDto: CreateCatDto): Promise&lt;Cat&gt; {
+    const createdCat = new this.catModel(createCatDto);
+    return createdCat.save();
+  }
+
+  async findAll(breed?: string): Promise&lt;Cat[]&gt; {
+    const filter = breed ? { breed } : {};
+    return this.catModel.find(filter).exec(); // .exec() để trả về Promise
+  }
+
+  async findOne(id: string): Promise&lt;Cat&gt; { // ID của MongoDB là string
+    const cat = await this.catModel.findById(id).exec();
+    if (!cat) {
+      throw new NotFoundException(`Cat with ID ${id} not found`);
+    }
+    return cat;
+  }
+
+  async update(id: string, updateCatDto: UpdateCatDto): Promise&lt;Cat&gt; {
+    const updatedCat = await this.catModel
+      .findByIdAndUpdate(id, updateCatDto, { new: true }) // {new: true} để trả về document đã update
+      .exec();
+    if (!updatedCat) {
+      throw new NotFoundException(`Cat with ID ${id} not found for update`);
+    }
+    return updatedCat;
+  }
+
+  async remove(id: string): Promise&lt;void&gt; {
+    const result = await this.catModel.deleteOne({ _id: id }).exec();
+    if (result.deletedCount === 0) {
+      throw new NotFoundException(`Cat with ID ${id} not found for deletion`);
+    }
+  }
+}
+</code></pre>
+<p>  Controller sẽ cần điều chỉnh <code>id</code> thành <code>string</code> và bỏ <code>ParseIntPipe</code> nếu dùng Mongoose.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example:</strong>
+<em>Học viên sẽ chọn một trong hai hướng: TypeORM hoặc Mongoose để làm theo.</em></p>
+<ul>
+<li><p><strong>Chuẩn bị CSDL:</strong></p>
+<ul>
+<li><strong>Docker (Khuyến khích):</strong> Cách dễ nhất để chạy CSDL local.<ul>
+<li><strong>PostgreSQL:</strong> <code>docker run --name my-postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=myuser -e POSTGRES_DB=mydatabase -p 5432:5432 -d postgres</code></li>
+<li><strong>MongoDB:</strong> <code>docker run --name my-mongo -p 27017:27017 -d mongo</code></li>
+</ul>
+</li>
+<li>Hoặc cài đặt CSDL trực tiếp trên máy.</li>
+</ul>
+</li>
+<li><p><strong>Code cho TypeORM đã được minh họa chi tiết ở phần lý thuyết TypeORM.</strong></p>
+</li>
+<li><p><strong>Code cho Mongoose đã được minh họa chi tiết ở phần lý thuyết Mongoose.</strong></p>
+</li>
+</ul>
+<p><strong>Bài tập thực hành:</strong>
+<em>Học viên chọn một trong hai hệ CSDL (PostgreSQL với TypeORM hoặc MongoDB với Mongoose) để thực hiện các bài tập này cho <code>ProductsModule</code>.</em></p>
+<ol>
+<li><strong>Cài đặt và Cấu hình CSDL:</strong><ul>
+<li><strong>Yêu cầu:</strong> Chạy một instance PostgreSQL (nếu chọn TypeORM) hoặc MongoDB (nếu chọn Mongoose) trên máy local (sử dụng Docker hoặc cài đặt trực tiếp).</li>
+<li>Cài đặt các package <code>@nestjs/typeorm typeorm pg</code> (hoặc <code>mysql2</code>) HOẶC <code>@nestjs/mongoose mongoose</code>.</li>
+<li>Trong <code>AppModule</code>, cấu hình <code>TypeOrmModule.forRoot()</code> hoặc <code>MongooseModule.forRoot()</code> để kết nối đến CSDL của bạn. Đặt <code>synchronize: true</code> (cho TypeORM) hoặc không cần thiết cho Mongoose trong giai đoạn development.</li>
+</ul>
+</li>
+<li><strong>Định nghĩa <code>Product</code> Entity/Schema:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li><strong>TypeORM:</strong> Tạo file <code>src/products/entities/product.entity.ts</code>. Định nghĩa class <code>Product</code> với các trường: <code>id</code> (khóa chính, tự tăng), <code>name</code> (string), <code>description</code> (string, có thể null), <code>price</code> (number), <code>stock</code> (number, default 0), <code>createdAt</code> (timestamp, tự động tạo), <code>updatedAt</code> (timestamp, tự động cập nhật).</li>
+<li><strong>Mongoose:</strong> Tạo file <code>src/products/schemas/product.schema.ts</code>. Định nghĩa <code>ProductSchema</code> và <code>Product</code> class/interface với các trường tương tự (MongoDB tự quản lý <code>_id</code>, <code>createdAt</code>, <code>updatedAt</code> nếu <code>@Schema({ timestamps: true })</code>).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Cập nhật <code>ProductsModule</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li><strong>TypeORM:</strong> Import <code>TypeOrmModule.forFeature([Product])</code> vào <code>ProductsModule</code>.</li>
+<li><strong>Mongoose:</strong> Import <code>MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }])</code> vào <code>ProductsModule</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Cập nhật <code>ProductsService</code> để sử dụng Repository/Model:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Inject <code>Repository&lt;Product&gt;</code> (cho TypeORM) hoặc <code>Model&lt;ProductDocument&gt;</code> (cho Mongoose) vào <code>ProductsService</code>.</li>
+<li>Viết lại các method CRUD (<code>create</code>, <code>findAll</code>, <code>findOne</code>, <code>update</code>, <code>remove</code>) trong <code>ProductsService</code> để sử dụng các method của repository/model tương ứng để tương tác với CSDL. Tất cả các method này nên là <code>async</code> và trả về <code>Promise</code>.</li>
+<li>Xử lý trường hợp không tìm thấy product bằng cách ném <code>NotFoundException</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Kiểm tra lại với Postman/Insomnia:</strong><ul>
+<li><strong>Yêu cầu:</strong> Chạy ứng dụng NestJS. Sử dụng Postman để kiểm tra tất cả các endpoint CRUD của <code>ProductsController</code>.<ul>
+<li>Tạo một vài sản phẩm.</li>
+<li>Lấy danh sách sản phẩm, lấy một sản phẩm theo ID.</li>
+<li>Cập nhật một sản phẩm.</li>
+<li>Xóa một sản phẩm.</li>
+</ul>
+</li>
+<li>Xác nhận rằng dữ liệu được lưu và truy xuất từ CSDL một cách chính xác. Kiểm tra CSDL trực tiếp nếu cần.</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,4 +1,4 @@
-## Chapter 4: Xử lý bất đồng bộ & Giới thiệu Cơ sở dữ liệu (TypeORM/Mongoose)
+# Chapter 4: Xử lý bất đồng bộ & Giới thiệu Cơ sở dữ liệu (TypeORM/Mongoose)
 
 **Tên Chapter học:** Xử lý bất đồng bộ & Giới thiệu Cơ sở dữ liệu (TypeORM/Mongoose)
 

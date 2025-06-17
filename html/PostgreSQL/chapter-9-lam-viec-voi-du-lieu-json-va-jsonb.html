@@ -1,0 +1,444 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-9-lam-viec-voi-du-lieu-json-va-jsonb</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 9: Làm việc với Dữ liệu JSON và JSONB</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Khai thác sức mạnh và tính linh hoạt của kiểu dữ liệu JSON/JSONB trong PostgreSQL.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Tổng quan về <code>JSON</code> và <code>JSONB</code>:</strong><ul>
+<li><code>JSON</code>: Lưu trữ bản sao chính xác của văn bản JSON đầu vào. Điều này có nghĩa là nó giữ lại khoảng trắng, thứ tự các key trong object, và cả các key bị trùng lặp (phiên bản cuối cùng của key trùng được giữ khi xử lý). Quá trình xử lý (parse) JSON diễn ra mỗi khi truy vấn.</li>
+<li><code>JSONB</code> (JSON Binary): Lưu trữ dữ liệu JSON ở định dạng nhị phân đã được phân tích cú pháp (parsed) và tối ưu hóa. Nó loại bỏ khoảng trắng không cần thiết, không đảm bảo thứ tự key của object, và chỉ giữ lại giá trị cuối cùng cho các key trùng lặp. <code>JSONB</code> thường hiệu quả hơn đáng kể cho việc truy vấn và thao tác, đồng thời hỗ trợ indexing tốt hơn. <strong>Khuyến nghị sử dụng <code>JSONB</code> trong hầu hết các trường hợp.</strong></li>
+<li>Chuyển đổi: <code>::jsonb</code>, <code>::json</code>.</li>
+</ul>
+</li>
+<li><strong>Toán tử truy cập (Operators):</strong><ul>
+<li><code>-&gt;</code>: Lấy phần tử mảng JSON theo index (0-based) hoặc giá trị object JSON theo key. Trả về kiểu <code>JSON</code> (nếu input là <code>JSON</code>) hoặc <code>JSONB</code> (nếu input là <code>JSONB</code>).<ul>
+<li><code>json_column -&gt; index</code> (cho mảng)</li>
+<li><code>json_column -&gt; &#39;key_name&#39;</code> (cho object)</li>
+</ul>
+</li>
+<li><code>-&gt;&gt;</code>: Tương tự <code>-&gt;</code> nhưng trả về giá trị dưới dạng <code>TEXT</code>. Hữu ích khi bạn muốn lấy giá trị cuối cùng là chuỗi.<ul>
+<li><code>json_column -&gt;&gt; index</code></li>
+<li><code>json_column -&gt;&gt; &#39;key_name&#39;</code></li>
+</ul>
+</li>
+<li><code>#&gt;</code>: Lấy giá trị JSON tại một đường dẫn (path) cụ thể, được chỉ định bằng một mảng text. Trả về <code>JSON</code>/<code>JSONB</code>.<ul>
+<li><code>json_column #&gt; &#39;{path,to,element}&#39;</code> (ví dụ: <code>&#39;{address,city}&#39;</code> hoặc <code>&#39;{tags,0}&#39;</code> để lấy phần tử đầu tiên của mảng &#39;tags&#39;).</li>
+</ul>
+</li>
+<li><code>#&gt;&gt;</code>: Tương tự <code>#&gt;</code> nhưng trả về giá trị dưới dạng <code>TEXT</code>.<ul>
+<li><code>json_column #&gt;&gt; &#39;{path,to,element}&#39;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Các hàm và toán tử tạo và xử lý JSON/JSONB:</strong><ul>
+<li><code>jsonb_build_object(key1, value1, key2, value2, ...)</code>: Tạo một object JSONB.</li>
+<li><code>jsonb_build_array(value1, value2, ...)</code>: Tạo một mảng JSONB.</li>
+<li><code>to_jsonb(anyelement)</code>: Chuyển đổi một giá trị SQL (ví dụ: một dòng, một mảng SQL) thành JSONB.</li>
+<li><code>jsonb_array_elements(jsonb_array)</code>: Mở rộng một mảng JSONB thành một tập các giá trị JSONB (mỗi phần tử mảng thành một dòng).</li>
+<li><code>jsonb_array_elements_text(jsonb_array)</code>: Tương tự nhưng trả về TEXT.</li>
+<li><code>jsonb_object_keys(jsonb_object)</code>: Trả về tất cả các key của một object JSONB dưới dạng một tập các TEXT.</li>
+<li><code>jsonb_each(jsonb_object)</code>: Mở rộng một object JSONB thành một tập các cặp (key TEXT, value JSONB).</li>
+<li><code>jsonb_each_text(jsonb_object)</code>: Tương tự nhưng value trả về là TEXT.</li>
+<li><code>jsonb_extract_path(from_json jsonb, VARIADIC path_elems text[])</code>: Tương đương toán tử <code>#&gt;</code>.</li>
+<li><code>jsonb_extract_path_text(...)</code>: Tương đương toán tử <code>#&gt;&gt;</code>.</li>
+<li><code>jsonb_pretty(jsonb)</code>: In JSONB ra dạng text dễ đọc, có thụt lề.</li>
+<li><code>jsonb_typeof(jsonb)</code>: Trả về kiểu của giá trị JSONB ngoài cùng (<code>&#39;object&#39;</code>, <code>&#39;array&#39;</code>, <code>&#39;string&#39;</code>, <code>&#39;number&#39;</code>, <code>&#39;boolean&#39;</code>, <code>&#39;null&#39;</code>).</li>
+<li><code>jsonb_strip_nulls(from_json jsonb)</code>: Xóa tất cả các cặp key-value mà value là null từ object.</li>
+</ul>
+</li>
+<li><strong>Toán tử kiểm tra sự tồn tại và chứa (Existence and Containment Operators - chủ yếu cho JSONB):</strong><ul>
+<li><code>@&gt;</code> (contains): <code>jsonb_A @&gt; jsonb_B</code> -&gt; <code>jsonb_A</code> có chứa <code>jsonb_B</code> không?<ul>
+<li>Ví dụ: <code>&#39;{&quot;a&quot;:1, &quot;b&quot;:2}&#39;::jsonb @&gt; &#39;{&quot;a&quot;:1}&#39;::jsonb</code> là TRUE.</li>
+<li><code>&#39;[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]&#39;::jsonb @&gt; &#39;[&quot;a&quot;, &quot;c&quot;]&#39;::jsonb</code> là TRUE.</li>
+</ul>
+</li>
+<li><code>&lt;@</code> (is contained by): <code>jsonb_A &lt;@ jsonb_B</code> -&gt; <code>jsonb_A</code> có được chứa bởi <code>jsonb_B</code> không?</li>
+<li><code>?</code> (key exists): <code>jsonb_object ? &#39;key_name&#39;</code> -&gt; <code>jsonb_object</code> có chứa <code>key_name</code> không?</li>
+<li><code>?|</code> (any key exists): <code>jsonb_object ?| ARRAY[&#39;key1&#39;, &#39;key2&#39;]</code> -&gt; <code>jsonb_object</code> có chứa bất kỳ key nào trong mảng không?</li>
+<li><code>?&amp;</code> (all keys exist): <code>jsonb_object ?&amp; ARRAY[&#39;key1&#39;, &#39;key2&#39;]</code> -&gt; <code>jsonb_object</code> có chứa tất cả các key trong mảng không?</li>
+</ul>
+</li>
+<li><strong>Cập nhật và xóa trong JSONB:</strong><ul>
+<li><code>jsonb_set(target jsonb, path text[], new_value jsonb [, create_missing boolean])</code>: Cập nhật hoặc chèn giá trị tại một path.</li>
+<li>Toán tử <code>||</code> (concatenate): Nối hai object JSONB (các key trùng ở object bên phải sẽ ghi đè) hoặc hai mảng JSONB.</li>
+<li>Toán tử <code>-</code> (delete):<ul>
+<li><code>jsonb_object - &#39;key_name&#39;</code>: Xóa key khỏi object.</li>
+<li><code>jsonb_object - ARRAY[&#39;key1&#39;, &#39;key2&#39;]</code>: Xóa nhiều key.</li>
+<li><code>jsonb_array - integer_index</code>: Xóa phần tử tại index khỏi mảng (index âm tính từ cuối).</li>
+</ul>
+</li>
+<li>Toán tử <code>#-</code>: <code>jsonb_value #- &#39;{path,to,element}&#39;</code>: Xóa phần tử tại path.</li>
+</ul>
+</li>
+<li><strong>Indexing JSONB:</strong><ul>
+<li><strong>GIN (Generalized Inverted Index)</strong> là loại index hiệu quả nhất cho JSONB.</li>
+<li><code>CREATE INDEX idx_gin_my_table_json_col ON my_table USING GIN (jsonb_column);</code> (Index toàn bộ cột JSONB, hỗ trợ các toán tử <code>@&gt;</code>, <code>?</code>, <code>?|</code>, <code>?&amp;</code>).</li>
+<li><code>CREATE INDEX idx_gin_my_table_json_col_path_ops ON my_table USING GIN (jsonb_column jsonb_path_ops);</code> (Hỗ trợ thêm toán tử <code>@&gt;</code> cho các path cụ thể, thường hiệu quả hơn GIN mặc định nếu bạn chỉ query containment ở path nông).</li>
+<li>Index trên một biểu thức (expression index) trích xuất một phần của JSONB:
+  <code>CREATE INDEX idx_my_table_specific_key ON my_table USING GIN ((jsonb_column -&gt; &#39;specific_key&#39;));</code>
+  Hoặc B-tree index nếu giá trị trích xuất là kiểu có thể index B-tree:
+  <code>CREATE INDEX idx_my_table_specific_value ON my_table ((jsonb_column -&gt;&gt; &#39;numeric_key&#39;)::numeric);</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Giả sử bảng Products có cột product_attributes JSONB
+/*
+CREATE TABLE Products (
+    product_id SERIAL PRIMARY KEY,
+    product_name TEXT NOT NULL,
+    product_attributes JSONB
+);
+INSERT INTO Products (product_name, product_attributes) VALUES
+(&#39;Laptop Pro&#39;, &#39;{&quot;brand&quot;: &quot;TechCorp&quot;, &quot;screen_size&quot;: 15.6, &quot;ram_gb&quot;: 16, &quot;tags&quot;: [&quot;powerful&quot;, &quot;business&quot;], &quot;specs&quot;: {&quot;cpu&quot;: &quot;i7&quot;, &quot;storage_type&quot;: &quot;SSD&quot;}}&#39;),
+(&#39;Smartphone Lite&#39;, &#39;{&quot;brand&quot;: &quot;MobileInc&quot;, &quot;screen_size&quot;: 6.1, &quot;ram_gb&quot;: 8, &quot;tags&quot;: [&quot;compact&quot;, &quot;budget&quot;], &quot;color_options&quot;: [&quot;black&quot;, &quot;white&quot;] }&#39;),
+(&#39;Wireless Mouse&#39;, &#39;{&quot;brand&quot;: &quot;AccessoriesCo&quot;, &quot;connectivity&quot;: &quot;bluetooth&quot;, &quot;tags&quot;: [&quot;ergonomic&quot;]}&#39;);
+*/
+
+-- Truy cập thuộc tính
+SELECT
+    product_name,
+    product_attributes -&gt;&gt; &#39;brand&#39; AS brand,
+    (product_attributes -&gt;&gt; &#39;screen_size&#39;)::NUMERIC AS screen,
+    product_attributes #&gt;&gt; &#39;{specs,cpu}&#39; AS cpu_model,
+    product_attributes -&gt; &#39;tags&#39; -&gt;&gt; 0 AS first_tag -- Lấy tag đầu tiên
+FROM Products;
+
+-- Kiểm tra sự tồn tại của key và containment
+SELECT product_name FROM Products WHERE product_attributes ? &#39;ram_gb&#39;;
+SELECT product_name FROM Products WHERE product_attributes @&gt; &#39;{&quot;brand&quot;: &quot;TechCorp&quot;}&#39;::jsonb;
+SELECT product_name FROM Products WHERE product_attributes -&gt; &#39;tags&#39; @&gt; &#39;[&quot;budget&quot;]&#39;::jsonb; -- Kiểm tra tag &#39;budget&#39;
+
+-- Mở rộng mảng và object
+SELECT p.product_name, t.tag
+FROM Products p, jsonb_array_elements_text(p.product_attributes -&gt; &#39;tags&#39;) AS t(tag)
+WHERE p.product_attributes ? &#39;tags&#39;;
+
+SELECT p.product_name, kv.key, kv.value
+FROM Products p, jsonb_each(p.product_attributes) AS kv(key, value)
+WHERE p.product_name = &#39;Laptop Pro&#39;;
+
+-- Cập nhật JSONB
+UPDATE Products
+SET product_attributes = product_attributes || &#39;{&quot;status&quot;: &quot;new_arrival&quot;}&#39;::jsonb -- Thêm/cập nhật key status
+WHERE product_name = &#39;Laptop Pro&#39;;
+
+UPDATE Products
+SET product_attributes = jsonb_set(
+                            product_attributes,
+                            &#39;{specs,storage_gb}&#39;, -- Path
+                            &#39;512&#39;::jsonb,        -- New value (phải là jsonb)
+                            true                 -- Create if missing
+                        )
+WHERE product_name = &#39;Laptop Pro&#39;;
+
+UPDATE Products
+SET product_attributes = product_attributes #- &#39;{ram_gb}&#39; -- Xóa key ram_gb
+WHERE product_name = &#39;Smartphone Lite&#39;;
+
+SELECT product_name, jsonb_pretty(product_attributes) FROM Products;
+
+-- Tạo GIN index
+CREATE INDEX idx_gin_products_attributes ON Products USING GIN (product_attributes);
+-- Query sử dụng index:
+EXPLAIN ANALYZE SELECT product_name FROM Products WHERE product_attributes @&gt; &#39;{&quot;brand&quot;:&quot;MobileInc&quot;}&#39;::jsonb;
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong>
+  Tạo bảng <code>UserProfiles</code> (user_id SERIAL PRIMARY KEY, username VARCHAR(50) UNIQUE, profile_data JSONB). Cột <code>profile_data</code> có thể chứa:
+  <code>{&quot;full_name&quot;: &quot;John Doe&quot;, &quot;email_verified&quot;: true, &quot;preferences&quot;: {&quot;theme&quot;: &quot;dark&quot;, &quot;notifications&quot;: {&quot;email&quot;: true, &quot;sms&quot;: false}}, &quot;login_history&quot;: [{&quot;timestamp&quot;: &quot;2023-01-15T10:00:00Z&quot;, &quot;ip_address&quot;: &quot;192.168.1.10&quot;}, {&quot;timestamp&quot;: &quot;2023-01-20T12:30:00Z&quot;, &quot;ip_address&quot;: &quot;10.0.0.5&quot;}]}</code><ol>
+<li><strong>Thêm dữ liệu:</strong> Thêm ít nhất 3 user profiles với các <code>profile_data</code> khác nhau, bao gồm cả mảng và object lồng nhau.</li>
+<li><strong>Truy vấn cơ bản:</strong><ul>
+<li>Lấy <code>username</code> và <code>full_name</code> của tất cả user.</li>
+<li>Tìm các user có <code>email_verified</code> là <code>true</code>.</li>
+<li>Tìm các user có preference <code>theme</code> là <code>&#39;dark&#39;</code>.</li>
+</ul>
+</li>
+<li><strong>Truy vấn mảng:</strong><ul>
+<li>Tìm các user đã đăng nhập từ một <code>ip_address</code> cụ thể.</li>
+<li>Lấy <code>username</code> và thời điểm đăng nhập cuối cùng của mỗi user.</li>
+</ul>
+</li>
+<li><strong>Cập nhật dữ liệu:</strong><ul>
+<li>Viết câu lệnh để cập nhật <code>theme</code> preference của một user thành <code>&#39;light&#39;</code>.</li>
+<li>Thêm một entry mới vào <code>login_history</code> cho một user.</li>
+<li>Xóa key <code>sms</code> notifications khỏi <code>preferences</code> của một user.</li>
+</ul>
+</li>
+<li><strong>Indexing và Tối ưu:</strong><ul>
+<li>Tạo GIN index trên cột <code>profile_data</code>.</li>
+<li>Viết một truy vấn tìm user dựa trên một key trong <code>preferences</code> (ví dụ: <code>preferences -&gt; notifications -&gt;&gt; &#39;email&#39; = &#39;true&#39;</code>) và xem <code>EXPLAIN ANALYZE</code> để kiểm tra việc sử dụng index.</li>
+<li>Thảo luận khi nào nên tạo index trên một path cụ thể trong JSONB thay vì toàn bộ cột.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

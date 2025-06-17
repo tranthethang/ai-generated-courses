@@ -1,0 +1,470 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-1-gioi-thieu-nestjs-cai-dat-moi-truong</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 1: Giới thiệu NestJS &amp; Cài đặt Môi trường</h1>
+<p><strong>Tên Chapter học:</strong> Giới thiệu NestJS &amp; Cài đặt Môi trường</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu rõ NestJS là gì:</strong> Nắm bắt được định nghĩa, triết lý thiết kế, và những ưu điểm vượt trội mà NestJS mang lại so với các framework Node.js khác (ví dụ: Express.js, Koa.js).</li>
+<li><strong>Kiến trúc cốt lõi:</strong> Làm quen với ba thành phần chính của NestJS: Modules (Mô-đun), Controllers (Bộ điều khiển), và Providers (Nhà cung cấp). Hiểu vai trò và mối quan hệ giữa chúng.</li>
+<li><strong>Lợi ích chính:</strong> Nhận diện được các lợi ích khi sử dụng NestJS như: cấu trúc rõ ràng, hỗ trợ TypeScript mạnh mẽ, Dependency Injection, tính module hóa cao, dễ dàng mở rộng và test.</li>
+<li><strong>Cài đặt môi trường:</strong> Thực hiện thành công việc cài đặt Node.js, npm (hoặc yarn), và NestJS CLI (Command Line Interface) trên máy tính cá nhân.</li>
+<li><strong>Tạo dự án đầu tiên:</strong> Sử dụng Nest CLI để khởi tạo một dự án NestJS mới, hiểu rõ cấu trúc thư mục và các tệp tin quan trọng được tạo ra.</li>
+<li><strong>Chạy ứng dụng cơ bản:</strong> Khởi động ứng dụng NestJS và truy cập endpoint mặc định để kiểm tra.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>NestJS là gì?</strong></p>
+<ul>
+<li>NestJS là một framework Node.js mã nguồn mở, được xây dựng trên nền tảng TypeScript, lấy cảm hứng từ Angular.</li>
+<li>Nó cung cấp một kiến trúc ứng dụng out-of-the-box, cho phép các nhà phát triển tạo ra các ứng dụng server-side có tính tổ chức cao, dễ kiểm thử và có khả năng mở rộng tốt.</li>
+<li>NestJS kết hợp các yếu tố của Lập trình hướng đối tượng (OOP), Lập trình hàm (FP), và Lập trình phản ứng hàm (FRP).</li>
+<li>Nó sử dụng Express.js làm HTTP server framework mặc định, nhưng cũng có thể cấu hình để hoạt động với Fastify.</li>
+</ul>
+</li>
+<li><p><strong>Tại sao chọn NestJS?</strong></p>
+<ul>
+<li><strong>TypeScript:</strong> Hỗ trợ đầy đủ TypeScript, giúp phát hiện lỗi sớm, cải thiện khả năng đọc hiểu và bảo trì code.</li>
+<li><strong>Kiến trúc rõ ràng:</strong> Áp dụng các design pattern như Dependency Injection, Modules, Decorators giúp code có cấu trúc mạch lạc.</li>
+<li><strong>Module hóa:</strong> Cho phép chia nhỏ ứng dụng thành các module độc lập, dễ quản lý và tái sử dụng.</li>
+<li><strong>Khả năng test:</strong> Kiến trúc của NestJS giúp việc viết unit test và E2E test trở nên dễ dàng hơn.</li>
+<li><strong>Cộng đồng và hệ sinh thái:</strong> Cộng đồng phát triển mạnh mẽ, cung cấp nhiều thư viện và công cụ hỗ trợ.</li>
+<li><strong>Tích hợp:</strong> Dễ dàng tích hợp với các công nghệ phổ biến khác như TypeORM, Mongoose, GraphQL, WebSockets, Microservices.</li>
+</ul>
+</li>
+<li><p><strong>Các khái niệm cốt lõi:</strong></p>
+<ul>
+<li><strong>Modules (<code>@Module()</code>):</strong> Là các khối xây dựng cơ bản trong NestJS. Mỗi ứng dụng có ít nhất một module gốc (root module), thường là <code>AppModule</code>. Modules giúp tổ chức code thành các phần có liên quan logic với nhau. Một module có thể import các module khác, export providers, và khai báo controllers, providers của riêng nó.<pre><code class="language-typescript">// app.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { AppController } from &#39;./app.controller&#39;;
+import { AppService } from &#39;./app.service&#39;;
+
+@Module({
+  imports: [], // Các module khác được import vào đây
+  controllers: [AppController], // Danh sách các controller thuộc module này
+  providers: [AppService], // Danh sách các provider thuộc module này
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><strong>Controllers (<code>@Controller()</code>):</strong> Chịu trách nhiệm xử lý các HTTP request đến và trả về response cho client. Chúng được định nghĩa bằng decorator <code>@Controller()</code> và các method handler được định nghĩa bằng các decorator HTTP method như <code>@Get()</code>, <code>@Post()</code>, <code>@Put()</code>, <code>@Delete()</code>.<pre><code class="language-typescript">// app.controller.ts
+import { Controller, Get } from &#39;@nestjs/common&#39;;
+import { AppService } from &#39;./app.service&#39;;
+
+@Controller() // Có thể truyền vào một path prefix, ví dụ: @Controller(&#39;cats&#39;)
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get() // Xử lý GET request đến path của controller
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}
+</code></pre>
+</li>
+<li><strong>Providers (<code>@Injectable()</code>):</strong> Là các class có thể được inject (tiêm) vào các class khác (thường là controllers hoặc các providers khác) dưới dạng dependency. Services, repositories, factories, helpers thường là providers. Chúng được đánh dấu bằng decorator <code>@Injectable()</code>.<pre><code class="language-typescript">// app.service.ts
+import { Injectable } from &#39;@nestjs/common&#39;;
+
+@Injectable()
+export class AppService {
+  getHello(): string {
+    return &#39;Hello World from NestJS!&#39;;
+  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>Cài đặt môi trường:</strong></p>
+<ul>
+<li><strong>Node.js và npm/yarn:</strong> Đảm bảo bạn đã cài đặt phiên bản Node.js LTS (Long Term Support) mới nhất. npm (Node Package Manager) đi kèm với Node.js. Yarn là một trình quản lý package thay thế.<ul>
+<li>Kiểm tra phiên bản: <code>node -v</code>, <code>npm -v</code> (hoặc <code>yarn -v</code>).</li>
+</ul>
+</li>
+<li><strong>NestJS CLI:</strong> Công cụ dòng lệnh giúp tạo dự án, generate các thành phần (modules, controllers, services), và quản lý dự án.<ul>
+<li>Cài đặt global: <code>npm install -g @nestjs/cli</code> (hoặc <code>yarn global add @nestjs/cli</code>).</li>
+<li>Kiểm tra cài đặt: <code>nest --version</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Tạo dự án NestJS đầu tiên:</strong></p>
+<ul>
+<li>Sử dụng lệnh: <code>nest new ten-du-an</code> (ví dụ: <code>nest new hello-nest</code>).</li>
+<li>CLI sẽ hỏi bạn chọn trình quản lý package (npm hoặc yarn).</li>
+<li>Sau khi hoàn tất, di chuyển vào thư mục dự án: <code>cd ten-du-an</code>.</li>
+<li><strong>Cấu trúc thư mục chính:</strong><ul>
+<li><code>node_modules/</code>: Chứa các thư viện dependencies.</li>
+<li><code>src/</code>: Chứa mã nguồn của ứng dụng.<ul>
+<li><code>app.controller.ts</code>: Controller mặc định.</li>
+<li><code>app.controller.spec.ts</code>: File unit test cho controller.</li>
+<li><code>app.module.ts</code>: Module gốc của ứng dụng.</li>
+<li><code>app.service.ts</code>: Service mặc định.</li>
+<li><code>main.ts</code>: Điểm khởi đầu của ứng dụng, nơi khởi tạo Nest application instance và lắng nghe request.</li>
+</ul>
+</li>
+<li><code>test/</code>: Chứa các file E2E test.</li>
+<li><code>.eslintrc.js</code>, <code>.prettierrc</code>, <code>nest-cli.json</code>, <code>package.json</code>, <code>tsconfig.build.json</code>, <code>tsconfig.json</code>: Các file cấu hình.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Chạy ứng dụng:</strong></p>
+<ul>
+<li>Lệnh chạy ở chế độ development (có hot-reloading): <code>npm run start:dev</code> (hoặc <code>yarn start:dev</code>).</li>
+<li>Ứng dụng mặc định sẽ chạy ở port <code>3000</code>. Mở trình duyệt và truy cập <code>http://localhost:3000</code>. Bạn sẽ thấy message &quot;Hello World!&quot;.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example (Minh họa các file chính):</strong></p>
+<ul>
+<li><p><strong><code>src/main.ts</code> (Điểm khởi đầu):</strong></p>
+<pre><code class="language-typescript">import { NestFactory } from &#39;@nestjs/core&#39;;
+import { AppModule } from &#39;./app.module&#39;;
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule); // Tạo instance của Nest application
+  await app.listen(3000); // Lắng nghe trên port 3000
+  console.log(`Application is running on: ${await app.getUrl()}`);
+}
+bootstrap();
+</code></pre>
+</li>
+<li><p><strong><code>src/app.module.ts</code> (Module gốc):</strong></p>
+<pre><code class="language-typescript">import { Module } from &#39;@nestjs/common&#39;;
+import { AppController } from &#39;./app.controller&#39;;
+import { AppService } from &#39;./app.service&#39;;
+
+@Module({
+  imports: [], // Nơi import các module khác
+  controllers: [AppController], // Khai báo controller cho module này
+  providers: [AppService], // Khai báo provider cho module này
+})
+export class AppModule {}
+</code></pre>
+</li>
+<li><p><strong><code>src/app.controller.ts</code> (Controller xử lý request):</strong></p>
+<pre><code class="language-typescript">import { Controller, Get } from &#39;@nestjs/common&#39;;
+import { AppService } from &#39;./app.service&#39;;
+
+@Controller() // Đường dẫn gốc cho controller này
+export class AppController {
+  constructor(private readonly appService: AppService) {} // Dependency Injection AppService
+
+  @Get() // Xử lý HTTP GET request đến đường dẫn gốc
+  getHello(): string {
+    return this.appService.getHello(); // Gọi method từ service
+  }
+}
+</code></pre>
+</li>
+<li><p><strong><code>src/app.service.ts</code> (Provider chứa logic nghiệp vụ):</strong></p>
+<pre><code class="language-typescript">import { Injectable } from &#39;@nestjs/common&#39;;
+
+@Injectable() // Đánh dấu class này là một provider có thể được inject
+export class AppService {
+  getHello(): string {
+    return &#39;Hello World from NestJS Service!&#39;; // Logic nghiệp vụ đơn giản
+  }
+}
+</code></pre>
+</li>
+</ul>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Cài đặt môi trường:</strong><ul>
+<li><strong>Yêu cầu:</strong> Cài đặt Node.js (phiên bản LTS mới nhất) và npm (hoặc yarn) trên máy tính của bạn.</li>
+<li><strong>Kiểm tra:</strong> Mở terminal/command prompt, chạy lệnh <code>node -v</code> và <code>npm -v</code> (hoặc <code>yarn -v</code>) để xác nhận cài đặt thành công.</li>
+</ul>
+</li>
+<li><strong>Cài đặt NestJS CLI:</strong><ul>
+<li><strong>Yêu cầu:</strong> Sử dụng npm (hoặc yarn) để cài đặt NestJS CLI toàn cục.</li>
+<li><strong>Lệnh:</strong> <code>npm install -g @nestjs/cli</code></li>
+<li><strong>Kiểm tra:</strong> Chạy lệnh <code>nest --version</code> để xem phiên bản CLI.</li>
+</ul>
+</li>
+<li><strong>Tạo dự án NestJS đầu tiên:</strong><ul>
+<li><strong>Yêu cầu:</strong> Sử dụng Nest CLI để tạo một dự án mới tên là <code>my-nest-journey</code>.</li>
+<li><strong>Lệnh:</strong> <code>nest new my-nest-journey</code> (chọn npm hoặc yarn khi được hỏi).</li>
+<li><strong>Kết quả:</strong> Một thư mục <code>my-nest-journey</code> được tạo với cấu trúc dự án NestJS.</li>
+</ul>
+</li>
+<li><strong>Khám phá cấu trúc dự án:</strong><ul>
+<li><strong>Yêu cầu:</strong> Mở thư mục <code>my-nest-journey</code> bằng một code editor (ví dụ: VS Code). Dành thời gian xem qua các file và thư mục chính trong <code>src/</code> (đặc biệt là <code>main.ts</code>, <code>app.module.ts</code>, <code>app.controller.ts</code>, <code>app.service.ts</code>).</li>
+<li><strong>Mục tiêu:</strong> Hiểu sơ bộ vai trò của từng file.</li>
+</ul>
+</li>
+<li><strong>Chạy ứng dụng và tùy chỉnh message:</strong><ul>
+<li><strong>Yêu cầu:</strong> Di chuyển vào thư mục dự án (<code>cd my-nest-journey</code>). Chạy ứng dụng ở chế độ development.</li>
+<li><strong>Lệnh:</strong> <code>npm run start:dev</code></li>
+<li><strong>Kiểm tra:</strong> Mở trình duyệt, truy cập <code>http://localhost:3000</code>. Bạn sẽ thấy &quot;Hello World!&quot;.</li>
+<li><strong>Tùy chỉnh:</strong> Mở file <code>src/app.service.ts</code>, thay đổi chuỗi trả về của method <code>getHello()</code> thành &quot;Xin chào thế giới cùng NestJS!&quot;. Lưu file và xem trình duyệt tự động cập nhật (do hot-reloading).</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

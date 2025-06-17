@@ -1,4 +1,4 @@
-### Chapter 3: Câu Lệnh SELECT Nâng Cao và Các Hàm Thông Dụng
+# Chapter 3: Câu Lệnh SELECT Nâng Cao và Các Hàm Thông Dụng
 
 * **Tên bài học:** Tối ưu truy vấn SELECT, làm quen với các hàm PostgreSQL và biểu thức điều kiện.
 * **Tóm tắt lý thuyết:**

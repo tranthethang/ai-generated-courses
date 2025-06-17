@@ -1,0 +1,660 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-5-pipes-va-validation</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 5: Pipes và Validation</h1>
+<p><strong>Tên Chapter học:</strong> Pipes và Validation</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu rõ về Pipes:</strong> Nắm vững vai trò của Pipes trong NestJS như một cơ chế để chuyển đổi (transformation) và xác thực (validation) dữ liệu đầu vào (route parameters, query parameters, request body).</li>
+<li><strong>Sử dụng Built-in Pipes:</strong><ul>
+<li>Thành thạo cách sử dụng các pipes có sẵn của NestJS:<ul>
+<li><code>ValidationPipe</code>: Tự động thực thi validation cho DTOs sử dụng <code>class-validator</code>.</li>
+<li><code>ParseIntPipe</code>, <code>ParseFloatPipe</code>, <code>ParseBoolPipe</code>, <code>ParseArrayPipe</code>, <code>ParseUUIDPipe</code>: Chuyển đổi chuỗi đầu vào thành kiểu dữ liệu mong muốn và báo lỗi nếu không hợp lệ.</li>
+<li><code>DefaultValuePipe</code>: Cung cấp giá trị mặc định nếu tham số không được truyền.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Validation với <code>class-validator</code> và <code>class-transformer</code>:</strong><ul>
+<li>Sử dụng thư viện <code>class-validator</code> để thêm các validation decorator (ví dụ: <code>@IsString()</code>, <code>@IsInt()</code>, <code>@IsEmail()</code>, <code>@MinLength()</code>, <code>@IsNotEmpty()</code>) vào các thuộc tính của DTOs.</li>
+<li>Hiểu vai trò của <code>class-transformer</code> trong việc chuyển đổi plain JavaScript object thành instance của DTO class (thường được <code>ValidationPipe</code> sử dụng ngầm).</li>
+</ul>
+</li>
+<li><strong>Áp dụng Pipes:</strong> Biết cách áp dụng pipes ở các cấp độ khác nhau:<ul>
+<li>Parameter-scoped: Áp dụng cho một tham số cụ thể của route handler.</li>
+<li>Handler-scoped: Áp dụng cho tất cả tham số của một route handler cụ thể (sử dụng <code>@UsePipes()</code>).</li>
+<li>Controller-scoped: Áp dụng cho tất cả handler trong một controller (sử dụng <code>@UsePipes()</code> trên class controller).</li>
+<li>Global-scoped: Áp dụng cho tất cả handler trong toàn bộ ứng dụng (sử dụng <code>app.useGlobalPipes()</code>).</li>
+</ul>
+</li>
+<li><strong>Tạo Custom Pipes:</strong> Học cách tạo ra các pipes tùy chỉnh bằng cách implement interface <code>PipeTransform</code> để đáp ứng các nhu cầu chuyển đổi hoặc xác thực đặc thù.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>Pipes là gì?</strong></p>
+<ul>
+<li>Pipes là các class được đánh dấu bằng <code>@Injectable()</code> decorator và phải implement interface <code>PipeTransform&lt;T, R&gt;</code>.</li>
+<li>Chúng có một method duy nhất là <code>transform(value: T, metadata: ArgumentMetadata): R | Promise&lt;R&gt;</code>.</li>
+<li><code>value</code>: Giá trị của tham số đầu vào đang được xử lý.</li>
+<li><code>metadata</code>: Một object chứa thông tin về tham số đang được xử lý (ví dụ: <code>metatype</code>, <code>type</code> (&#39;body&#39;, &#39;query&#39;, &#39;param&#39;, &#39;custom&#39;), <code>data</code> (tên decorator nếu có)).</li>
+<li>Pipes được thực thi <strong>trước khi</strong> route handler được gọi.</li>
+<li><strong>Hai mục đích chính của Pipes:</strong><ul>
+<li><strong>Transformation (Chuyển đổi):</strong> Chuyển đổi dữ liệu đầu vào từ dạng này sang dạng khác (ví dụ: từ string sang number).</li>
+<li><strong>Validation (Xác thực):</strong> Kiểm tra xem dữ liệu đầu vào có hợp lệ hay không. Nếu không hợp lệ, pipe sẽ ném một exception (thường là <code>BadRequestException</code>).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Built-in Pipes:</strong></p>
+<ul>
+<li>NestJS cung cấp một số pipes hữu ích có sẵn:</li>
+<li><strong><code>ValidationPipe</code>:</strong><ul>
+<li>Pipe mạnh mẽ nhất, thường được sử dụng để tự động validate DTOs.</li>
+<li>Nó sử dụng hai thư viện mạnh mẽ: <code>class-validator</code> để định nghĩa các rule validation bằng decorators, và <code>class-transformer</code> để chuyển đổi plain object (từ JSON body) thành typed DTO instance.</li>
+<li>Cần cài đặt: <code>npm install --save class-validator class-transformer</code>.</li>
+<li>Có nhiều options cấu hình: <code>whitelist</code>, <code>forbidNonWhitelisted</code>, <code>transform</code>, <code>disableErrorMessages</code>, <code>exceptionFactory</code>, etc.<ul>
+<li><code>whitelist: true</code>: Tự động loại bỏ các thuộc tính không được định nghĩa trong DTO.</li>
+<li><code>forbidNonWhitelisted: true</code>: Ném lỗi nếu request body chứa các thuộc tính không được định nghĩa trong DTO.</li>
+<li><code>transform: true</code>: Tự động chuyển đổi payload thành instance của DTO (quan trọng để các default values và type coercion hoạt động).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><code>ParseIntPipe</code>:</strong> Kiểm tra xem giá trị có phải là một chuỗi số nguyên hợp lệ không và chuyển đổi nó thành <code>number</code>.</li>
+<li><strong><code>ParseFloatPipe</code>:</strong> Tương tự <code>ParseIntPipe</code> nhưng cho số thực.</li>
+<li><strong><code>ParseBoolPipe</code>:</strong> Kiểm tra xem giá trị có phải là một chuỗi boolean (&quot;true&quot;, &quot;false&quot;) hợp lệ không và chuyển đổi nó thành <code>boolean</code>.</li>
+<li><strong><code>ParseArrayPipe</code>:</strong> Kiểm tra xem giá trị có phải là mảng không và có thể tùy chọn validate từng item trong mảng.</li>
+<li><strong><code>ParseUUIDPipe</code>:</strong> Kiểm tra xem giá trị có phải là một chuỗi UUID hợp lệ không. Có thể chỉ định phiên bản UUID.</li>
+<li><strong><code>DefaultValuePipe</code>:</strong> Cung cấp một giá trị mặc định nếu tham số không được truyền hoặc là <code>undefined</code>. Pipe này phải được đặt trước các pipe parse khác.</li>
+</ul>
+</li>
+<li><p><strong>Validation với <code>class-validator</code> và <code>class-transformer</code>:</strong></p>
+<ul>
+<li><strong><code>class-validator</code>:</strong> Cho phép bạn thêm các validation decorator trực tiếp vào các thuộc tính của DTO class.<pre><code class="language-typescript">// src/cats/dto/create-cat.dto.ts
+import { IsString, IsInt, Min, Max, IsNotEmpty, Length, IsOptional, IsEnum } from &#39;class-validator&#39;;
+
+export enum CatBreed {
+  PERSIAN = &#39;Persian&#39;,
+  SIAMESE = &#39;Siamese&#39;,
+  BENGAL = &#39;Bengal&#39;,
+  OTHER = &#39;Other&#39;,
+}
+
+export class CreateCatDto {
+  @IsString()
+  @IsNotEmpty({ message: &#39;Name cannot be empty&#39; }) // Custom message
+  @Length(3, 50) // Min 3, Max 50 ký tự
+  name: string;
+
+  @IsInt()
+  @Min(0)
+  @Max(25)
+  age: number;
+
+  @IsEnum(CatBreed)
+  @IsNotEmpty()
+  breed: CatBreed;
+
+  @IsString()
+  @IsOptional() // Thuộc tính này có thể có hoặc không
+  color?: string;
+}
+</code></pre>
+  Một số decorators phổ biến: <code>@IsString()</code>, <code>@IsNumber()</code>, <code>@IsInt()</code>, <code>@IsBoolean()</code>, <code>@IsDate()</code>, <code>@IsEmail()</code>, <code>@IsUrl()</code>, <code>@IsNotEmpty()</code>, <code>@IsOptional()</code>, <code>@MinLength()</code>, <code>@MaxLength()</code>, <code>@Length()</code>, <code>@Min()</code>, <code>@Max()</code>, <code>@IsEnum()</code>, <code>@IsArray()</code>, <code>@ValidateNested()</code>, <code>@ArrayMinSize()</code>, <code>@ArrayMaxSize()</code>, etc.</li>
+<li><strong><code>class-transformer</code>:</strong><ul>
+<li><code>ValidationPipe</code> với option <code>transform: true</code> sẽ sử dụng <code>class-transformer</code> để:<ul>
+<li>Chuyển đổi payload JSON (plain object) thành một instance thực sự của DTO class. Điều này quan trọng để các method của DTO (nếu có) hoặc các default value được khởi tạo.</li>
+<li>Thực hiện type coercion ngầm (ví dụ: nếu DTO mong đợi <code>number</code> nhưng payload gửi string &quot;123&quot;, nó có thể cố gắng chuyển đổi).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Cách áp dụng Pipes:</strong></p>
+<ul>
+<li><strong>Parameter-scoped (cho một tham số cụ thể):</strong><pre><code class="language-typescript">@Get(&#39;:id&#39;)
+findOne(@Param(&#39;id&#39;, ParseIntPipe) id: number) { /* ... */ }
+
+@Post()
+create(@Body(ValidationPipe) createCatDto: CreateCatDto) { /* ... */ }
+// Hoặc nếu ValidationPipe được dùng global, thì không cần ở đây
+</code></pre>
+</li>
+<li><strong>Handler-scoped (cho một route handler):</strong><pre><code class="language-typescript">@Post(&#39;special&#39;)
+@UsePipes(new ValidationPipe({ groups: [&#39;special&#39;] })) // Áp dụng ValidationPipe với options
+createSpecial(@Body() createDto: CreateSpecialDto) { /* ... */ }
+</code></pre>
+</li>
+<li><strong>Controller-scoped (cho tất cả handler trong controller):</strong><pre><code class="language-typescript">@Controller(&#39;cats&#39;)
+@UsePipes(ValidationPipe) // Hoặc new ValidationPipe({ whitelist: true })
+export class CatsController { /* ... */ }
+</code></pre>
+</li>
+<li><strong>Global-scoped (cho toàn bộ ứng dụng):</strong><ul>
+<li>Trong <code>src/main.ts</code>:</li>
+</ul>
+<pre><code class="language-typescript">// src/main.ts
+import { NestFactory } from &#39;@nestjs/core&#39;;
+import { AppModule } from &#39;./app.module&#39;;
+import { ValidationPipe } from &#39;@nestjs/common&#39;;
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Loại bỏ các thuộc tính không có trong DTO
+      forbidNonWhitelisted: true, // Báo lỗi nếu có thuộc tính thừa
+      transform: true, // Tự động transform payload thành DTO instance
+      transformOptions: {
+        enableImplicitConversion: true, // Cho phép chuyển đổi kiểu ngầm (ví dụ string query param thành number)
+      },
+    }),
+  );
+  await app.listen(3000);
+}
+bootstrap();
+</code></pre>
+<p>  Khi <code>ValidationPipe</code> được áp dụng global, bạn không cần phải thêm nó vào từng controller hoặc handler nữa (trừ khi muốn override với options khác).</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Tạo Custom Pipes:</strong></p>
+<ul>
+<li>Implement interface <code>PipeTransform</code>.</li>
+<li>Method <code>transform(value, metadata)</code> phải trả về giá trị đã được chuyển đổi hoặc ném exception nếu validation thất bại.</li>
+<li>Ví dụ: Một pipe để parse một chuỗi query param dạng &quot;item1,item2,item3&quot; thành mảng <code>[&#39;item1&#39;, &#39;item2&#39;, &#39;item3&#39;]</code>.<pre><code class="language-typescript">// src/common/pipes/parse-comma-separated-array.pipe.ts
+import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from &#39;@nestjs/common&#39;;
+
+@Injectable()
+export class ParseCommaSeparatedArrayPipe implements PipeTransform&lt;string, string[]&gt; {
+  transform(value: string, metadata: ArgumentMetadata): string[] {
+    if (value === undefined || value === null) {
+      return undefined; // Hoặc trả về mảng rỗng, hoặc ném lỗi tùy logic
+    }
+    if (typeof value !== &#39;string&#39;) {
+      throw new BadRequestException(`Validation failed (${metadata.type} ${metadata.data} must be a comma-separated string)`);
+    }
+    const array = value.split(&#39;,&#39;).map(item =&gt; item.trim()).filter(item =&gt; item.length &gt; 0);
+    if (array.length === 0 &amp;&amp; value.length &gt; 0) { // Nếu chuỗi không rỗng nhưng không parse ra được item nào
+        throw new BadRequestException(`Validation failed (${metadata.type} ${metadata.data} must contain valid items)`);
+    }
+    return array;
+  }
+}
+</code></pre>
+  Sử dụng:<pre><code class="language-typescript">@Get(&#39;filter&#39;)
+filterByTags(@Query(&#39;tags&#39;, ParseCommaSeparatedArrayPipe) tags?: string[]) {
+  // tags ở đây sẽ là string[] hoặc undefined
+  return { receivedTags: tags };
+}
+// Request: /filter?tags=nest,typescript,node
+// tags sẽ là [&#39;nest&#39;, &#39;typescript&#39;, &#39;node&#39;]
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example:</strong></p>
+<ol>
+<li><p><strong>Cài đặt <code>class-validator</code> và <code>class-transformer</code>:</strong></p>
+<pre><code class="language-bash">npm install --save class-validator class-transformer
+</code></pre>
+</li>
+<li><p><strong>Cập nhật <code>CreateCatDto</code> với validation decorators:</strong></p>
+<pre><code class="language-typescript">// src/cats/dto/create-cat.dto.ts
+import { IsString, IsInt, Min, Max, IsNotEmpty, Length, IsEnum, IsOptional } from &#39;class-validator&#39;;
+
+export enum CatBreed {
+  PERSIAN = &#39;Persian&#39;,
+  SIAMESE = &#39;Siamese&#39;,
+  BENGAL = &#39;Bengal&#39;,
+  MAINE_COON = &#39;Maine Coon&#39;,
+  OTHER = &#39;Other&#39;,
+}
+
+export class CreateCatDto {
+  @IsString({ message: &#39;Name must be a string&#39; })
+  @IsNotEmpty({ message: &#39;Name should not be empty&#39; })
+  @Length(2, 50, { message: &#39;Name must be between 2 and 50 characters&#39; })
+  name: string;
+
+  @IsInt({ message: &#39;Age must be an integer&#39; })
+  @Min(0, { message: &#39;Age must be at least 0&#39; })
+  @Max(30, { message: &#39;Age must be at most 30&#39; })
+  age: number;
+
+  @IsEnum(CatBreed, { message: &#39;Breed must be a valid enum value&#39; })
+  @IsNotEmpty({ message: &#39;Breed should not be empty&#39; })
+  breed: CatBreed;
+
+  @IsString()
+  @IsOptional()
+  @Length(3, 100)
+  favoriteToy?: string;
+}
+</code></pre>
+</li>
+<li><p><strong>Cập nhật <code>UpdateCatDto</code> (sử dụng <code>PartialType</code> và các decorator nếu cần override):</strong></p>
+<ul>
+<li><code>PartialType</code> từ <code>@nestjs/mapped-types</code> (hoặc <code>@nestjs/swagger</code>) sẽ làm tất cả các thuộc tính của <code>CreateCatDto</code> thành optional và kế thừa các validation decorators.</li>
+<li>Nếu bạn muốn validation khác cho update, bạn có thể định nghĩa lại hoặc thêm decorator trong <code>UpdateCatDto</code>.</li>
+</ul>
+<pre><code class="language-typescript">// src/cats/dto/update-cat.dto.ts
+import { PartialType } from &#39;@nestjs/mapped-types&#39;;
+import { CreateCatDto } from &#39;./create-cat.dto&#39;;
+import { IsString, IsOptional, Length } from &#39;class-validator&#39;;
+
+
+export class UpdateCatDto extends PartialType(CreateCatDto) {
+  // Ví dụ, nếu muốn có validation riêng cho &#39;favoriteToy&#39; khi update
+  @IsString()
+  @IsOptional()
+  @Length(1, 50) // Có thể khác với CreateCatDto
+  favoriteToy?: string;
+}
+</code></pre>
+</li>
+<li><p><strong>Áp dụng <code>ValidationPipe</code> global trong <code>main.ts</code>:</strong></p>
+<pre><code class="language-typescript">// src/main.ts
+import { NestFactory } from &#39;@nestjs/core&#39;;
+import { AppModule } from &#39;./app.module&#39;;
+import { ValidationPipe } from &#39;@nestjs/common&#39;;
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true, // Quan trọng cho query/param pipes
+      },
+      // disableErrorMessages: true, // Không hiển thị lỗi chi tiết trong production
+    }),
+  );
+  await app.listen(3000);
+  console.log(`Application is running on: ${await app.getUrl()}`);
+}
+bootstrap();
+</code></pre>
+</li>
+<li><p><strong>Sử dụng các Parse*Pipes trong <code>CatsController</code>:</strong></p>
+<pre><code class="language-typescript">// src/cats/cats.controller.ts
+import { Controller, Get, Post, Body, Param, Query, Put, Delete, HttpCode, ParseIntPipe, DefaultValuePipe, ParseBoolPipe } from &#39;@nestjs/common&#39;;
+// ... imports khác ...
+
+@Controller(&#39;cats&#39;)
+// ValidationPipe đã được áp dụng global, không cần @UsePipes ở đây nữa
+export class CatsController {
+  constructor(private readonly catsService: CatsService) {}
+
+  // Ví dụ sử dụng DefaultValuePipe và ParseBoolPipe cho query param
+  @Get()
+  findAll(
+    @Query(&#39;breed&#39;) breed?: string,
+    @Query(&#39;isActive&#39;, new DefaultValuePipe(true), ParseBoolPipe) isActive?: boolean,
+    // DefaultValuePipe phải đứng trước ParseIntPipe
+    @Query(&#39;minAge&#39;, new DefaultValuePipe(0), ParseIntPipe) minAge?: number
+  ): Promise&lt;Cat[]&gt; { // Giả sử service trả về Promise&lt;Cat[]&gt;
+    console.log(`Filtering cats: breed=${breed}, isActive=${isActive}, minAge=${minAge}`);
+    return this.catsService.findAllAdvanced({ breed, isActive, minAge }); // Cần cập nhật service
+  }
+
+  @Get(&#39;:id&#39;)
+  findOne(@Param(&#39;id&#39;, ParseIntPipe) id: number): Promise&lt;Cat&gt; { // ParseIntPipe vẫn cần thiết ở đây
+    return this.catsService.findOne(id);
+  }
+
+  @Post()
+  @HttpCode(201)
+  create(@Body() createCatDto: CreateCatDto): Promise&lt;Cat&gt; { // ValidationPipe global sẽ xử lý createCatDto
+    return this.catsService.create(createCatDto);
+  }
+
+  @Put(&#39;:id&#39;)
+  update(@Param(&#39;id&#39;, ParseIntPipe) id: number, @Body() updateCatDto: UpdateCatDto): Promise&lt;Cat&gt; {
+    return this.catsService.update(id, updateCatDto);
+  }
+  // ...
+}
+</code></pre>
+<p>Cần cập nhật <code>CatsService</code> để xử lý <code>findAllAdvanced</code>.</p>
+</li>
+</ol>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Cài đặt <code>class-validator</code> và <code>class-transformer</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Nếu chưa cài, hãy chạy <code>npm install --save class-validator class-transformer</code>.</li>
+</ul>
+</li>
+<li><strong>Áp dụng Validation cho <code>Product</code> DTOs:</strong><ul>
+<li><strong>Yêu cầu:</strong> Mở <code>src/products/dto/create-product.dto.ts</code> và <code>src/products/dto/update-product.dto.ts</code>.</li>
+<li>Thêm các validation decorator (<code>class-validator</code>) phù hợp cho các thuộc tính:<ul>
+<li><code>name</code>: Phải là string, không được rỗng, độ dài từ 3 đến 100 ký tự.</li>
+<li><code>description</code>: Phải là string, tùy chọn (có thể không có). Nếu có, độ dài tối đa 500 ký tự.</li>
+<li><code>price</code>: Phải là number, không âm (&gt;= 0).</li>
+<li><code>stock</code>: Phải là integer, không âm.</li>
+</ul>
+</li>
+<li>Đảm bảo <code>UpdateProductDto</code> sử dụng <code>PartialType</code> và kế thừa/override validation nếu cần.</li>
+</ul>
+</li>
+<li><strong>Cấu hình <code>ValidationPipe</code> Global:</strong><ul>
+<li><strong>Yêu cầu:</strong> Trong file <code>src/main.ts</code>, sử dụng <code>app.useGlobalPipes()</code> để áp dụng <code>ValidationPipe</code> cho toàn bộ ứng dụng.</li>
+<li>Cấu hình pipe với các options: <code>whitelist: true</code>, <code>forbidNonWhitelisted: true</code>, <code>transform: true</code>, và <code>transformOptions: { enableImplicitConversion: true }</code>.</li>
+</ul>
+</li>
+<li><strong>Sử dụng <code>ParseIntPipe</code> và <code>DefaultValuePipe</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Trong <code>ProductsController</code>:<ul>
+<li>Sử dụng <code>ParseIntPipe</code> cho route parameter <code>:productId</code> ở các endpoint <code>findOne</code>, <code>update</code>, <code>remove</code>.</li>
+<li>Trong endpoint <code>GET /products</code>, thêm các query parameter tùy chọn:<ul>
+<li><code>limit</code> (số lượng sản phẩm mỗi trang): Dùng <code>DefaultValuePipe</code> để đặt giá trị mặc định là 10, sau đó dùng <code>ParseIntPipe</code>.</li>
+<li><code>offset</code> (vị trí bắt đầu lấy sản phẩm): Dùng <code>DefaultValuePipe</code> để đặt giá trị mặc định là 0, sau đó dùng <code>ParseIntPipe</code>.</li>
+<li><code>minPrice</code>: Dùng <code>ParseFloatPipe</code> (hoặc <code>ParseIntPipe</code> nếu giá là số nguyên), có thể là optional (không cần <code>DefaultValuePipe</code> nếu <code>undefined</code> là chấp nhận được).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Tạo Custom Pipe <code>ValidateProductStatusPipe</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong> Giả sử sản phẩm có một trường <code>status</code> (ví dụ: &#39;available&#39;, &#39;out_of_stock&#39;, &#39;discontinued&#39;).</li>
+<li>Tạo một custom pipe tên là <code>ValidateProductStatusPipe</code>. Pipe này nhận một string đầu vào và kiểm tra xem nó có phải là một trong các giá trị status hợp lệ không. Nếu không, ném <code>BadRequestException</code>. Nếu hợp lệ, trả về chính giá trị đó.</li>
+<li>Áp dụng pipe này cho một query parameter <code>status</code> trong endpoint <code>GET /products</code> để lọc sản phẩm theo status.</li>
+<li><strong>Gợi ý:</strong><pre><code class="language-typescript">// src/products/pipes/validate-product-status.pipe.ts
+import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from &#39;@nestjs/common&#39;;
+
+export enum ProductStatus {
+  AVAILABLE = &#39;available&#39;,
+  OUT_OF_STOCK = &#39;out_of_stock&#39;,
+  DISCONTINUED = &#39;discontinued&#39;,
+}
+
+@Injectable()
+export class ValidateProductStatusPipe implements PipeTransform&lt;string, ProductStatus&gt; {
+  readonly allowedStatuses = Object.values(ProductStatus);
+
+  transform(value: string, metadata: ArgumentMetadata): ProductStatus {
+    if (!value) { // Nếu status là optional và không được cung cấp
+      return undefined;
+    }
+    value = value.toLowerCase() as ProductStatus;
+    if (!this.allowedStatuses.includes(value)) {
+      throw new BadRequestException(`Invalid status &quot;${value}&quot;. Allowed statuses are: ${this.allowedStatuses.join(&#39;, &#39;)}`);
+    }
+    return value;
+  }
+}
+</code></pre>
+  Sử dụng trong controller: <code>@Query(&#39;status&#39;, ValidateProductStatusPipe) status?: ProductStatus</code></li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

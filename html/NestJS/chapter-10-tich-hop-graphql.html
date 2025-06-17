@@ -1,0 +1,674 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-10-tich-hop-graphql</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 10: Tích hợp GraphQL</h1>
+<p><strong>Tên Chapter học:</strong> Tích hợp GraphQL</p>
+<p><strong>Mục tiêu bài học:</strong></p>
+<ul>
+<li><strong>Hiểu GraphQL cơ bản:</strong> Nắm vững các khái niệm cốt lõi của GraphQL: Schema, Types (Scalar, Object, Input, Enum), Queries, Mutations, Subscriptions (giới thiệu), Resolvers. So sánh GraphQL với REST API.</li>
+<li><strong>Tích hợp GraphQL vào NestJS:</strong><ul>
+<li>Sử dụng module <code>@nestjs/graphql</code> (thường với Apollo Server driver).</li>
+<li>Cấu hình <code>GraphQLModule.forRoot()</code> trong <code>AppModule</code>.</li>
+</ul>
+</li>
+<li><strong>Code-First Approach:</strong><ul>
+<li>Học cách định nghĩa GraphQL schema bằng cách sử dụng decorators của NestJS (<code>@ObjectType()</code>, <code>@Field()</code>, <code>@Query()</code>, <code>@Mutation()</code>, <code>@Args()</code>, <code>@Resolver()</code>, etc.).</li>
+<li>NestJS sẽ tự động sinh ra GraphQL schema (SDL) từ code TypeScript.</li>
+</ul>
+</li>
+<li><strong>Schema-First Approach (Giới thiệu):</strong> Biết về lựa chọn viết schema bằng SDL trước, sau đó liên kết với resolvers (ít phổ biến hơn trong NestJS).</li>
+<li><strong>Tạo Resolvers:</strong><ul>
+<li>Viết các resolver class để xử lý các query và mutation đã định nghĩa.</li>
+<li>Resolver methods sẽ nhận arguments (sử dụng <code>@Args()</code>) và gọi các service để thực hiện logic nghiệp vụ.</li>
+</ul>
+</li>
+<li><strong>Làm việc với Arguments và Input Types:</strong><ul>
+<li>Sử dụng <code>@Args()</code> để lấy các đối số cho query/mutation.</li>
+<li>Định nghĩa <code>InputType</code> (<code>@InputType()</code>) để nhóm các đối số phức tạp.</li>
+</ul>
+</li>
+<li><strong>DataLoaders (Giải quyết N+1 Problem):</strong><ul>
+<li>Hiểu vấn đề N+1 query khi fetching nested data trong GraphQL.</li>
+<li>Giới thiệu và triển khai <code>DataLoader</code> pattern để tối ưu hóa việc truy vấn dữ liệu, gộp nhiều query con thành một batch query.</li>
+</ul>
+</li>
+<li><strong>GraphQL Playground:</strong> Sử dụng GraphQL Playground (hoặc công cụ tương tự) để gửi query và mutation, khám phá schema.</li>
+</ul>
+<p><strong>Tóm tắt lý thuyết:</strong></p>
+<ol>
+<li><p><strong>GraphQL là gì?</strong></p>
+<ul>
+<li>Một ngôn ngữ truy vấn (query language) cho API và một runtime phía server để thực thi các truy vấn đó.</li>
+<li>Cho phép client yêu cầu chính xác dữ liệu mình cần, không thừa không thiếu.</li>
+<li>Trả về dữ liệu có cấu trúc dễ đoán, thường là JSON.</li>
+<li><strong>So với REST:</strong><ul>
+<li><strong>GraphQL:</strong> Một endpoint duy nhất (thường <code>/graphql</code>). Client định nghĩa data shape. Không có over-fetching/under-fetching. Strongly typed.</li>
+<li><strong>REST:</strong> Nhiều endpoints. Server định nghĩa data shape cho mỗi endpoint. Có thể bị over/under-fetching. Typing phụ thuộc vào OpenAPI/Swagger.</li>
+</ul>
+</li>
+<li><strong>Các khái niệm cốt lõi:</strong><ul>
+<li><strong>Schema:</strong> Định nghĩa &quot;hợp đồng&quot; giữa client và server. Mô tả các loại dữ liệu có thể truy vấn và các thao tác có thể thực hiện.</li>
+<li><strong>Types:</strong> Các khối xây dựng của schema.<ul>
+<li><strong>Scalar Types:</strong> <code>Int</code>, <code>Float</code>, <code>String</code>, <code>Boolean</code>, <code>ID</code>.</li>
+<li><strong>Object Types:</strong> Các loại đối tượng bạn định nghĩa (ví dụ: <code>User</code>, <code>Product</code>).</li>
+<li><strong>Input Types:</strong> Dùng để truyền các đối tượng phức tạp làm argument cho mutations hoặc queries.</li>
+<li><strong>Enum Types:</strong> Tập hợp các giá trị cho phép.</li>
+<li><strong>Query Type:</strong> Định nghĩa các entry point để đọc dữ liệu.</li>
+<li><strong>Mutation Type:</strong> Định nghĩa các entry point để ghi/thay đổi dữ liệu.</li>
+<li><strong>Subscription Type:</strong> Định nghĩa các entry point để nhận dữ liệu real-time qua WebSockets.</li>
+</ul>
+</li>
+<li><strong>Resolvers:</strong> Các function phía server chịu trách nhiệm fetch dữ liệu cho một field cụ thể trong schema. Mỗi field của mỗi type đều có một resolver tương ứng.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Tích hợp GraphQL với NestJS (<code>@nestjs/graphql</code>):</strong></p>
+<ul>
+<li>NestJS cung cấp module <code>@nestjs/graphql</code> để dễ dàng xây dựng GraphQL server.</li>
+<li><strong>Cài đặt:</strong><pre><code class="language-bash">npm install --save @nestjs/graphql @nestjs/apollo @apollo/server graphql graphql-tools
+# @nestjs/apollo là driver cho Apollo Server
+</code></pre>
+</li>
+<li><strong>Cấu hình <code>GraphQLModule</code> (Code-First):</strong><pre><code class="language-typescript">// app.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { GraphQLModule } from &#39;@nestjs/graphql&#39;;
+import { ApolloDriver, ApolloDriverConfig } from &#39;@nestjs/apollo&#39;;
+import { join } from &#39;path&#39;; // Để join path
+// ... import các module resolver của bạn ...
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot&lt;ApolloDriverConfig&gt;({
+      driver: ApolloDriver, // Sử dụng Apollo Server
+      autoSchemaFile: join(process.cwd(), &#39;src/schema.gql&#39;), // Path để tự động sinh file schema.gql
+                                                            // Hoặc: autoSchemaFile: true (tạo schema trong memory)
+      sortSchema: true, // Sắp xếp schema cho dễ đọc
+      playground: true, // Bật GraphQL Playground (mặc định true nếu NODE_ENV !== &#39;production&#39;)
+      // debug: true, // Bật debug mode
+      // installSubscriptionHandlers: true, // Nếu dùng Subscriptions
+    }),
+    // ... Các module chứa resolvers (ví dụ ProductsModule) ...
+  ],
+})
+export class AppModule {}
+</code></pre>
+  Sau khi chạy, file <code>src/schema.gql</code> sẽ được tạo ra.</li>
+</ul>
+</li>
+<li><p><strong>Code-First Approach:</strong></p>
+<ul>
+<li>Định nghĩa schema bằng cách sử dụng TypeScript classes và decorators.</li>
+<li><strong><code>@ObjectType(name?)</code>:</strong> Đánh dấu một class là một GraphQL object type.</li>
+<li><strong><code>@Field(typeFunc?, options?)</code>:</strong> Đánh dấu một property của class là một field trong GraphQL type.<ul>
+<li><code>typeFunc</code>: Một hàm trả về GraphQL type (ví dụ: <code>() =&gt; String</code>, <code>() =&gt; Int</code>, <code>() =&gt; [OtherType]</code>). Cần thiết cho circular dependencies hoặc khi type không thể suy luận.</li>
+<li><code>options</code>: <code>nullable: true/false</code>, <code>description</code>, <code>deprecationReason</code>.</li>
+</ul>
+</li>
+<li><strong><code>@Resolver(typeFunc?)</code>:</strong> Đánh dấu một class là một resolver. <code>typeFunc</code> (ví dụ: <code>() =&gt; ProductType</code>) chỉ định object type mà resolver này chịu trách nhiệm. Nếu bỏ qua, resolver sẽ là &quot;root&quot; resolver cho Queries/Mutations.</li>
+<li><strong><code>@Query(typeFunc?, options?)</code>:</strong> Đánh dấu một method trong resolver là một GraphQL query.</li>
+<li><strong><code>@Mutation(typeFunc?, options?)</code>:</strong> Đánh dấu một method trong resolver là một GraphQL mutation.</li>
+<li><strong><code>@Args(name, options?)</code>:</strong> Inject một argument vào resolver method.<ul>
+<li><code>@Args(&#39;id&#39;, { type: () =&gt; ID }) id: string</code></li>
+</ul>
+</li>
+<li><strong><code>@InputType(name?)</code>:</strong> Đánh dấu một class là một GraphQL input type. Các field của nó cũng dùng <code>@Field()</code>.</li>
+<li><strong><code>@Subscription(typeFunc?, options?)</code>:</strong> (Nâng cao) Cho real-time updates.</li>
+<li><strong><code>@ResolveField(typeFunc?, options?)</code>:</strong> (Nâng cao) Tạo resolver cho một field cụ thể của một <code>ObjectType</code> (thường khi field đó không có sẵn trực tiếp trên object data và cần logic để lấy).</li>
+</ul>
+</li>
+<li><p><strong>Ví dụ: Tạo GraphQL API cho Products (Code-First):</strong></p>
+<ul>
+<li><strong><code>src/products/graphql/product.type.ts</code> (Object Type):</strong><pre><code class="language-typescript">import { ObjectType, Field, ID, Float, Int } from &#39;@nestjs/graphql&#39;;
+
+@ObjectType(&#39;Product&#39;) // Tên GraphQL type là &#39;Product&#39;
+export class ProductType {
+  @Field(() =&gt; ID) // GraphQL ID type (thường là string)
+  id: string; // Giả sử ID trong DB của bạn là string (ví dụ MongoDB _id)
+              // Hoặc number nếu là TypeORM id (PrimaryGeneratedColumn)
+
+  @Field()
+  name: string;
+
+  @Field({ nullable: true }) // description có thể null
+  description?: string;
+
+  @Field(() =&gt; Float)
+  price: number;
+
+  @Field(() =&gt; Int)
+  stock: number;
+
+  // Nếu bạn muốn thêm trường user (người tạo sản phẩm)
+  // @Field(() =&gt; UserType, { nullable: true })
+  // owner?: UserType; // Sẽ cần UserType và ResolveField nếu owner là ID
+}
+</code></pre>
+</li>
+<li><strong><code>src/products/graphql/create-product.input.ts</code> (Input Type):</strong><pre><code class="language-typescript">import { InputType, Field, Float, Int } from &#39;@nestjs/graphql&#39;;
+import { IsString, IsNotEmpty, MinLength, IsNumber, Min, IsOptional } from &#39;class-validator&#39;; // Có thể dùng validation
+
+@InputType()
+export class CreateProductInput {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(3)
+  name: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @Field(() =&gt; Float)
+  @IsNumber()
+  @Min(0)
+  price: number;
+
+  @Field(() =&gt; Int, { defaultValue: 0 }) // Có thể có defaultValue
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  stock?: number;
+}
+</code></pre>
+</li>
+<li><strong><code>src/products/products.resolver.ts</code> (Resolver):</strong><pre><code class="language-typescript">import { Resolver, Query, Mutation, Args, ID } from &#39;@nestjs/graphql&#39;;
+import { ProductsService } from &#39;../products.service&#39;; // Service REST API đã có
+import { ProductType } from &#39;./product.type&#39;;
+import { CreateProductInput } from &#39;./create-product.input&#39;;
+// import { UpdateProductInput } from &#39;./update-product.input&#39;; // Tạo tương tự CreateProductInput
+
+@Resolver(() =&gt; ProductType) // Resolver này xử lý cho ProductType
+export class ProductsResolver {
+  constructor(private productsService: ProductsService) {}
+
+  @Query(() =&gt; [ProductType], { name: &#39;products&#39; }) // Query tên là &#39;products&#39;, trả về mảng ProductType
+  async getAllProducts() {
+    // Chuyển đổi ID từ number (TypeORM) sang string nếu GraphQL ID là string
+    // Hoặc giữ nguyên nếu ID đã là string (MongoDB)
+    // const products = await this.productsService.findAll();
+    // return products.map(p =&gt; ({ ...p, id: String(p.id) })); // Ví dụ chuyển đổi
+    return this.productsService.findAll(); // Giả sử service trả về đúng kiểu
+  }
+
+  @Query(() =&gt; ProductType, { name: &#39;product&#39;, nullable: true })
+  async getProductById(@Args(&#39;id&#39;, { type: () =&gt; ID }) id: string) { // Hoặc number nếu ID là number
+    // const numericId = parseInt(id, 10); // Chuyển đổi nếu cần
+    // return this.productsService.findOne(numericId);
+    return this.productsService.findOne(id); // Giả sử service nhận string ID
+  }
+
+  @Mutation(() =&gt; ProductType, { name: &#39;createProduct&#39; })
+  async createProduct(@Args(&#39;createProductInput&#39;) createProductInput: CreateProductInput) {
+    // this.productsService.create() có thể nhận DTO của REST, cần map field nếu khác
+    // Hoặc sửa create() trong service để nhận CreateProductInput
+    return this.productsService.create(createProductInput as any); // Cần cast hoặc map
+  }
+
+  // TODO: Implement updateProduct và deleteProduct mutations
+  // @Mutation(() =&gt; ProductType, { name: &#39;updateProduct&#39; })
+  // async updateProduct(
+  //   @Args(&#39;id&#39;, { type: () =&gt; ID }) id: string,
+  //   @Args(&#39;updateProductInput&#39;) updateProductInput: UpdateProductInput,
+  // ) { /* ... */ }
+
+  // @Mutation(() =&gt; Boolean, { name: &#39;deleteProduct&#39; }) // Trả về boolean cho biết thành công hay không
+  // async deleteProduct(@Args(&#39;id&#39;, { type: () =&gt; ID }) id: string) { /* ... */ }
+
+  // Ví dụ ResolveField nếu ProductType có trường ownerId nhưng muốn trả về UserType
+  // @ResolveField(&#39;owner&#39;, () =&gt; UserType)
+  // async getOwner(@Parent() product: ProductType) {
+  //   const { ownerId } = product; // Giả sử ProductType có ownerId
+  //   return this.usersService.findOneById(ownerId);
+  // }
+}
+</code></pre>
+</li>
+<li><strong>Cập nhật <code>ProductsModule</code>:</strong><pre><code class="language-typescript">// src/products/products.module.ts
+import { Module } from &#39;@nestjs/common&#39;;
+import { ProductsController } from &#39;./products.controller&#39;;
+import { ProductsService } from &#39;./products.service&#39;;
+import { ProductsResolver } from &#39;./products.resolver&#39;; // Import Resolver
+// ... TypeOrmModule hoặc MongooseModule ...
+
+@Module({
+  // ... imports (TypeOrmModule.forFeature, etc.) ...
+  controllers: [ProductsController], // Vẫn giữ REST controller nếu muốn
+  providers: [ProductsService, ProductsResolver], // Thêm Resolver vào providers
+})
+export class ProductsModule {}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><strong>DataLoaders (Giải quyết N+1 Problem):</strong></p>
+<ul>
+<li><strong>Vấn đề N+1:</strong> Khi bạn có một query lồng nhau, ví dụ: lấy danh sách bài viết, và cho mỗi bài viết lấy thông tin tác giả. Nếu không cẩn thận, bạn sẽ chạy N query để lấy N tác giả, cộng với 1 query để lấy danh sách bài viết.<pre><code class="language-graphql">query {
+  posts { # 1 query
+    title
+    author { # N queries (một cho mỗi post)
+      name
+    }
+  }
+}
+</code></pre>
+</li>
+<li><strong>DataLoader:</strong> Một utility được cung cấp bởi Facebook, giúp gộp các yêu cầu lấy dữ liệu riêng lẻ cho cùng một loại resource thành một batch request duy nhất.<ul>
+<li>Hoạt động dựa trên việc thu thập các ID trong một tick của event loop, sau đó thực hiện một query duy nhất (ví dụ: <code>SELECT * FROM users WHERE id IN (id1, id2, ...)</code>).</li>
+</ul>
+</li>
+<li><strong>Tích hợp DataLoader trong NestJS:</strong><ul>
+<li>Thường tạo DataLoader instance cho mỗi request (request-scoped).</li>
+<li>Tạo một service (ví dụ <code>AuthorsLoader</code>) để cung cấp DataLoader.</li>
+<li>Inject DataLoader vào resolver.</li>
+<li><strong>Cài đặt:</strong> <code>npm install --save dataloader</code></li>
+<li><strong>Ví dụ <code>AuthorLoader</code>:</strong><pre><code class="language-typescript">// src/authors/authors.loader.ts
+import { Injectable, Scope } from &#39;@nestjs/common&#39;;
+import * as DataLoader from &#39;dataloader&#39;;
+import { AuthorsService } from &#39;./authors.service&#39;; // Service lấy dữ liệu tác giả
+import { Author } from &#39;./entities/author.entity&#39;; // Entity tác giả
+
+@Injectable({ scope: Scope.REQUEST }) // Request-scoped quan trọng
+export class AuthorLoader {
+  constructor(private authorsService: AuthorsService) {}
+
+  public readonly batchAuthors = new DataLoader&lt;number, Author&gt;(
+    async (authorIds: number[]) =&gt; {
+      console.log(&#39;DataLoader: Fetching authors with IDs:&#39;, authorIds);
+      const authors = await this.authorsService.findByIds(authorIds); // Method này cần lấy authors theo mảng IDs
+      // Đảm bảo kết quả trả về đúng thứ tự với mảng IDs đầu vào
+      const authorsMap = new Map(authors.map(author =&gt; [author.id, author]));
+      return authorIds.map(id =&gt; authorsMap.get(id) || null);
+    },
+  );
+}
+</code></pre>
+  Trong <code>AuthorsService</code>, cần có method <code>findByIds(ids: number[]): Promise&lt;Author[]&gt;</code>.</li>
+<li><strong>Sử dụng trong Resolver (ví dụ <code>PostsResolver</code> có field <code>author</code>):</strong><pre><code class="language-typescript">// src/posts/posts.resolver.ts
+// ...
+// Giả sử PostType có authorId
+// @Resolver(() =&gt; PostType)
+// export class PostsResolver {
+//   constructor(private postsService: PostsService, private authorLoader: AuthorLoader) {}
+
+//   @ResolveField(&#39;author&#39;, () =&gt; AuthorType)
+//   async getAuthorOfPost(@Parent() post: PostTypeHavingAuthorId) {
+//     return this.authorLoader.batchAuthors.load(post.authorId); // Sử dụng DataLoader
+//   }
+// }
+</code></pre>
+  Cần cung cấp <code>AuthorLoader</code> trong module tương ứng.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>GraphQL Playground:</strong></p>
+<ul>
+<li>Khi <code>playground: true</code> trong <code>GraphQLModule</code>, truy cập endpoint <code>/graphql</code> trên trình duyệt sẽ mở GraphQL Playground.</li>
+<li>Cho phép bạn:<ul>
+<li>Viết và thực thi Queries, Mutations, Subscriptions.</li>
+<li>Xem schema (Docs, Schema tabs).</li>
+<li>Xem lịch sử query.</li>
+<li>Truyền HTTP Headers (ví dụ: <code>Authorization</code> header cho JWT).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Code Example (Triển khai cơ bản cho Products):</strong></p>
+<ul>
+<li>Đã được minh họa từng phần ở trên. Hãy kết hợp chúng lại.</li>
+<li>Đảm bảo <code>ProductsModule</code> đã được import vào <code>AppModule</code>.</li>
+<li>Chạy ứng dụng, truy cập <code>http://localhost:&lt;port&gt;/graphql</code>.</li>
+<li>Thử các query:<pre><code class="language-graphql">query GetAllProducts {
+  products {
+    id
+    name
+    price
+    stock
+  }
+}
+
+query GetOneProduct {
+  product(id: &quot;your_product_id_string_or_number&quot;) { # Thay ID
+    id
+    name
+    description
+    price
+  }
+}
+</code></pre>
+</li>
+<li>Thử mutation:<pre><code class="language-graphql">mutation CreateNewProduct {
+  createProduct(createProductInput: {
+    name: &quot;Awesome GraphQL Product&quot;
+    description: &quot;Created via GraphQL&quot;
+    price: 99.99
+    stock: 10
+  }) {
+    id
+    name
+    description
+  }
+}
+</code></pre>
+</li>
+</ul>
+<p><strong>Bài tập thực hành:</strong></p>
+<ol>
+<li><strong>Cài đặt và Cấu hình GraphQL:</strong><ul>
+<li><strong>Yêu cầu:</strong> Cài đặt các package <code>@nestjs/graphql @nestjs/apollo @apollo/server graphql graphql-tools</code>.</li>
+<li>Cấu hình <code>GraphQLModule.forRootAsync</code> (sử dụng <code>ConfigService</code> nếu muốn lấy <code>autoSchemaFile</code> path từ config) trong <code>AppModule</code> với <code>ApolloDriver</code>. Đặt <code>autoSchemaFile: &#39;src/schema.gql&#39;</code> và <code>playground: true</code>.</li>
+</ul>
+</li>
+<li><strong>Tạo GraphQL Types và Inputs cho <code>Users</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Tạo <code>UserType</code> (<code>src/users/graphql/user.type.ts</code>) với các field: <code>id (ID!)</code>, <code>username (String!)</code>, <code>email (String!)</code>, <code>isActive (Boolean)</code>.</li>
+<li>Tạo <code>CreateUserInput</code> (<code>src/users/graphql/create-user.input.ts</code>) với các field: <code>username (String!)</code>, <code>email (String!)</code>, <code>password (String!)</code>. (Thêm validation nếu muốn).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Tạo <code>UsersResolver</code>:</strong><ul>
+<li><strong>Yêu cầu:</strong><ul>
+<li>Tạo <code>UsersResolver</code> (<code>src/users/users.resolver.ts</code>).</li>
+<li>Inject <code>UsersService</code> (service REST API đã có).</li>
+<li>Triển khai query <code>user(id: ID!): UserType</code> để lấy user theo ID.</li>
+<li>Triển khai query <code>users: [UserType!]</code> để lấy tất cả users.</li>
+<li>Triển khai mutation <code>createUser(createUserInput: CreateUserInput!): UserType</code> để tạo user mới.</li>
+<li>(Nâng cao) Triển khai mutation <code>updateUser</code> và <code>deleteUser</code>.</li>
+</ul>
+</li>
+<li>Thêm <code>UsersResolver</code> vào <code>providers</code> của <code>UsersModule</code>.</li>
+</ul>
+</li>
+<li><strong>Kết nối <code>ProductType</code> với <code>UserType</code> (Nâng cao - ResolveField):</strong><ul>
+<li><strong>Yêu cầu:</strong> Giả sử <code>ProductEntity</code> có một trường <code>ownerId</code> (ID của user tạo sản phẩm).</li>
+<li>Trong <code>ProductType</code>, thêm một field <code>owner: UserType</code>.</li>
+<li>Trong <code>ProductsResolver</code>, tạo một <code>@ResolveField(&#39;owner&#39;, () =&gt; UserType)</code> method. Method này nhận <code>@Parent() product: ProductType</code> và sử dụng <code>product.ownerId</code> để gọi <code>UsersService.findOneById()</code> nhằm lấy thông tin user.</li>
+<li>Test query lấy sản phẩm kèm thông tin owner.</li>
+</ul>
+</li>
+<li><strong>Thực hành với DataLoader cho <code>Product.owner</code> (Nâng cao):</strong><ul>
+<li><strong>Yêu cầu:</strong> Nếu ở bài 4, bạn đã triển khai <code>ResolveField</code> cho <code>owner</code> của <code>ProductType</code>, hãy tối ưu nó bằng <code>DataLoader</code>.</li>
+<li>Tạo <code>UserLoader</code> service (request-scoped) tương tự như <code>AuthorLoader</code> ở ví dụ lý thuyết. Service này sẽ nhận mảng <code>userIds</code> và trả về mảng <code>Users</code> tương ứng.</li>
+<li>Inject <code>UserLoader</code> vào <code>ProductsResolver</code> và sử dụng <code>userLoader.batchUsers.load(product.ownerId)</code> trong <code>ResolveField</code> của <code>owner</code>.</li>
+<li>Thêm log vào <code>UserLoader</code> để thấy nó được gọi với batch IDs.</li>
+</ul>
+</li>
+<li><strong>Khám phá GraphQL Playground:</strong><ul>
+<li><strong>Yêu cầu:</strong> Chạy ứng dụng, mở GraphQL Playground.</li>
+<li>Thực thi tất cả các query và mutation bạn đã tạo cho <code>Users</code> và <code>Products</code>.</li>
+<li>Sử dụng tab &quot;Docs&quot; và &quot;Schema&quot; để xem cấu trúc API GraphQL của bạn.</li>
+<li>Thử truyền sai arguments hoặc query field không tồn tại để xem lỗi GraphQL trả về.</li>
+</ul>
+</li>
+</ol>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

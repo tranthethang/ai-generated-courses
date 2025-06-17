@@ -1,0 +1,440 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-7-common-table-expressions-cte</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 7: Common Table Expressions (CTE)</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Viết truy vấn SQL rõ ràng, module hóa và mạnh mẽ hơn với Common Table Expressions (CTE), bao gồm cả CTE đệ quy.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Common Table Expressions (CTE) là gì?</strong><ul>
+<li>CTE, hay còn gọi là mệnh đề <code>WITH</code>, cho phép bạn định nghĩa một hoặc nhiều tập kết quả tạm thời, được đặt tên, mà bạn có thể tham chiếu đến trong một câu lệnh SQL chính (<code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>).</li>
+<li>CTE chỉ tồn tại trong phạm vi của câu lệnh SQL mà nó được định nghĩa.</li>
+</ul>
+</li>
+<li><strong>Cú pháp:</strong><pre><code class="language-sql">WITH 
+    ten_cte_1 AS (
+        -- Câu lệnh SELECT định nghĩa ten_cte_1
+    ),
+    ten_cte_2 AS (
+        -- Câu lệnh SELECT định nghĩa ten_cte_2
+        -- (Có thể tham chiếu đến ten_cte_1)
+    )
+    -- ... có thể có nhiều CTE khác
+SELECT ... FROM ten_cte_1 JOIN ten_cte_2 ON ... -- Câu lệnh chính sử dụng các CTE
+-- Hoặc INSERT/UPDATE/DELETE ...
+</code></pre>
+</li>
+<li><strong>Lợi ích của CTE:</strong><ul>
+<li><strong>Cải thiện tính dễ đọc và bảo trì:</strong> Chia nhỏ các câu lệnh SQL phức tạp thành các khối logic nhỏ hơn, dễ hiểu hơn.</li>
+<li><strong>Module hóa logic:</strong> Tái sử dụng một tập kết quả tạm thời nhiều lần trong cùng một câu lệnh chính (tuy nhiên, PostgreSQL thường tính toán lại CTE mỗi lần tham chiếu, trừ khi nó là <code>MATERIALIZED</code> - xem thêm).</li>
+<li><strong>Cho phép truy vấn đệ quy:</strong> Xử lý dữ liệu phân cấp (cây tổ chức, danh mục sản phẩm) hoặc dạng đồ thị.</li>
+<li><strong>Tổ chức các bước tính toán:</strong> Thực hiện các phép tính trung gian trước khi đến câu lệnh cuối cùng.</li>
+</ul>
+</li>
+<li><strong>CTE không đệ quy (Non-recursive CTEs):</strong><ul>
+<li>Là loại CTE phổ biến nhất, được định nghĩa bằng một câu lệnh <code>SELECT</code> đơn giản.</li>
+<li>Có thể được dùng để thay thế các subquery phức tạp hoặc view tạm thời.</li>
+</ul>
+</li>
+<li><strong>CTE đệ quy (Recursive CTEs):</strong><ul>
+<li>Được sử dụng để thực hiện các truy vấn lặp đi lặp lại trên một tập dữ liệu cho đến khi một điều kiện dừng được thỏa mãn.</li>
+<li>Cấu trúc:<pre><code class="language-sql">WITH RECURSIVE ten_cte_de_quy (cot1, cot2, ...) AS (
+    -- Phần neo (Non-recursive term / Anchor member)
+    SELECT ... 
+    FROM ...
+    WHERE ... -- Điều kiện khởi tạo cho đệ quy
+
+    UNION ALL -- Hoặc UNION
+
+    -- Phần đệ quy (Recursive term / Recursive member)
+    SELECT ...
+    FROM ... JOIN ten_cte_de_quy ON ... -- Tham chiếu lại chính CTE đó
+    WHERE ... -- Điều kiện dừng hoặc điều kiện cho bước lặp tiếp theo
+)
+SELECT ... FROM ten_cte_de_quy;
+</code></pre>
+</li>
+<li><strong>Phần neo:</strong> Thực thi một lần, tạo ra tập kết quả ban đầu.</li>
+<li><strong>Phần đệ quy:</strong> Thực thi lặp đi lặp lại, mỗi lần lấy kết quả của lần lặp trước đó làm đầu vào, cho đến khi phần đệ quy không trả về thêm dòng nào nữa.</li>
+<li><code>UNION ALL</code> thường được sử dụng để kết hợp kết quả từ phần neo và các bước đệ quy. <code>UNION</code> (loại bỏ trùng lặp) có thể được dùng nhưng thường kém hiệu quả hơn và có thể gây ra vòng lặp vô hạn nếu không cẩn thận.</li>
+<li>Cẩn thận với điều kiện dừng để tránh vòng lặp vô hạn.</li>
+</ul>
+</li>
+<li><strong>CTE có thể ghi dữ liệu (Data-Modifying CTEs):</strong><ul>
+<li>Một CTE có thể chứa các câu lệnh <code>INSERT</code>, <code>UPDATE</code>, hoặc <code>DELETE</code>.</li>
+<li>Mệnh đề <code>RETURNING</code> trong CTE ghi dữ liệu là bắt buộc nếu CTE đó được tham chiếu bởi các CTE khác hoặc câu lệnh chính.</li>
+</ul>
+<pre><code class="language-sql">WITH moved_rows AS (
+    DELETE FROM old_table WHERE condition
+    RETURNING *
+)
+INSERT INTO new_table (SELECT * FROM moved_rows);
+</code></pre>
+</li>
+<li><strong><code>MATERIALIZED</code> / <code>NOT MATERIALIZED</code> (PostgreSQL 12+):</strong><ul>
+<li><code>WITH my_cte AS MATERIALIZED (...)</code>: Buộc PostgreSQL tính toán CTE một lần và lưu kết quả vào một bảng tạm thời. Hữu ích nếu CTE được tham chiếu nhiều lần và chi phí tính toán lại cao.</li>
+<li><code>WITH my_cte AS NOT MATERIALIZED (...)</code>: Buộc PostgreSQL inline (gộp) định nghĩa CTE vào câu lệnh chính. Có thể hữu ích nếu CTE đơn giản và việc materialization không cần thiết.</li>
+<li>Mặc định, PostgreSQL tự quyết định dựa trên chi phí.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- CTE không đệ quy: Lấy danh sách nhân viên và tên phòng ban của họ
+-- Giả sử có bảng Employees(emp_id, emp_name, dept_id) và Departments(dept_id, dept_name)
+/*
+CREATE TABLE Departments (dept_id INT PRIMARY KEY, dept_name VARCHAR(50));
+CREATE TABLE Employees (emp_id INT PRIMARY KEY, emp_name VARCHAR(50), dept_id INT REFERENCES Departments(dept_id));
+INSERT INTO Departments VALUES (1, &#39;Engineering&#39;), (2, &#39;Sales&#39;), (3, &#39;HR&#39;);
+INSERT INTO Employees VALUES (101, &#39;Alice&#39;, 1), (102, &#39;Bob&#39;, 2), (103, &#39;Charlie&#39;, 1), (104, &#39;David&#39;, NULL);
+*/
+WITH EmployeeDetails AS (
+    SELECT e.emp_name, d.dept_name
+    FROM Employees e
+    LEFT JOIN Departments d ON e.dept_id = d.dept_id
+),
+DepartmentSummary AS (
+    SELECT dept_name, COUNT(*) as num_employees
+    FROM EmployeeDetails
+    WHERE dept_name IS NOT NULL
+    GROUP BY dept_name
+)
+SELECT ed.emp_name, COALESCE(ed.dept_name, &#39;N/A&#39;) AS department, ds.num_employees AS employees_in_dept
+FROM EmployeeDetails ed
+LEFT JOIN DepartmentSummary ds ON ed.dept_name = ds.dept_name
+ORDER BY ed.dept_name, ed.emp_name;
+
+-- CTE đệ quy: Liệt kê cây quản lý nhân viên
+-- Giả sử bảng NhanVien (id INT PRIMARY KEY, ho_ten VARCHAR, id_nguoi_quan_ly INT REFERENCES NhanVien(id))
+/*
+CREATE TABLE NhanVien (id INT PRIMARY KEY, ho_ten VARCHAR(50), id_nguoi_quan_ly INT REFERENCES NhanVien(id));
+INSERT INTO NhanVien VALUES (1, &#39;CEO&#39;, NULL), (2, &#39;Manager A&#39;, 1), (3, &#39;Manager B&#39;, 1),
+                           (4, &#39;Dev A1&#39;, 2), (5, &#39;Dev A2&#39;, 2), (6, &#39;Sales B1&#39;, 3);
+*/
+WITH RECURSIVE EmployeeHierarchy (employee_id, employee_name, manager_id, level, path_string) AS (
+    -- Phần neo: Nhân viên cấp cao nhất (không có quản lý)
+    SELECT id, ho_ten, id_nguoi_quan_ly, 0, ho_ten::TEXT
+    FROM NhanVien
+    WHERE id_nguoi_quan_ly IS NULL
+
+    UNION ALL
+
+    -- Phần đệ quy: Tìm nhân viên báo cáo cho các nhân viên ở cấp trước đó
+    SELECT nv.id, nv.ho_ten, nv.id_nguoi_quan_ly, eh.level + 1, eh.path_string || &#39; -&gt; &#39; || nv.ho_ten
+    FROM NhanVien nv
+    JOIN EmployeeHierarchy eh ON nv.id_nguoi_quan_ly = eh.employee_id
+)
+SELECT employee_id, REPEAT(&#39;  &#39;, level) || employee_name AS display_name, manager_id, level, path_string
+FROM EmployeeHierarchy
+ORDER BY path_string;
+
+-- CTE ghi dữ liệu: Di chuyển các đơn hàng cũ sang bảng lưu trữ
+/*
+CREATE TABLE ActiveOrders (order_id INT PRIMARY KEY, order_date DATE, amount NUMERIC);
+CREATE TABLE ArchivedOrders (order_id INT PRIMARY KEY, order_date DATE, amount NUMERIC, archived_at TIMESTAMPTZ);
+INSERT INTO ActiveOrders VALUES (1, &#39;2022-01-15&#39;, 100), (2, &#39;2023-05-20&#39;, 200), (3, &#39;2022-06-10&#39;, 150);
+*/
+WITH MovedOrders AS (
+    DELETE FROM ActiveOrders
+    WHERE order_date &lt; &#39;2023-01-01&#39;
+    RETURNING order_id, order_date, amount
+)
+INSERT INTO ArchivedOrders (order_id, order_date, amount, archived_at)
+SELECT order_id, order_date, amount, NOW()
+FROM MovedOrders;
+
+SELECT * FROM ActiveOrders;
+SELECT * FROM ArchivedOrders;
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong>
+  Giả sử có các bảng:<ul>
+<li><code>Categories</code> (category_id SERIAL PRIMARY KEY, category_name VARCHAR, parent_category_id INT REFERENCES Categories(category_id))</li>
+<li><code>Products</code> (product_id SERIAL PRIMARY KEY, product_name VARCHAR, category_id INT REFERENCES Categories(category_id), unit_price NUMERIC)</li>
+<li><code>Sales</code> (sale_id SERIAL PRIMARY KEY, product_id INT REFERENCES Products(product_id), quantity_sold INT, sale_date DATE)</li>
+</ul>
+<ol>
+<li><strong>Doanh thu theo danh mục:</strong> Sử dụng CTE, tính tổng doanh thu (<code>unit_price * quantity_sold</code>) cho mỗi <code>category_name</code>. CTE đầu tiên có thể join <code>Products</code> và <code>Sales</code>, CTE thứ hai join kết quả đó với <code>Categories</code> và tính tổng.</li>
+<li><strong>Sản phẩm bán chạy nhất mỗi danh mục:</strong><ul>
+<li>CTE 1: Tính tổng số lượng bán được (<code>total_quantity_sold</code>) cho mỗi <code>product_id</code>.</li>
+<li>CTE 2: Join kết quả trên với <code>Products</code> và <code>Categories</code>. Sau đó, sử dụng Window Function (sẽ học ở Chapter sau, hoặc <code>DISTINCT ON</code> nếu đã quen) bên trong CTE này để tìm sản phẩm có <code>total_quantity_sold</code> cao nhất cho mỗi <code>category_id</code>.</li>
+<li>Câu lệnh chính: Hiển thị <code>category_name</code>, <code>product_name</code> bán chạy nhất, và <code>total_quantity_sold</code> của sản phẩm đó.</li>
+</ul>
+</li>
+<li><strong>Hiển thị cây danh mục sản phẩm:</strong> Sử dụng CTE đệ quy, hiển thị tất cả các danh mục theo cấu trúc cây, thụt lề tên danh mục con dựa trên cấp độ của chúng. Hiển thị <code>category_id</code>, <code>category_name</code> (đã thụt lề), <code>parent_category_id</code>, và <code>level</code>.</li>
+<li><strong>Tìm đường dẫn đầy đủ của danh mục:</strong> Mở rộng bài tập 3, hiển thị thêm một cột <code>full_path</code> là chuỗi các tên danh mục từ gốc đến danh mục hiện tại (ví dụ: &quot;Electronics -&gt; Computers -&gt; Laptops&quot;).</li>
+<li><strong>CTE ghi dữ liệu - Tăng giá sản phẩm:</strong><ul>
+<li>Sử dụng CTE, chọn ra các sản phẩm thuộc một danh mục cụ thể (ví dụ: &#39;Laptops&#39;) mà chưa được bán trong 6 tháng qua (dựa vào <code>sale_date</code> trong bảng <code>Sales</code>).</li>
+<li>Trong câu lệnh chính, <code>UPDATE</code> giá (<code>unit_price</code>) của các sản phẩm này lên 5% (sử dụng <code>product_id</code> từ CTE). Dùng <code>RETURNING</code> để xem các sản phẩm đã được cập nhật giá.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<p>(Các Chapter tiếp theo sẽ được mở rộng tương tự để đảm bảo độ dài và chi tiết)</p>
+<p>... (Nội dung chi tiết cho Chapter 8 đến Chapter 12 sẽ được thêm vào đây, theo cấu trúc và mức độ chi tiết tương tự như các Chapter trên. Mỗi Chapter sẽ được mở rộng phần lý thuyết, thêm nhiều ví dụ code hơn và bài tập phức tạp hơn.)</p>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,4 +1,4 @@
-### Chapter 7: Common Table Expressions (CTE)
+# Chapter 7: Common Table Expressions (CTE)
 
 * **Tên bài học:** Viết truy vấn SQL rõ ràng, module hóa và mạnh mẽ hơn với Common Table Expressions (CTE), bao gồm cả CTE đệ quy.
 * **Tóm tắt lý thuyết:**

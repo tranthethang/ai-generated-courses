@@ -1,4 +1,4 @@
-## Chapter 3: Providers và Dependency Injection (DI)
+# Chapter 3: Providers và Dependency Injection (DI)
 
 **Tên Chapter học:** Providers và Dependency Injection (DI)
 

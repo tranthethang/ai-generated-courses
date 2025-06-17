@@ -1,0 +1,421 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-3-cau-lenh-select-nang-cao-va-cac-ham-thong-dung</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 3: Câu Lệnh SELECT Nâng Cao và Các Hàm Thông Dụng</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Tối ưu truy vấn SELECT, làm quen với các hàm PostgreSQL và biểu thức điều kiện.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong><code>LIMIT</code> và <code>OFFSET</code>:</strong><ul>
+<li><code>LIMIT count</code>: Giới hạn số dòng trả về.</li>
+<li><code>OFFSET start</code>: Bỏ qua <code>start</code> dòng đầu tiên.</li>
+<li>Thường dùng cho phân trang. Ví dụ: <code>LIMIT 10 OFFSET 20</code> (lấy 10 dòng, bắt đầu từ dòng thứ 21).</li>
+<li>PostgreSQL cũng hỗ trợ cú pháp SQL standard: <code>FETCH FIRST N ROWS ONLY</code> (tương đương <code>LIMIT N</code>) và <code>OFFSET M ROWS FETCH NEXT N ROWS ONLY</code>.</li>
+</ul>
+</li>
+<li><strong><code>DISTINCT</code> và <code>DISTINCT ON (expression)</code>:</strong><ul>
+<li><code>SELECT DISTINCT column1, column2 FROM table;</code>: Trả về các dòng duy nhất dựa trên tất cả các cột được chọn.</li>
+<li><code>SELECT DISTINCT ON (expression1 [, expression2 ...]) column_list FROM table ORDER BY expression1 [, expression2 ...], order_expression;</code>:<ul>
+<li>Đây là một tính năng mạnh mẽ của PostgreSQL, không có trong MySQL.</li>
+<li>Giữ lại dòng <em>đầu tiên</em> cho mỗi nhóm các dòng có cùng giá trị cho các <code>expression</code> trong <code>DISTINCT ON</code>.</li>
+<li>&quot;Dòng đầu tiên&quot; được xác định bởi mệnh đề <code>ORDER BY</code>. Mệnh đề <code>ORDER BY</code> phải bắt đầu bằng các biểu thức trong <code>DISTINCT ON</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Các hàm xử lý chuỗi phổ biến:</strong><ul>
+<li><code>LENGTH(string)</code>: Độ dài chuỗi.</li>
+<li><code>LOWER(string)</code>, <code>UPPER(string)</code>: Chuyển thành chữ thường/hoa.</li>
+<li><code>INITCAP(string)</code>: Viết hoa ký tự đầu mỗi từ.</li>
+<li><code>SUBSTRING(string FROM start [FOR length])</code>: Trích xuất chuỗi con. Cũng có thể dùng <code>SUBSTRING(string, start, length)</code>.</li>
+<li><code>POSITION(substring IN string)</code> hoặc <code>STRPOS(string, substring)</code>: Tìm vị trí chuỗi con.</li>
+<li><code>REPLACE(string, from_substring, to_substring)</code>: Thay thế chuỗi.</li>
+<li><code>CONCAT(str1, str2, ...)</code> hoặc toán tử <code>||</code>: Nối chuỗi. <code>CONCAT_WS(separator, str1, str2, ...)</code> nối với dấu phân cách.</li>
+<li><code>TRIM([LEADING | TRAILING | BOTH] [characters] FROM string)</code>: Cắt bỏ ký tự (mặc định là khoảng trắng) ở đầu/cuối/cả hai.</li>
+<li><code>LPAD(string, length [, fill])</code>, <code>RPAD(string, length [, fill])</code>: Đệm chuỗi.</li>
+<li><code>SPLIT_PART(string, delimiter, field_number)</code>: Tách chuỗi theo dấu phân cách và lấy phần tử thứ <code>field_number</code>.</li>
+<li><code>REGEXP_REPLACE(string, pattern, replacement [, flags])</code>: Thay thế dựa trên biểu thức chính quy.</li>
+<li><code>REGEXP_MATCHES(string, pattern [, flags])</code>: Trả về các nhóm con khớp với biểu thức chính quy.</li>
+<li><code>FORMAT(format_string [, format_arg ...])</code>: Định dạng chuỗi theo kiểu <code>printf</code>.</li>
+</ul>
+</li>
+<li><strong>Các hàm xử lý số học:</strong><ul>
+<li><code>ROUND(numeric_val [, precision])</code>: Làm tròn.</li>
+<li><code>CEIL(numeric_val)</code> hoặc <code>CEILING(numeric_val)</code>: Làm tròn lên.</li>
+<li><code>FLOOR(numeric_val)</code>: Làm tròn xuống.</li>
+<li><code>ABS(numeric_val)</code>: Giá trị tuyệt đối.</li>
+<li><code>MOD(dividend, divisor)</code> hoặc toán tử <code>%</code>: Phép chia lấy dư.</li>
+<li><code>POWER(base, exponent)</code> hoặc toán tử <code>^</code>: Lũy thừa.</li>
+<li><code>SQRT(numeric_val)</code>: Căn bậc hai.</li>
+<li><code>random()</code>: Trả về số thực ngẫu nhiên giữa 0 và 1.</li>
+<li><code>width_bucket(operand, low, high, count)</code>: Chia một khoảng thành các &quot;bucket&quot; và xác định bucket của operand.</li>
+</ul>
+</li>
+<li><strong>Các hàm xử lý ngày giờ:</strong><ul>
+<li><code>NOW()</code>, <code>CURRENT_TIMESTAMP</code>: Thời gian hiện tại (có timezone, kiểu <code>TIMESTAMPTZ</code>).</li>
+<li><code>CURRENT_DATE</code>, <code>CURRENT_TIME</code>: Ngày/giờ hiện tại.</li>
+<li><code>LOCALTIMESTAMP</code>, <code>LOCALTIME</code>: Thời gian hiện tại (không có timezone).</li>
+<li><code>AGE(timestamp_end, timestamp_start)</code>: Tính khoảng thời gian giữa hai thời điểm.</li>
+<li><code>EXTRACT(field FROM source)</code>: Trích xuất một phần của ngày/giờ (ví dụ: <code>YEAR</code>, <code>MONTH</code>, <code>DAY</code>, <code>HOUR</code>, <code>MINUTE</code>, <code>SECOND</code>, <code>DOW</code> (day of week), <code>DOY</code> (day of year), <code>EPOCH</code> (giây từ 1970-01-01 UTC)).</li>
+<li><code>DATE_PART(field, source)</code>: Tương tự <code>EXTRACT</code>.</li>
+<li><code>DATE_TRUNC(field, source)</code>: Làm tròn ngày/giờ xuống đơn vị <code>field</code> (ví dụ: <code>DATE_TRUNC(&#39;month&#39;, some_timestamp)</code> sẽ trả về ngày đầu tiên của tháng đó).</li>
+<li><code>TO_CHAR(timestamp_val, format_string)</code>: Chuyển ngày/giờ thành chuỗi theo định dạng.</li>
+<li><code>TO_TIMESTAMP(string, format_string)</code>, <code>TO_DATE(string, format_string)</code>: Chuyển chuỗi thành ngày/giờ.</li>
+<li>Cộng trừ ngày giờ: <code>date_col + INTERVAL &#39;1 day&#39;</code>, <code>timestamp_col - INTERVAL &#39;2 hours&#39;</code>.</li>
+<li><code>MAKE_INTERVAL(years, months, weeks, days, hours, mins, secs)</code>: Tạo giá trị interval.</li>
+<li><code>JUSTIFY_INTERVAL(interval)</code>: Chuẩn hóa interval (ví dụ, 30 ngày thành 1 tháng).</li>
+<li><code>AT TIME ZONE zone</code>: Chuyển đổi giá trị <code>TIMESTAMP WITHOUT TIME ZONE</code> sang <code>TIMESTAMPTZ</code> tại một múi giờ cụ thể, hoặc chuyển đổi <code>TIMESTAMPTZ</code> sang <code>TIMESTAMP WITHOUT TIME ZONE</code> hiển thị theo giờ địa phương của <code>zone</code>.</li>
+</ul>
+</li>
+<li><strong>Biểu thức <code>CASE</code>:</strong><ul>
+<li><code>CASE WHEN condition1 THEN result1 WHEN condition2 THEN result2 ... ELSE result_else END</code> (Searched CASE).</li>
+<li><code>CASE expression WHEN value1 THEN result1 WHEN value2 THEN result2 ... ELSE result_else END</code> (Simple CASE).</li>
+<li>Dùng cho logic điều kiện trong câu lệnh SQL.</li>
+</ul>
+</li>
+<li><strong>Hàm <code>COALESCE(value1, value2, ...)</code>:</strong> Trả về biểu thức không NULL đầu tiên trong danh sách. Hữu ích để cung cấp giá trị mặc định cho các cột NULL.</li>
+<li><strong>Hàm <code>NULLIF(value1, value2)</code>:</strong> Trả về NULL nếu <code>value1</code> bằng <code>value2</code>, ngược lại trả về <code>value1</code>. Hữu ích để tránh lỗi chia cho zero (<code>NULLIF(divisor, 0)</code>).</li>
+<li><strong>Hàm <code>GREATEST(...)</code> và <code>LEAST(...)</code>:</strong> Trả về giá trị lớn nhất/nhỏ nhất trong danh sách các biểu thức.</li>
+<li><strong>Hàm <code>generate_series(start, stop [, step])</code>:</strong> Tạo ra một chuỗi các giá trị số hoặc timestamp. Rất hữu ích cho việc tạo dữ liệu mẫu hoặc các báo cáo theo chuỗi thời gian.</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- DISTINCT ON: Lấy đơn hàng gần nhất của mỗi khách hàng
+CREATE TABLE Orders (order_id SERIAL PRIMARY KEY, customer_id INT, order_date TIMESTAMPTZ, total_amount NUMERIC);
+INSERT INTO Orders (customer_id, order_date, total_amount) VALUES
+(1, &#39;2023-01-10 10:00:00 UTC&#39;, 100), (2, &#39;2023-01-10 11:00:00 UTC&#39;, 150),
+(1, &#39;2023-01-15 14:00:00 UTC&#39;, 200), (3, &#39;2023-01-15 16:00:00 UTC&#39;, 50),
+(2, &#39;2023-01-20 09:00:00 UTC&#39;, 120);
+
+SELECT DISTINCT ON (customer_id) customer_id, order_id, order_date, total_amount
+FROM Orders
+ORDER BY customer_id, order_date DESC;
+
+-- Hàm chuỗi: Định dạng tên người dùng
+SELECT
+    ho_ten,
+    UPPER(SUBSTRING(ho_ten FROM 1 FOR 1)) || LOWER(SUBSTRING(ho_ten FROM 2)) AS ten_viet_hoa_ky_tu_dau,
+    SPLIT_PART(email, &#39;@&#39;, 1) AS ten_dang_nhap_email,
+    FORMAT(&#39;User: %s (Email: %s)&#39;, ho_ten, email) AS thong_tin_user
+FROM NhanVien LIMIT 2;
+
+-- Hàm ngày giờ: Tính số ngày làm việc và tháng hiện tại
+SELECT
+    ho_ten,
+    ngay_vao_lam,
+    AGE(CURRENT_DATE, ngay_vao_lam) AS thoi_gian_lam_viec,
+    EXTRACT(DOW FROM NOW()) AS thu_trong_tuan, -- 0=Chủ nhật, 6=Thứ bảy
+    TO_CHAR(NOW(), &#39;Month YYYY&#39;) AS thang_nam_hien_tai,
+    DATE_TRUNC(&#39;quarter&#39;, NOW())::DATE AS ngay_dau_quy
+FROM NhanVien WHERE ngay_vao_lam IS NOT NULL LIMIT 2;
+
+-- Chuyển đổi múi giờ
+SELECT NOW() AS current_utc_timestamptz,
+       NOW() AT TIME ZONE &#39;Asia/Ho_Chi_Minh&#39; AS hcm_time,
+       (NOW() AT TIME ZONE &#39;Asia/Ho_Chi_Minh&#39;)::TIMESTAMP WITHOUT TIME ZONE AT TIME ZONE &#39;America/New_York&#39; AS ny_time_from_hcm;
+
+
+-- CASE và COALESCE: Phân loại lương và hiển thị phòng ban
+SELECT
+    ho_ten,
+    luong,
+    CASE
+        WHEN luong &lt; 10000000 THEN &#39;Thấp&#39;
+        WHEN luong &gt;= 10000000 AND luong &lt; 25000000 THEN &#39;Trung bình&#39;
+        WHEN luong &gt;= 25000000 THEN &#39;Cao&#39;
+        ELSE &#39;Chưa có thông tin lương&#39;
+    END AS muc_luong_chi_tiet,
+    COALESCE(phong_ban_id::TEXT, &#39;Chưa phân công phòng ban&#39;) AS thong_tin_phong_ban
+FROM NhanVien LIMIT 5;
+
+-- generate_series: Tạo danh sách các ngày trong tháng hiện tại
+SELECT day::DATE
+FROM generate_series(
+    DATE_TRUNC(&#39;month&#39;, CURRENT_DATE),
+    DATE_TRUNC(&#39;month&#39;, CURRENT_DATE) + INTERVAL &#39;1 month&#39; - INTERVAL &#39;1 day&#39;,
+    INTERVAL &#39;1 day&#39;
+) AS day;
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong>
+  Giả sử có bảng <code>Log TruyCapWeb</code> (log_id SERIAL, ip_address VARCHAR, thoi_gian_ truy_cap TIMESTAMPTZ, url_path TEXT, http_status_code INT, user_agent TEXT).<ol>
+<li><strong>Phân trang log:</strong> Viết câu lệnh lấy 20 log truy cập gần đây nhất, bỏ qua 10 log đầu tiên (tức là lấy log từ 11 đến 30).</li>
+<li><strong>Truy cập cuối cùng:</strong> Sử dụng <code>DISTINCT ON</code>, tìm lần truy cập cuối cùng (gần nhất) cho mỗi <code>ip_address</code>.</li>
+<li><strong>Trích xuất thông tin:</strong><ul>
+<li>Lấy <code>url_path</code> và trích xuất phần domain chính từ URL (ví dụ, từ <code>/products/123?source=email</code> lấy <code>products</code>). (Gợi ý: dùng <code>SPLIT_PART</code> hoặc regex).</li>
+<li>Hiển thị <code>user_agent</code> và phân loại thành &#39;Mobile&#39;, &#39;Desktop&#39;, &#39;Bot&#39; dựa vào các từ khóa phổ biến trong <code>user_agent</code> (ví dụ: &#39;Mobi&#39;, &#39;Android&#39;, &#39;iPhone&#39; là Mobile; &#39;Googlebot&#39;, &#39;Bingbot&#39; là Bot; còn lại là Desktop). Dùng <code>CASE</code>.</li>
+</ul>
+</li>
+<li><strong>Thống kê theo giờ:</strong><ul>
+<li>Đếm số lượng truy cập theo từng giờ trong ngày (0-23h) cho một ngày cụ thể. (Gợi ý: <code>EXTRACT(HOUR FROM ...)</code> và <code>GROUP BY</code>).</li>
+<li>Sử dụng <code>generate_series</code> để đảm bảo tất cả các giờ trong ngày đều xuất hiện trong kết quả, kể cả khi không có log nào trong giờ đó (điền 0).</li>
+</ul>
+</li>
+<li><strong>Định dạng output:</strong> Hiển thị <code>thoi_gian_truy_cap</code> dưới dạng <code>Thứ X, ngày DD tháng MM năm YYYY, HH:MI:SS</code> (ví dụ: <code>Thứ Hai, ngày 28 tháng 05 năm 2024, 15:30:00</code>). Nếu <code>http_status_code</code> là 404, hiển thị thông báo &#39;Không tìm thấy trang&#39;, nếu là 200, hiển thị &#39;Thành công&#39;, các trường hợp khác hiển thị mã lỗi. Sử dụng <code>COALESCE</code> để xử lý <code>user_agent</code> bị NULL, hiển thị là &#39;Không rõ&#39;.</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

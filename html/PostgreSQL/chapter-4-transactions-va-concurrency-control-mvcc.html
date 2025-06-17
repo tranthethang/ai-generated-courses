@@ -1,0 +1,409 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-4-transactions-va-concurrency-control-mvcc</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 4: Transactions và Concurrency Control (MVCC)</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Đảm bảo toàn vẹn dữ liệu với Transactions, hiểu sâu về MVCC và các mức cô lập.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Tính chất ACID trong PostgreSQL:</strong><ul>
+<li><strong>Atomicity (Tính nguyên tử):</strong> Một transaction được thực thi hoàn toàn hoặc không được thực thi gì cả. Nếu bất kỳ phần nào của transaction thất bại, toàn bộ transaction sẽ được rollback. PostgreSQL đảm bảo điều này qua Write-Ahead Logging (WAL).</li>
+<li><strong>Consistency (Tính nhất quán):</strong> Một transaction chuyển CSDL từ một trạng thái hợp lệ này sang một trạng thái hợp lệ khác. Tất cả các ràng buộc (constraints), trigger phải được thỏa mãn.</li>
+<li><strong>Isolation (Tính cô lập):</strong> Các transaction đồng thời phải được thực thi một cách độc lập với nhau, như thể chúng được thực thi tuần tự. PostgreSQL đạt được điều này thông qua MVCC và các mức cô lập.</li>
+<li><strong>Durability (Tính bền vững):</strong> Một khi transaction đã được commit, các thay đổi của nó sẽ tồn tại vĩnh viễn, ngay cả khi hệ thống gặp sự cố (ví dụ: mất điện). PostgreSQL sử dụng WAL và checkpoint để đảm bảo tính bền vững.</li>
+</ul>
+</li>
+<li><strong>Câu lệnh quản lý transaction:</strong><ul>
+<li><code>BEGIN;</code> hoặc <code>START TRANSACTION;</code>: Bắt đầu một transaction mới.</li>
+<li><code>COMMIT;</code> hoặc <code>END;</code>: Lưu tất cả các thay đổi của transaction vào CSDL.</li>
+<li><code>ROLLBACK;</code>: Hủy bỏ tất cả các thay đổi của transaction.</li>
+<li><strong><code>SAVEPOINT savepoint_name;</code></strong>: Tạo một điểm lưu tạm bên trong transaction hiện tại.</li>
+<li><strong><code>ROLLBACK TO SAVEPOINT savepoint_name;</code></strong>: Rollback transaction về một savepoint đã tạo trước đó. Các thay đổi sau savepoint đó sẽ bị hủy, nhưng các thay đổi trước đó và chính savepoint vẫn còn hiệu lực.</li>
+<li><strong><code>RELEASE SAVEPOINT savepoint_name;</code></strong>: Xóa một savepoint đã tạo (ít dùng, vì commit hoặc rollback to savepoint trước đó sẽ tự động xóa các savepoint sau).</li>
+</ul>
+</li>
+<li><strong>Các mức cô lập (Isolation Levels) trong PostgreSQL:</strong><ul>
+<li><strong><code>READ UNCOMMITTED</code></strong>: Mức thấp nhất. PostgreSQL không thực sự triển khai mức này; nó được coi như <code>READ COMMITTED</code>.</li>
+<li><strong><code>READ COMMITTED</code> (Mặc định):</strong><ul>
+<li>Một câu lệnh chỉ thấy được dữ liệu đã được commit <em>trước khi câu lệnh đó bắt đầu</em>.</li>
+<li>Trong cùng một transaction, hai câu lệnh <code>SELECT</code> giống hệt nhau có thể trả về kết quả khác nhau nếu một transaction khác commit thay đổi dữ liệu ở giữa hai câu lệnh đó (hiện tượng <strong>Non-Repeatable Read</strong>).</li>
+<li>Một câu lệnh có thể thấy các dòng mới được chèn (hoặc các dòng bị xóa) bởi các transaction khác đã commit sau khi transaction hiện tại bắt đầu (hiện tượng <strong>Phantom Read</strong> có thể xảy ra).</li>
+</ul>
+</li>
+<li><strong><code>REPEATABLE READ</code></strong>:<ul>
+<li>Tất cả các câu lệnh trong transaction hiện tại chỉ thấy được dữ liệu đã được commit <em>trước khi transaction đó bắt đầu</em>. Đảm bảo Non-Repeatable Read không xảy ra.</li>
+<li>Tuy nhiên, Phantom Read vẫn có thể xảy ra. Nếu một transaction khác chèn dòng mới và commit, transaction hiện tại ở mức <code>REPEATABLE READ</code> sẽ không thấy dòng mới đó, nhưng nếu nó cố gắng <code>INSERT</code> một dòng có key trùng với dòng mới kia (mà nó không thấy), nó có thể bị lỗi serialization (serialization failure).</li>
+<li>PostgreSQL có thể báo lỗi &quot;could not serialize access due to concurrent update&quot; và yêu cầu rollback và thử lại transaction.</li>
+</ul>
+</li>
+<li><strong><code>SERIALIZABLE</code></strong>:<ul>
+<li>Mức cô lập cao nhất. Đảm bảo các transaction thực thi như thể chúng được chạy tuần tự, loại bỏ tất cả các hiện tượng bất thường (Dirty Read, Non-Repeatable Read, Phantom Read).</li>
+<li>PostgreSQL triển khai mức này bằng cách sử dụng Snapshot Isolation và kiểm tra các pattern nguy hiểm (predicate locking &quot;ảo&quot;). Nếu phát hiện xung đột có thể dẫn đến kết quả không tuần tự hóa được, một trong các transaction sẽ bị rollback với lỗi serialization.</li>
+<li>Yêu cầu ứng dụng phải có logic để thử lại các transaction bị thất bại.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Giới thiệu về Multi-Version Concurrency Control (MVCC):</strong><ul>
+<li>Cơ chế PostgreSQL sử dụng để quản lý truy cập đồng thời.</li>
+<li>Khi một dòng được cập nhật hoặc xóa, PostgreSQL không ghi đè lên dữ liệu cũ ngay lập tức. Thay vào đó, nó tạo ra một phiên bản mới của dòng (cho <code>UPDATE</code>) hoặc đánh dấu dòng là đã xóa (cho <code>DELETE</code>), trong khi vẫn giữ lại phiên bản cũ.</li>
+<li>Mỗi transaction hoạt động trên một &quot;snapshot&quot; của CSDL tại một thời điểm nhất định. Snapshot này xác định phiên bản nào của mỗi dòng là &quot;nhìn thấy được&quot; (visible) đối với transaction đó.</li>
+<li>Các cột hệ thống ẩn: <code>xmin</code> (ID transaction đã chèn dòng), <code>xmax</code> (ID transaction đã xóa/cập nhật dòng), <code>ctid</code> (vị trí vật lý của tuple).</li>
+<li><strong>Ưu điểm:</strong> &quot;Readers never block writers, and writers never block readers.&quot; Tăng đáng kể khả năng đồng thời.</li>
+<li><strong>Nhược điểm:</strong><ul>
+<li><strong>Bloat:</strong> Các phiên bản dòng cũ (dead tuples) chiếm không gian đĩa.</li>
+<li><strong>Wraparound:</strong> Transaction ID có giới hạn, cần xử lý hiện tượng wraparound.</li>
+<li><strong>VACUUM:</strong> Cần tiến trình <code>VACUUM</code> (và <code>AUTOVACUUM</code>) để dọn dẹp các dead tuples và &quot;đóng băng&quot; các transaction ID cũ để tránh wraparound.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Deadlocks:</strong><ul>
+<li>Xảy ra khi hai (hoặc nhiều) transaction chờ đợi lẫn nhau để giải phóng tài nguyên (lock).</li>
+<li>PostgreSQL tự động phát hiện deadlock và rollback một trong các transaction (thường là transaction gây ra ít công việc hơn) để giải quyết. Ứng dụng cần sẵn sàng thử lại transaction bị rollback.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- Transaction với SAVEPOINT và ROLLBACK TO SAVEPOINT
+CREATE TABLE Accounts (account_id INT PRIMARY KEY, balance NUMERIC CHECK (balance &gt;= 0));
+INSERT INTO Accounts VALUES (1, 1000), (2, 500);
+
+BEGIN;
+UPDATE Accounts SET balance = balance - 200 WHERE account_id = 1;
+SELECT * FROM Accounts; -- Thấy balance của account 1 là 800
+SAVEPOINT before_second_update;
+UPDATE Accounts SET balance = balance + 200 WHERE account_id = 2;
+SELECT * FROM Accounts; -- Thấy balance của account 2 là 700
+
+-- Giả sử có lỗi hoặc quyết định hủy một phần
+ROLLBACK TO SAVEPOINT before_second_update;
+SELECT * FROM Accounts; -- Account 1 vẫn là 800, Account 2 quay lại 500
+COMMIT;
+SELECT * FROM Accounts; -- Kết quả cuối: Account 1 là 800, Account 2 là 500
+
+-- Minh họa Non-Repeatable Read ở mức READ COMMITTED
+-- Session 1:
+BEGIN;
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT balance FROM Accounts WHERE account_id = 1; -- Giả sử trả về 800
+-- Session 2:
+-- BEGIN; UPDATE Accounts SET balance = 700 WHERE account_id = 1; COMMIT;
+-- Session 1 (tiếp tục):
+SELECT balance FROM Accounts WHERE account_id = 1; -- Có thể trả về 700 (khác lần đọc trước)
+COMMIT;
+
+-- Minh họa REPEATABLE READ
+-- Session 1:
+BEGIN;
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+SELECT balance FROM Accounts WHERE account_id = 1; -- Giả sử trả về 800
+-- Session 2:
+-- BEGIN; UPDATE Accounts SET balance = 600 WHERE account_id = 1; COMMIT;
+-- Session 1 (tiếp tục):
+SELECT balance FROM Accounts WHERE account_id = 1; -- Vẫn trả về 800 (không thấy thay đổi từ Session 2)
+-- Nếu Session 1 cố gắng UPDATE account_id = 1:
+-- UPDATE Accounts SET balance = balance - 50 WHERE account_id = 1;
+-- Có thể bị lỗi: ERROR:  could not serialize access due to concurrent update
+COMMIT;
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong>
+  Sử dụng bảng <code>Products</code> (product_id SERIAL, name TEXT, quantity_on_hand INT CHECK (quantity_on_hand &gt;=0)) và <code>OrderItems</code> (order_item_id SERIAL, product_id INT, quantity_ordered INT).<ol>
+<li><strong>Transaction Chuyển Khoản An Toàn:</strong><ul>
+<li>Viết một transaction để thực hiện việc đặt hàng: Giảm <code>quantity_on_hand</code> trong <code>Products</code> và thêm một dòng vào <code>OrderItems</code>.</li>
+<li>Đảm bảo rằng nếu <code>quantity_on_hand</code> không đủ, toàn bộ transaction sẽ được <code>ROLLBACK</code>.</li>
+<li>Sử dụng <code>SAVEPOINT</code> sau khi kiểm tra số lượng tồn kho nhưng trước khi cập nhật. Nếu việc thêm vào <code>OrderItems</code> gặp lỗi (ví dụ, do ràng buộc), rollback về savepoint đó và thông báo lỗi thay vì rollback toàn bộ (tùy kịch bản).</li>
+</ul>
+</li>
+<li><strong>Mô phỏng Non-Repeatable Read:</strong><ul>
+<li>Mở hai session <code>psql</code>.</li>
+<li>Session 1: Bắt đầu một transaction ở mức <code>READ COMMITTED</code>. Đọc số lượng tồn kho của một sản phẩm.</li>
+<li>Session 2: Bắt đầu một transaction, cập nhật số lượng tồn kho của sản phẩm đó và <code>COMMIT</code>.</li>
+<li>Session 1: Đọc lại số lượng tồn kho của sản phẩm đó. Quan sát sự thay đổi. <code>COMMIT</code> Session 1.</li>
+</ul>
+</li>
+<li><strong>Mô phỏng REPEATABLE READ:</strong><ul>
+<li>Lặp lại bài 2, nhưng Session 1 đặt mức cô lập là <code>REPEATABLE READ</code>. Quan sát xem Session 1 có thấy thay đổi từ Session 2 không.</li>
+<li>Trong Session 1 (sau khi Session 2 đã commit), thử cập nhật chính sản phẩm đó. Quan sát xem có lỗi serialization xảy ra không.</li>
+</ul>
+</li>
+<li><strong>Xử lý Deadlock (Lý thuyết):</strong><ul>
+<li>Mô tả một kịch bản có thể gây deadlock giữa hai transaction khi chúng cùng cập nhật hai sản phẩm khác nhau nhưng theo thứ tự ngược nhau (ví dụ: Tx1 cập nhật P1 rồi P2, Tx2 cập nhật P2 rồi P1).</li>
+<li>Nếu ứng dụng của bạn gặp lỗi deadlock từ PostgreSQL, bạn nên xử lý như thế nào? (Gợi ý: thử lại transaction).</li>
+</ul>
+</li>
+<li><strong>Thảo luận về VACUUM:</strong><ul>
+<li>Tại sao <code>VACUUM</code> lại cần thiết trong PostgreSQL do cơ chế MVCC?</li>
+<li><code>AUTOVACUUM</code> là gì và tại sao nó quan trọng?</li>
+<li>Sự khác biệt giữa <code>VACUUM</code> và <code>VACUUM FULL</code> là gì? Khi nào nên dùng <code>VACUUM FULL</code> (và tại sao nên cẩn thận)?</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,4 +1,4 @@
-### Chapter 4: Transactions và Concurrency Control (MVCC)
+# Chapter 4: Transactions và Concurrency Control (MVCC)
 
 * **Tên bài học:** Đảm bảo toàn vẹn dữ liệu với Transactions, hiểu sâu về MVCC và các mức cô lập.
 * **Tóm tắt lý thuyết:**

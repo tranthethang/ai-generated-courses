@@ -1,4 +1,4 @@
-## Chapter 5: Pipes và Validation
+# Chapter 5: Pipes và Validation
 
 **Tên Chapter học:** Pipes và Validation
 

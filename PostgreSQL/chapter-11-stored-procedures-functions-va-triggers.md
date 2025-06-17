@@ -1,4 +1,4 @@
-### Chapter 11: Stored Procedures, Functions và Triggers
+# Chapter 11: Stored Procedures, Functions và Triggers
 
 * **Tên bài học:** Đóng gói logic nghiệp vụ, tự động hóa tác vụ với Stored Procedures, Functions và Triggers sử dụng PL/pgSQL.
 * **Tóm tắt lý thuyết:**

@@ -1,0 +1,433 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>chapter-10-cac-loai-index-va-toi-uu-hoa-truy-van</title>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: #2d3748;
+        background-color: #fafbfc;
+        background-color: rgb(250, 249, 245);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #1a202c;
+        margin: 0 0 2rem 0;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #2d3748;
+        margin: 3rem 0 1.5rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2d3748;
+        margin: 2.5rem 0 1rem 0;
+        letter-spacing: -0.015em;
+      }
+
+      h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 2rem 0 0.75rem 0;
+      }
+
+      h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.75rem 0 0.75rem 0;
+      }
+
+      h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #4a5568;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 1.5rem 0;
+        padding-left: 2rem;
+        line-height: 1.7;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul ul,
+      ol ol,
+      ul ol,
+      ol ul {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+
+      blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        background-color: #f7fafc;
+        font-style: italic;
+        color: #4a5568;
+      }
+
+      code {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+      }
+
+      pre {
+        font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas",
+          monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: 400;
+      }
+
+      a {
+        color: #3182ce;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 0.2s ease;
+      }
+
+      a:hover {
+        border-bottom-color: #3182ce;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      em,
+      i {
+        font-style: italic;
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      /* Spacing improvements for better readability */
+      h1 + p,
+      h2 + p,
+      h3 + p,
+      h4 + p,
+      h5 + p,
+      h6 + p {
+        margin-top: 0;
+      }
+
+      /* Ensure proper spacing after code blocks */
+      pre + h1,
+      pre + h2,
+      pre + h3,
+      pre + h4,
+      pre + h5,
+      pre + h6 {
+        margin-top: 3rem;
+      }
+
+      /* Better spacing for lists following headings */
+      h1 + ul,
+      h1 + ol,
+      h2 + ul,
+      h2 + ol,
+      h3 + ul,
+      h3 + ol,
+      h4 + ul,
+      h4 + ol,
+      h5 + ul,
+      h5 + ol,
+      h6 + ul,
+      h6 + ol {
+        margin-top: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+          font-size: 15px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+        }
+
+        pre {
+          padding: 1rem;
+          margin: 1.5rem 0;
+        }
+      } 
+</style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"/>
+    </head>
+    <body>
+      <h1>Chapter 10: Các Loại Index và Tối Ưu Hóa Truy Vấn</h1>
+<ul>
+<li><strong>Tên bài học:</strong> Tăng tốc độ truy vấn với các loại Index hiệu quả và kỹ thuật tối ưu hóa cơ bản.</li>
+<li><strong>Tóm tắt lý thuyết:</strong><ul>
+<li><strong>Tầm quan trọng của Indexing:</strong><ul>
+<li>Index là một cấu trúc dữ liệu đặc biệt giúp tăng tốc độ truy xuất dữ liệu từ các bảng. Nó hoạt động tương tự như mục lục của một cuốn sách.</li>
+<li>Khi không có index, PostgreSQL phải thực hiện quét toàn bộ bảng (sequential scan) để tìm các dòng thỏa mãn điều kiện truy vấn, điều này rất chậm với bảng lớn.</li>
+<li>Index làm tăng tốc độ <code>SELECT</code> nhưng có thể làm chậm các thao tác <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code> vì index cũng cần được cập nhật. Do đó, cần cân nhắc tạo index cho các cột thường xuyên được dùng trong mệnh đề <code>WHERE</code>, <code>JOIN ON</code>, <code>ORDER BY</code>, <code>GROUP BY</code>.</li>
+</ul>
+</li>
+<li><strong>Các loại Index chính trong PostgreSQL:</strong><ul>
+<li><strong>B-tree (Mặc định):</strong><ul>
+<li>Cấu trúc cây cân bằng. Phù hợp nhất cho các toán tử so sánh: <code>=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>BETWEEN</code>, <code>IN</code>, <code>IS NULL</code>, <code>IS NOT NULL</code>.</li>
+<li>Hỗ trợ sắp xếp (<code>ORDER BY</code>) và tìm kiếm theo dải (range queries).</li>
+<li>Mặc định được tạo cho <code>PRIMARY KEY</code> và <code>UNIQUE</code> constraints.</li>
+</ul>
+</li>
+<li><strong>Hash:</strong><ul>
+<li>Chỉ hỗ trợ toán tử bằng (<code>=</code>).</li>
+<li>Có thể nhanh hơn B-tree cho các phép so sánh bằng đơn giản trong một số trường hợp, nhưng ít linh hoạt hơn.</li>
+<li>Không được ghi vào WAL trước PostgreSQL 10, có thể cần rebuild sau crash. Ít được sử dụng hơn B-tree.</li>
+</ul>
+</li>
+<li><strong>GIN (Generalized Inverted Index):</strong><ul>
+<li>Được thiết kế cho việc index các kiểu dữ liệu phức hợp chứa nhiều &quot;item&quot; trong một giá trị cột (ví dụ: một mảng chứa nhiều phần tử, một tài liệu text chứa nhiều từ, một JSONB chứa nhiều key/value).</li>
+<li>Hữu ích cho: <code>ARRAY</code> (toán tử <code>@&gt;</code>, <code>&lt;@</code>, <code>&amp;&amp;</code>), <code>JSONB</code> (toán tử <code>@&gt;</code>, <code>?</code>, <code>?|</code>, <code>?&amp;</code>), <code>tsvector</code> (Full-Text Search).</li>
+<li>Tạo index chậm hơn B-tree nhưng truy vấn rất nhanh cho các toán tử được hỗ trợ.</li>
+</ul>
+</li>
+<li><strong>GiST (Generalized Search Tree):</strong><ul>
+<li>Một framework để xây dựng các cấu trúc index tùy chỉnh cho nhiều loại dữ liệu và toán tử phức tạp.</li>
+<li>Có thể index dữ liệu hình học (PostGIS extension dùng GiST), dữ liệu không gian, full-text search (thay thế cho GIN trong một số trường hợp), dữ liệu khoảng (range types).</li>
+<li>Linh hoạt nhưng có thể phức tạp hơn để hiểu và tune.</li>
+</ul>
+</li>
+<li><strong>SP-GiST (Space-Partitioned GiST):</strong><ul>
+<li>Hỗ trợ các cấu trúc dữ liệu phân vùng không gian (ví dụ: k-d trees, quadtrees, radix trees).</li>
+<li>Hiệu quả cho các loại dữ liệu không đều (non-uniformly distributed data) mà GiST không xử lý tốt. Ví dụ: số điện thoại, địa chỉ IP.</li>
+</ul>
+</li>
+<li><strong>BRIN (Block Range Index):</strong><ul>
+<li>Hiệu quả cho các bảng rất lớn có dữ liệu được sắp xếp tự nhiên hoặc có sự tương quan mạnh giữa giá trị cột và vị trí vật lý của dòng trên đĩa (ví dụ: cột timestamp trong bảng log được chèn theo thứ tự thời gian).</li>
+<li>Lưu trữ thông tin tóm tắt (min, max, sum, count, etc.) cho mỗi <em>dải các block</em> (block range) trên đĩa.</li>
+<li>Index rất nhỏ và tạo rất nhanh. Truy vấn có thể bỏ qua việc đọc nhiều block nếu giá trị tìm kiếm nằm ngoài dải min/max của block range đó.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Các kỹ thuật Indexing nâng cao:</strong><ul>
+<li><strong>Index đa cột (Multi-column / Composite Indexes):</strong><ul>
+<li><code>CREATE INDEX idx_name ON table_name (column1, column2, ...);</code></li>
+<li>Thứ tự các cột trong index rất quan trọng. Index có thể được sử dụng hiệu quả nếu điều kiện truy vấn sử dụng tiền tố của các cột trong index (ví dụ: <code>WHERE column1 = ? AND column2 = ?</code> hoặc <code>WHERE column1 = ?</code>).</li>
+</ul>
+</li>
+<li><strong>Covering Indexes (Sử dụng mệnh đề <code>INCLUDE</code> - PostgreSQL 11+):</strong><ul>
+<li><code>CREATE INDEX idx_name ON table_name (indexed_column1, indexed_column2) INCLUDE (non_indexed_column1, non_indexed_column2);</code></li>
+<li>Cho phép lưu trữ thêm các cột không phải là phần của key index nhưng thường được truy vấn cùng.</li>
+<li>Nếu tất cả các cột cần thiết cho một truy vấn đều có trong index (kể cả phần <code>INCLUDE</code>), PostgreSQL có thể thực hiện &quot;index-only scan&quot;, không cần truy cập vào bảng chính, rất nhanh.</li>
+</ul>
+</li>
+<li><strong>Partial Indexes (Index một phần):</strong><ul>
+<li><code>CREATE INDEX idx_name ON table_name (column_name) WHERE condition;</code></li>
+<li>Index chỉ một tập con các dòng của bảng thỏa mãn điều kiện <code>WHERE</code>.</li>
+<li>Tiết kiệm không gian và thời gian cập nhật index nếu chỉ một phần nhỏ của bảng thường xuyên được truy vấn với điều kiện đó. Ví dụ: <code>WHERE processed = false</code>.</li>
+</ul>
+</li>
+<li><strong>Expression Indexes (Functional Indexes / Index trên biểu thức):</strong><ul>
+<li><code>CREATE INDEX idx_name ON table_name (LOWER(column_name));</code></li>
+<li>Index dựa trên kết quả của một hàm hoặc biểu thức.</li>
+<li>Hữu ích khi truy vấn thường xuyên sử dụng hàm đó trong mệnh đề <code>WHERE</code> (ví dụ: <code>WHERE LOWER(email) = &#39;...&#39;</code>).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Tối ưu hóa truy vấn cơ bản:</strong><ul>
+<li><strong>Câu lệnh <code>EXPLAIN</code> và <code>EXPLAIN ANALYZE</code>:</strong><ul>
+<li><code>EXPLAIN SELECT ...</code>: Hiển thị kế hoạch thực thi (execution plan) mà PostgreSQL dự định sử dụng, bao gồm các bước (nodes) như Sequential Scan, Index Scan, Nested Loop Join, Hash Join, Sort, Aggregate. Ước tính chi phí (cost), số dòng (rows), độ rộng (width).</li>
+<li><code>EXPLAIN ANALYZE SELECT ...</code>: Thực thi câu lệnh và hiển thị kế hoạch thực tế cùng với thời gian thực thi thực tế và số dòng thực tế cho mỗi node. <strong>Rất quan trọng để chẩn đoán hiệu năng.</strong></li>
+<li>Các thông số cần chú ý: <code>cost</code> (start-up cost..total cost), <code>rows</code> (ước tính vs thực tế), <code>actual time</code> (thời gian thực thi node), loại scan (Index Scan tốt hơn Seq Scan cho query chọn lọc), loại join.</li>
+</ul>
+</li>
+<li><strong><code>VACUUM</code> và <code>ANALYZE</code>:</strong><ul>
+<li><code>VACUUM</code>: Dọn dẹp các &quot;dead tuples&quot; (phiên bản dòng cũ không còn nhìn thấy được bởi bất kỳ transaction nào).</li>
+<li><code>ANALYZE</code>: Thu thập thống kê về sự phân bố dữ liệu trong các bảng và cột. Thống kê này được bộ tối ưu hóa truy vấn (query planner) sử dụng để đưa ra kế hoạch thực thi tốt nhất.</li>
+<li><code>AUTOVACUUM</code> daemon thường tự động chạy cả hai, nhưng đôi khi cần chạy thủ công sau khi có thay đổi dữ liệu lớn.</li>
+</ul>
+</li>
+<li><strong>Tránh <code>SELECT *</code></strong>: Chỉ chọn các cột bạn thực sự cần. Giảm I/O, có thể giúp sử dụng index-only scan.</li>
+<li><strong>Viết điều kiện <code>WHERE</code> hiệu quả (SARGable - Search ARGument Able):</strong> Điều kiện cho phép sử dụng index. Tránh dùng hàm trên cột được index trong <code>WHERE</code> (trừ khi có expression index).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Code ví dụ (SQL):</strong><pre><code class="language-sql">-- B-tree index (thường tự động tạo cho PRIMARY KEY và UNIQUE)
+CREATE INDEX idx_employees_lastname ON Employees (last_name); -- Giả sử có cột last_name
+CREATE INDEX idx_orders_customer_date ON Orders (customer_id, order_date DESC); -- Index đa cột
+
+-- GIN index cho JSONB (đã ví dụ ở Chapter 9)
+-- CREATE INDEX idx_products_attributes ON Products USING GIN (product_attributes);
+
+-- GIN index cho ARRAY (ví dụ: bảng NhanVien có cột ky_nang TEXT[])
+-- CREATE INDEX idx_nhanvien_kynang ON NhanVien USING GIN (ky_nang);
+-- Query sử dụng: SELECT * FROM NhanVien WHERE ky_nang @&gt; ARRAY[&#39;Java&#39;];
+
+-- Partial Index: Chỉ index các đơn hàng chưa được giao
+-- CREATE TABLE Shipments (shipment_id SERIAL PRIMARY KEY, order_id INT, status TEXT DEFAULT &#39;pending&#39;);
+CREATE INDEX idx_shipments_pending ON Shipments (order_id)
+WHERE status = &#39;pending&#39; OR status = &#39;processing&#39;;
+
+-- Expression Index: Index trên email viết thường để tìm kiếm không phân biệt hoa thường
+-- CREATE TABLE Users (user_id SERIAL, email TEXT UNIQUE);
+CREATE INDEX idx_users_email_lower ON Users (LOWER(email));
+-- Query sử dụng: SELECT * FROM Users WHERE LOWER(email) = &#39;test@example.com&#39;;
+
+-- Covering Index (PostgreSQL 11+)
+-- CREATE INDEX idx_orders_customer_include_amount ON Orders (customer_id) INCLUDE (total_amount, order_date);
+-- Query có thể dùng index-only scan: SELECT total_amount, order_date FROM Orders WHERE customer_id = 123;
+
+-- Xem kế hoạch thực thi
+EXPLAIN SELECT * FROM Employees WHERE last_name = &#39;Smith&#39;;
+EXPLAIN ANALYZE SELECT * FROM Users WHERE LOWER(email) = &#39;test@example.com&#39;;
+
+-- Chạy ANALYZE để cập nhật thống kê (thường autovacuum làm, nhưng có thể chạy thủ công)
+ANALYZE Employees;
+</code></pre>
+</li>
+<li><strong>Bài tập ứng dụng:</strong>
+  Giả sử có bảng <code>FlightBookings</code> (booking_id SERIAL PRIMARY KEY, passenger_name TEXT, flight_number VARCHAR(10), departure_city TEXT, arrival_city TEXT, booking_date TIMESTAMPTZ, seat_class VARCHAR(20) CHECK (seat_class IN (&#39;Economy&#39;, &#39;Business&#39;, &#39;First&#39;)), status VARCHAR(15) DEFAULT &#39;CONFIRMED&#39;).<ol>
+<li><strong>Phân tích truy vấn và đề xuất Index:</strong><ul>
+<li>Cho các truy vấn sau, hãy phân tích và đề xuất các B-tree index (đơn cột hoặc đa cột) phù hợp:<ul>
+<li><code>SELECT * FROM FlightBookings WHERE flight_number = &#39;VN123&#39; AND booking_date &gt;= &#39;2024-01-01&#39;;</code></li>
+<li><code>SELECT passenger_name, flight_number FROM FlightBookings WHERE departure_city = &#39;Hanoi&#39; ORDER BY booking_date DESC;</code></li>
+<li><code>SELECT COUNT(*) FROM FlightBookings WHERE status = &#39;CANCELLED&#39;;</code></li>
+</ul>
+</li>
+<li>Tạo các index bạn đã đề xuất.</li>
+</ul>
+</li>
+<li><strong>Sử dụng <code>EXPLAIN ANALYZE</code>:</strong><ul>
+<li>Chạy <code>EXPLAIN ANALYZE</code> cho các truy vấn ở câu 1 trước và sau khi tạo index. So sánh kế hoạch thực thi và thời gian.</li>
+</ul>
+</li>
+<li><strong>Partial Index:</strong><ul>
+<li>Giả sử 95% các booking có status là &#39;CONFIRMED&#39;. Tạo một Partial Index cho các booking <em>không</em> phải là &#39;CONFIRMED&#39; (ví dụ: &#39;CANCELLED&#39;, &#39;PENDING&#39;).</li>
+<li>Viết truy vấn tìm tất cả các booking có status &#39;CANCELLED&#39; và xem <code>EXPLAIN ANALYZE</code>.</li>
+</ul>
+</li>
+<li><strong>Expression Index:</strong><ul>
+<li>Nếu thường xuyên tìm kiếm <code>passenger_name</code> không phân biệt hoa thường, hãy tạo một Expression Index phù hợp.</li>
+<li>Viết truy vấn tìm kiếm và kiểm tra với <code>EXPLAIN ANALYZE</code>.</li>
+</ul>
+</li>
+<li><strong>BRIN Index (Thảo luận):</strong><ul>
+<li>Nếu bảng <code>FlightBookings</code> rất lớn và các booking được chèn gần như theo thứ tự <code>booking_date</code>, BRIN index trên <code>booking_date</code> có thể hữu ích không? Tại sao? So sánh với B-tree trong trường hợp này.</li>
+</ul>
+</li>
+<li><strong>Covering Index (Nếu dùng PostgreSQL 11+):</strong><ul>
+<li>Giả sử có truy vấn thường xuyên: <code>SELECT flight_number, seat_class FROM FlightBookings WHERE passenger_name = &#39;Nguyen Van A&#39;;</code></li>
+<li>Đề xuất một covering index để tối ưu truy vấn này thành index-only scan.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </html>
+  

@@ -1,4 +1,4 @@
-## Chapter 6: Guards và Authentication Cơ bản (JWT)
+# Chapter 6: Guards và Authentication Cơ bản (JWT)
 
 **Tên Chapter học:** Guards và Authentication Cơ bản (JWT)
 

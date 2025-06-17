@@ -1,4 +1,4 @@
-## Chapter 2: Modules, Controllers và Routing
+# Chapter 2: Modules, Controllers và Routing
 
 **Tên Chapter học:** Modules, Controllers và Routing
 
