@@ -12,4 +12,5 @@ coverage/
 npm-debug.log*
 .next/
 .cache/
+.myenv/
 out/
