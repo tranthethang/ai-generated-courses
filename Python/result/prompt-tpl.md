@@ -15,10 +15,10 @@ Please refer to these two critical documents for guidance:
 **Technical Terms:** English first, Vietnamese explanation in parentheses when needed
 
 ## LESSON TO CREATE:
-**Lesson Number:** Bài 11
-**Lesson Title:** Alembic - Database Migrations
-**Module:** Module 2: Python Nâng Cao & Làm Việc với Dữ Liệu
-**Prerequisites:** Bài 1-10 (Python nâng cao và SQLAlchemy)
+**Lesson Number:** Bài 12
+**Lesson Title:** Giới Thiệu FastAPI & Routing
+**Module:** Module 3: Xây Dựng API với FastAPI
+**Prerequisites:** Bài 1-11 (Python hoàn chỉnh và database)
 
 ## STRICT TEMPLATE ADHERENCE:
 Follow the exact structure provided in the lesson template, including:
