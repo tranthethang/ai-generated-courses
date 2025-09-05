@@ -15,23 +15,23 @@ Please refer to these two critical documents for guidance:
 **Technical Terms:** English first, Vietnamese explanation in parentheses when needed
 
 ## LESSON TO CREATE:
-**Lesson Number:** Bài 12
-**Lesson Title:** Giới Thiệu FastAPI & Routing
+**Lesson Number:** Bài 15
+**Lesson Title:** Dependency Injection System
 **Module:** Module 3: Xây Dựng API với FastAPI
-**Prerequisites:** Bài 1-11 (Python hoàn chỉnh và database)
+**Prerequisites:** Bài 1-14 (Python, FastAPI cơ bản, và Pydantic)
 
 ## STRICT TEMPLATE ADHERENCE:
 Follow the exact structure provided in the lesson template, including:
-- 📋 Thông tin Bài học
-- 🎯 Mục tiêu Bài học (4-6 specific objectives)
-- 🔑 Key Points (4-6 major concepts with PHP comparisons)
-- 📚 Lý thuyết Chi tiết (3-4 detailed sections)
-- 💻 Code Examples & Demos (5-7 comprehensive examples)
-- 🔨 Hands-on Exercises (3 progressive exercises: 30min, 45min, 60min)
-- ✅ Self-Assessment Checklist
-- 🔗 Resources & Further Reading
-- 🐛 Common Pitfalls & Solutions
-- 🎉 Summary & Next Steps
+- Thông tin Bài học
+- Mục tiêu Bài học (4-6 specific objectives)
+- Key Points (4-6 major concepts with PHP comparisons)
+- Lý thuyết Chi tiết (3-4 detailed sections)
+- Code Examples & Demos (5-7 comprehensive examples)
+- Hands-on Exercises (3 progressive exercises: 30min, 45min, 60min)
+- Self-Assessment Checklist
+- Resources & Further Reading
+- Common Pitfalls & Solutions
+- Summary & Next Steps
 
 ## CONTENT QUALITY STANDARDS:
 
@@ -92,6 +92,11 @@ Follow the exact structure provided in the lesson template, including:
 - Include real-world analogies and examples
 - Make connections to common PHP development patterns
 - Encourage experimentation and exploration
+- Content does not use icons or emojis
+- Use active voice for clarity
+- Write in present tense for immediacy
+- Keep sentences short and concise
+- Use bullet points and numbered lists effectively
 
 ### Code Examples Requirements:
 - Minimum 15-20 substantial code blocks
