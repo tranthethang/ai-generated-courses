@@ -6,6 +6,8 @@ Vui lòng tham khảo hai tài liệu quan trọng sau để được hướng d
 
 1.  **roadmap-claude-final.md** - Chứa lộ trình khóa học hoàn chỉnh với 25 bài học, mục tiêu học tập và tiến trình kỹ năng.
 2.  **lesson-template.md** - Chứa cấu trúc mẫu và các yêu cầu định dạng chính xác PHẢI được tuân thủ.
+3.  **lesson-list.md** - Chứa danh sách các bài học với tiêu đề và mô tả ngắn gọn.
+
 
 ## CONTEXT & REQUIREMENTS:
 
