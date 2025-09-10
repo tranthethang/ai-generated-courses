@@ -48,36 +48,97 @@ Sử dụng cú pháp admonition của Docusaurus để làm nổi bật thông 
   - `:::caution` Cảnh báo về các cạm bẫy hoặc lỗi thường gặp.
   - `:::danger` Cảnh báo quan trọng về bảo mật hoặc các vấn đề nghiêm trọng.
 
-### 3. Sử dụng Tabs cho So sánh Code (Bắt buộc)
+### 3. Code Block Highlighting**:
+Mọi ví dụ mã trong **tất cả** các bài học **không còn được phép** sử dụng cú pháp Markdown ba dấu backtick.  
+Thay vào đó **bắt buộc** dùng component:
+
+```tsx
+import CodeBlock from '@theme/CodeBlock';
+```
+
+#### 1. Quy định chung
+
+- **Không** dùng \`\`\` python, \`\`\` php, \`\`\` bash… ở bất kỳ đâu trong nội dung publish lên Docusaurus.
+- Mọi khối mã phải được bọc trong thẻ `<CodeBlock>`‐level component hoặc các component dẫn xuất (ví dụ `<Tabs>` + `<TabItem>`).
+- Phải **khai báo đầy đủ** các prop quan trọng:
+    - `language` – ngôn ngữ highlight (`python`, `php`, `jsx`, `bash`, …).
+    - `title`     – đường dẫn/nơi lưu file để người đọc dễ hình dung.
+    - `showLineNumbers` (bật/tắt tuỳ use-case; mặc định **true** với đoạn ≥10 dòng).
+    - `metastring` – highlight dòng:
+        - `{5}`   → chỉ dòng 5.
+        - `{3,7-9}` → dòng 3 và 7 → 9.
+
+
+#### 2. Ví dụ đơn giản
+
+```jsx
+import CodeBlock from '@theme/CodeBlock';
+
+<CodeBlock
+  language="python"
+  title="src/utils/math.py"
+  metastring="{3}"
+  showLineNumbers
+>
+{`def add(a: int, b: int) -> int:
+    """Simple addition."""
+    return a + b
+`}
+</CodeBlock>
+```
+
+
+### 4. Ví dụ kết hợp Tabs so sánh Python ↔ PHP
 
 Tất cả các so sánh code side-by-side giữa Python và PHP PHẢI sử dụng component Tabs của Docusaurus. Điều này cực kỳ quan trọng. Luôn import `Tabs` và `TabItem` ở đầu file sau front matter.
 
 **Ví dụ Template:**
 
-````mdx
+```mdx
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
 
 <Tabs groupId="php-python-comparison">
-  <TabItem value="python" label="Python (FastAPI)" default>
-    ```python title="main.py"
-    # Your Python code here
-    ```
-  </TabItem>
-  <TabItem value="php" label="PHP (Laravel/Symfony)">
-    ```php title="routes/api.php"
-    // Your equivalent PHP code here
-    ```
-  </TabItem>
+
+<TabItem value="python" label="Python (FastAPI)" default>
+<CodeBlock language="python" title="main.py" metastring="{4-6}">
+{`from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "Hello Python"}
+`}
+</CodeBlock>
+</TabItem>
+
+<TabItem value="php" label="PHP (Laravel)">
+<CodeBlock language="php" title="routes/web.php" metastring="{3-5}">
+{`<?php
+
+Route::get('/', function () {
+    return ['message' => 'Hello PHP'];
+});
+`}
+</CodeBlock>
+</TabItem>
+
 </Tabs>
-````
+```
 
-### 4. Cải tiến Khối Code
+### 5. Hướng dẫn highlight nâng cao
 
-Sử dụng các tính năng nâng cao của Docusaurus cho các khối code:
+- **Highlight dòng tiếp theo**
+Thêm comment `highlight-next-line` ngay trên dòng cần tô sáng.
+- **Vùng highlight nhiều dòng**
 
-  - **Tiêu đề file:** Thêm `title="path/to/your/file.py"` vào sau ngôn ngữ.
-  - **Highlight dòng:** Sử dụng comment `{...}` để highlight các dòng quan trọng. Ví dụ: `// highlight-next-line` hoặc `// highlight-start ... // highlight-end`.
+```python
+# highlight-start
+...
+# highlight-end
+```
 
 ## STRICT TEMPLATE ADHERENCE:
 
@@ -113,10 +174,27 @@ Tuân thủ chính xác cấu trúc được cung cấp trong `lesson-template.m
 
 ### 3. Exercise Design:
 
-  - **Exercise 1 (Bronze 🥉):** Ứng dụng cú pháp và khái niệm cơ bản (30 phút)
-  - **Exercise 2 (Silver 🥈):** Giải quyết vấn đề thực tế với nhiều khái niệm (45 phút)
-  - **Exercise 3 (Gold 🥇):** Kịch bản thế giới thực với các cân nhắc cho production (60 phút)
+  - **Exercise 1 (Bronze):** Ứng dụng cú pháp và khái niệm cơ bản (30 phút)
+  - **Exercise 2 (Silver):** Giải quyết vấn đề thực tế với nhiều khái niệm (45 phút)
+  - **Exercise 3 (Gold):** Kịch bản thế giới thực với các cân nhắc cho production (60 phút)
   - Mỗi bài tập phải có: Yêu cầu rõ ràng, code khởi đầu, output mong muốn, gợi ý từng bước, so sánh với PHP, và test case để xác thực.
+
+### 4. Content Depth and Breadth:
+  - Tính nghiêm túc chuyên nghiệp:
+    - Nội dung bài học phải giữ tính nghiêm túc, chuyên nghiệp
+    - Tuyệt đối KHÔNG sử dụng emoji, biểu tượng cảm xúc, icon dưới bất kỳ hình thức nào
+    - Không dùng từ ngữ sáo rỗng, hài hước quá mức hoặc biểu cảm cảm xúc cá nhân
+    - Ngôn ngữ sử dụng trang trọng, rõ ràng, tránh ngôn ngữ chat, tiếng lóng
+
+  - Ví dụ KHÔNG được phép:
+    - "Awesome! Bây giờ chúng ta sẽ học FastAPI"
+    - "Coding thôi nào!"
+    - "Super cool feature này"
+
+  - Ví dụ được khuyến khích:
+    - "Tiếp theo, chúng ta sẽ tìm hiểu về FastAPI"
+    - "Tính năng này cung cấp hiệu suất cao"
+    - "Phương pháp này được khuyến nghị trong môi trường production"
 
 ## OUTPUT FORMAT:
 
@@ -147,7 +225,7 @@ tags: [fastapi, dependency-injection, python, php, laravel, symfony]
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## 🎯 Mục tiêu Bài học
+## Mục tiêu Bài học
 
 Sau khi hoàn thành bài học này, bạn sẽ có thể:
 - ...
@@ -155,7 +233,7 @@ Sau khi hoàn thành bài học này, bạn sẽ có thể:
 
 ---
 
-## 🔑 Key Points & So sánh với PHP
+## Key Points & So sánh với PHP
 
 | Key Point trong FastAPI | Tương đương trong Thế giới PHP | Ghi chú So sánh |
 |---|---|---|
@@ -164,7 +242,7 @@ Sau khi hoàn thành bài học này, bạn sẽ có thể:
 
 ---
 
-## 📚 Lý thuyết Chi tiết
+## Lý thuyết Chi tiết
 
 ### 1. Dependency Injection là gì? Ôn lại từ góc nhìn PHP
 
